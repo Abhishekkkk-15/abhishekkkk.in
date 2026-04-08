@@ -1,75 +1,95 @@
-import React from "react";
-import { ArrowDown } from "lucide-react";
+import { Github, Linkedin, Mail, ChevronDown, ArrowRight } from 'lucide-react';
 
-export default function Hero() {
-  const scrollToWork = () => {
-    document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
+const Hero = () => {
+  const scrollToAbout = () => {
+    const element = document.getElementById('about');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToProjects = () => {
+    const element = document.getElementById('projects');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
     <section
-      id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-neutral-900 to-emerald-950/30" />
+      id="home"
+      className="min-h-screen flex items-center justify-center px-6 pt-20 relative overflow-hidden"
+    >
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-10 w-72 h-72 bg-black/2 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-black/2 rounded-full blur-3xl" />
+      </div>
 
-      <div className="absolute top-20 right-0 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl opacity-20 animate-pulse" />
-      <div className="absolute bottom-32 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl opacity-10 animate-pulse delay-1000" />
+      <div className="max-w-4xl mx-auto text-center relative z-10">
+        <div className="mb-8 fade-in-up stagger-1">
+          <img src="https://avatars.githubusercontent.com/u/164181412?s=400&u=9a50ae006ddac2f963b40b78317de5fec35b4366&v=4" className="w-24 h-24 mx-auto  rounded-2xl flex items-center justify-center text-stone-50 text-2xl font-light shadow-lg hover:scale-105 transition-transform duration-300"/>
+            
+        </div>
 
-      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        <div className="space-y-8 animate-fadeIn">
-          <div className="inline-block">
-            <span className="text-xs uppercase tracking-[0.2em] text-emerald-400/60 font-medium">
-              Welcome —{" "}
-              <span className="text-neutral-100 font-medium text-xs ">
-                I'm Abhishek
-              </span>
-            </span>
-          </div>
+        <h1 className="text-6xl md:text-8xl font-extralight tracking-tighter mb-6 fade-in-up stagger-2 leading-tight">
+          Building<br />
+          <span className="gradient-text">Softwares</span>
+        </h1>
 
-          <h1 className="text-7xl md:text-8xl lg:text-[120px] font-extralight tracking-tighter text-neutral-100 leading-none">
-            <span className="relative">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-300 to-cyan-400">
-                Full Stack Developer
-              </span>
-              <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-cyan-400 blur-sm opacity-30" />
-            </span>
-          </h1>
+        <p className="text-lg md:text-xl font-light text-black/60 mb-12 max-w-2xl mx-auto leading-relaxed fade-in-up stagger-3">
+          Hi, I'm Abhishek Jangid. Currently working on Forge and DevCon, and exploring the world of Golang. All of my projects are available at abhishekkkk.in.
+        </p>
 
-          <p className="text-lg md:text-xl text-neutral-300 tracking-wide max-w-2xl mx-auto leading-relaxed font-light">
-            I build scalable, real-time and distributed web applications —
-            event-driven systems, GraphQL APIs and polished full-stack
-            experiences.
-          </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 fade-in-up stagger-4">
+          <button
+            onClick={scrollToProjects}
+            className="px-8 py-3 bg-black text-stone-50 font-light rounded-lg hover:bg-black/90 transition-all hover-lift inline-flex items-center gap-2"
+          >
+            View My Work
+            <ArrowRight size={18} />
+          </button>
+          <button
+            onClick={scrollToAbout}
+            className="px-8 py-3 border border-black/30 font-light rounded-lg hover:border-black hover:bg-black/2 transition-all"
+          >
+            Learn About Me
+          </button>
+        </div>
+
+        <div className="flex items-center justify-center gap-4 mb-16 fade-in-up stagger-4">
+          <a
+            href="https://github.com/abhishekkkk-15"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-3 border border-black/20 rounded-full hover:bg-black hover:text-stone-50 hover:border-black transition-all hover-lift group"
+          >
+            <Github size={20} className="group-hover:scale-110 transition-transform" />
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-3 border border-black/20 rounded-full hover:bg-black hover:text-stone-50 hover:border-black transition-all hover-lift group"
+          >
+            <Linkedin size={20} className="group-hover:scale-110 transition-transform" />
+          </a>
+          <a
+            href="mailto:abhishekjangid3489@gmail.com"
+            className="p-3 border border-black/20 rounded-full hover:bg-black hover:text-stone-50 hover:border-black transition-all hover-lift group"
+          >
+            <Mail size={20} className="group-hover:scale-110 transition-transform" />
+          </a>
         </div>
 
         <button
-          onClick={scrollToWork}
-          className="mt-20 group relative inline-flex items-center justify-center gap-3 px-8 py-4 text-sm uppercase tracking-[0.15em] text-emerald-400 border border-emerald-500/50 rounded-full hover:border-emerald-400 transition-all duration-500 hover:shadow-lg hover:shadow-emerald-500/20">
-          <span className="relative z-10">Explore My Work</span>
-          <ArrowDown
-            size={16}
-            className="group-hover:translate-y-1 transition-transform duration-300"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          onClick={scrollToAbout}
+          className="animate-bounce text-black/40 hover:text-black transition-colors mx-auto block"
+        >
+          <ChevronDown size={32} />
         </button>
-
-        <div className="mt-20 flex justify-center gap-8 text-neutral-500 text-sm">
-          <span className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            React
-          </span>
-          <span className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse delay-100" />
-            Node.js
-          </span>
-          <span className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse delay-200" />
-            PostgreSQL
-          </span>
-        </div>
       </div>
-
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-neutral-950 via-neutral-950/50 to-transparent" />
     </section>
   );
-}
+};
+
+export default Hero;

@@ -1,84 +1,64 @@
-import React from "react";
-import { Code2, Palette, Rocket } from "lucide-react";
+import { Code2, Coffee, Lightbulb } from 'lucide-react';
 
-export default function About() {
+const About = () => {
   return (
-    <section
-      id="about"
-      className="py-32 px-6 bg-gradient-to-b from-neutral-950 to-neutral-900/50">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-5xl md:text-7xl font-extralight text-neutral-100 mb-20 tracking-tight">
-          About
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-            .
-          </span>
-        </h2>
+    <section id="about" className="min-h-screen flex items-center justify-center px-6 py-20 bg-gradient-to-b from-stone-50 via-stone-50 to-black/1">
+      <div className="max-w-5xl mx-auto w-full">
+        <div className="mb-16">
+          <h2 className="text-5xl md:text-6xl font-light tracking-tight mb-6">
+            About Me
+          </h2>
+          <div className="h-1 w-12 bg-black/20" />
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-20 items-center">
-          <div className="space-y-6 text-neutral-300 leading-relaxed">
-            <p className="text-lg font-light">
-              I'm <strong>Abhishek Jangid</strong>, a confident full-stack
-              developer focused on building scalable, real-time, and distributed
-              systems. I specialize in event-driven architectures, GraphQL APIs,
-              and production-ready web applications.
+        <div className="grid md:grid-cols-2 gap-16 items-start mb-16">
+          <div className="space-y-8">
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              I'm Abhishek Jangid, a passionate software developer building impactful solutions. My approach combines technical
+              expertise with creative problem-solving to deliver exceptional results.
             </p>
-            <p className="text-lg font-light">
-              I enjoy turning complex backend challenges into reliable,
-              maintainable systems — using technologies like Kafka, Redis,
-              PostgreSQL, and modern Node/Nest stacks — while delivering
-              polished React/Next.js frontends.
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              I'm currently working on open-source projects like Forge and DevCon.
+              I have experience with TypeScript, JavaScript, and I'm currently expanding my skill set by learning Golang.
             </p>
-            <div className="pt-6 flex gap-4">
-              <div className="px-4 py-2 border border-emerald-500/30 rounded-full text-sm text-emerald-400/80 bg-emerald-500/5">
-                Confident Developer
-              </div>
-              <div className="px-4 py-2 border border-emerald-500/30 rounded-full text-sm text-emerald-400/80 bg-emerald-500/5">
-                Event-driven Systems
-              </div>
-              <div className="px-4 py-2 border border-emerald-500/30 rounded-full text-sm text-emerald-400/80 bg-emerald-500/5">
-                Scalable Backends
-              </div>
-            </div>
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              All of my previous projects are available at abhishekkkk.in. When I'm not coding, you'll find me exploring emerging technologies and
+              contributing to open source projects.
+            </p>
           </div>
 
-          <div className="space-y-6">
-            {[
-              {
-                icon: Code2,
-                title: "Scalable Architecture",
-                desc: "Event-driven, microservices-ready designs",
-              },
-              {
-                icon: Palette,
-                title: "Polished Frontends",
-                desc: "User-friendly, responsive React/Next.js interfaces",
-              },
-              {
-                icon: Rocket,
-                title: "Performance & Reliability",
-                desc: "Optimized systems with caching and background jobs",
-              },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="group relative p-6 bg-neutral-800/30 backdrop-blur-sm border border-emerald-500/10 rounded-xl hover:border-emerald-500/30 transition-all duration-300 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="relative flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors duration-300">
-                    <item.icon className="text-emerald-400" size={24} />
-                  </div>
-                  <div>
-                    <h3 className="text-neutral-100 font-medium mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-neutral-400">{item.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="space-y-4">
+            <div className="group border border-black/10 p-8 rounded-xl hover:border-black/25 hover:bg-black/2 transition-all hover-lift overflow-hidden relative">
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-black/1 rounded-full blur-2xl group-hover:bg-black/2 transition-all" />
+              <Code2 className="mb-4 relative z-10 group-hover:scale-110 transition-transform" size={28} />
+              <h3 className="text-lg font-light mb-3 relative z-10">Clean Code</h3>
+              <p className="text-black/60 font-light text-sm relative z-10">
+                Writing maintainable, efficient code that stands the test of time
+              </p>
+            </div>
+
+            <div className="group border border-black/10 p-8 rounded-xl hover:border-black/25 hover:bg-black/2 transition-all hover-lift overflow-hidden relative">
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-black/1 rounded-full blur-2xl group-hover:bg-black/2 transition-all" />
+              <Lightbulb className="mb-4 relative z-10 group-hover:scale-110 transition-transform" size={28} />
+              <h3 className="text-lg font-light mb-3 relative z-10">Problem Solver</h3>
+              <p className="text-black/60 font-light text-sm relative z-10">
+                Turning complex challenges into elegant, user-friendly solutions
+              </p>
+            </div>
+
+            <div className="group border border-black/10 p-8 rounded-xl hover:border-black/25 hover:bg-black/2 transition-all hover-lift overflow-hidden relative">
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-black/1 rounded-full blur-2xl group-hover:bg-black/2 transition-all" />
+              <Coffee className="mb-4 relative z-10 group-hover:scale-110 transition-transform" size={28} />
+              <h3 className="text-lg font-light mb-3 relative z-10">Continuous Learner</h3>
+              <p className="text-black/60 font-light text-sm relative z-10">
+                Always exploring new technologies and best practices
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default About;

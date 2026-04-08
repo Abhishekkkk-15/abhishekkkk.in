@@ -1,81 +1,88 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
-export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+interface NavigationProps {
+  activeSection: string;
+}
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+const Navigation = ({ activeSection }: NavigationProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navItems = [
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About' },
+    { id: 'projects', label: 'Projects' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'contact', label: 'Contact' },
+  ];
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setIsOpen(false);
+      element.scrollIntoView({ behavior: 'smooth' });
+      setIsMenuOpen(false);
     }
   };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-        scrolled
-          ? "bg-neutral-950/80 backdrop-blur-xl border-b border-emerald-500/10 py-4 shadow-lg"
-          : "bg-transparent py-6"
-      }`}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <button
-          onClick={() => scrollToSection("hero")}
-          className="relative group text-2xl font-light tracking-wider text-neutral-100 hover:text-emerald-400 transition-all duration-300">
-          Abhishek<span className="text-emerald-400">.in</span>
-          <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-transparent group-hover:w-full transition-all duration-500" />
-        </button>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-stone-50/98 backdrop-blur-md border-b border-black/5 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-5">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => scrollToSection('home')}
+            className="flex items-center gap-2 group"
+          >
+            <div className="w-6 h-6 bg-black rounded-sm group-hover:scale-110 transition-transform" />
+            <span className="text-lg font-light tracking-tight">Portfolio</span>
+          </button>
 
-        <div className="hidden md:flex gap-10">
-          {["about", "work", "skills", "contact"].map((item) => (
-            <button
-              key={item}
-              onClick={() => scrollToSection(item)}
-              className="relative text-xs uppercase tracking-[0.15em] text-neutral-400 hover:text-emerald-400 transition-colors duration-300 group">
-              {item}
-              <div className="absolute -bottom-1.5 left-0 w-0 h-px bg-emerald-400 group-hover:w-full transition-all duration-300" />
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-neutral-100 hover:text-emerald-400 transition-colors">
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {isOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-neutral-950/95 backdrop-blur-xl border-t border-emerald-500/10 animate-in fade-in slide-in-from-top-2">
-          <div className="flex flex-col gap-6 p-6">
-            {["about", "work", "skills", "contact"].map((item) => (
+          <div className="hidden md:flex items-center gap-12">
+            {navItems.map((item) => (
               <button
-                key={item}
-                onClick={() => scrollToSection(item)}
-                className="text-left text-xs uppercase tracking-[0.15em] text-neutral-400 hover:text-emerald-400 transition-colors duration-300">
-                {item}
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`relative text-sm font-light tracking-wide transition-all group ${
+                  activeSection === item.id ? 'text-black' : 'text-black/60 hover:text-black'
+                }`}
+              >
+                {item.label}
+                <span
+                  className={`absolute bottom-0 left-0 h-0.5 bg-black transition-all duration-300 ${
+                    activeSection === item.id ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}
+                />
               </button>
             ))}
-            <a
-              href="https://abhishek.in"
-              onClick={() => setIsOpen(false)}
-              className="text-left text-xs uppercase tracking-[0.15em] text-neutral-400 hover:text-emerald-400 transition-colors duration-300">
-              Visit Portfolio
-            </a>
           </div>
+
+          <button
+            className="md:hidden p-2 hover:bg-black/5 rounded-lg transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-      )}
+
+        {isMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t border-black/5 pt-4">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`text-left text-sm font-light tracking-wide transition-all py-2 px-3 rounded-lg ${
+                  activeSection === item.id
+                    ? 'text-black bg-black/5'
+                    : 'text-black/60 hover:text-black hover:bg-black/2.5'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </nav>
   );
-}
+};
+
+export default Navigation;
