@@ -1,8 +1,10 @@
-import { Mail, Github, Linkedin, Twitter, ArrowRight } from 'lucide-react';
+import { Mail, Github, Linkedin, Twitter, ArrowRight } from "lucide-react";
 
 const Contact = () => {
   return (
-    <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-20 bg-stone-50 relative">
+    <section
+      id="contact"
+      className="min-h-screen flex items-center justify-center px-6 py-20 bg-stone-50 relative">
       <div className="max-w-4xl mx-auto w-full text-center">
         <div className="mb-12">
           <h2 className="text-5xl md:text-6xl font-light tracking-tight mb-6">
@@ -11,8 +13,8 @@ const Contact = () => {
             <span className="gradient-text">Great Together</span>
           </h2>
           <p className="text-lg font-light text-black/60 max-w-2xl mx-auto leading-relaxed">
-            I'm always excited to discuss new projects, innovative ideas, and opportunities
-            to collaborate on meaningful digital solutions.
+            I'm always excited to discuss new projects, innovative ideas, and
+            opportunities to collaborate on meaningful digital solutions.
           </p>
         </div>
 
@@ -21,11 +23,13 @@ const Contact = () => {
         <div className="grid md:grid-cols-2 gap-4 mb-16">
           <a
             href="mailto:abhishekjangid3489@gmail.com"
-            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden"
-          >
+            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/0 group-hover:from-black/5 group-hover:to-black/0 transition-all" />
             <div className="relative z-10">
-              <Mail className="mx-auto mb-4 group-hover:scale-110 transition-transform" size={28} />
+              <Mail
+                className="mx-auto mb-4 group-hover:scale-110 transition-transform"
+                size={28}
+              />
               <h3 className="text-lg font-light mb-2">Email</h3>
               <p className="text-sm font-light opacity-70 group-hover:opacity-100 transition-opacity">
                 abhishekjangid3489@gmail.com
@@ -34,17 +38,19 @@ const Contact = () => {
           </a>
 
           <a
-            href="https://abhishekkkk.in"
+            href="https://www.linkedin.com/in/abhishek-jangid-3532b1323"
             target="_blank"
             rel="noopener noreferrer"
-            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden"
-          >
+            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/0 group-hover:from-black/5 group-hover:to-black/0 transition-all" />
             <div className="relative z-10">
-              <Linkedin className="mx-auto mb-4 group-hover:scale-110 transition-transform" size={28} />
-              <h3 className="text-lg font-light mb-2">Portfolio</h3>
+              <Linkedin
+                className="mx-auto mb-4 group-hover:scale-110 transition-transform"
+                size={28}
+              />
+              <h3 className="text-lg font-light mb-2">Linkdin</h3>
               <p className="text-sm font-light opacity-70 group-hover:opacity-100 transition-opacity">
-                abhishekkkk.in
+                Abhishek Jangid
               </p>
             </div>
           </a>
@@ -53,11 +59,13 @@ const Contact = () => {
             href="https://github.com/abhishekkkk-15"
             target="_blank"
             rel="noopener noreferrer"
-            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden"
-          >
+            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/0 group-hover:from-black/5 group-hover:to-black/0 transition-all" />
             <div className="relative z-10">
-              <Github className="mx-auto mb-4 group-hover:scale-110 transition-transform" size={28} />
+              <Github
+                className="mx-auto mb-4 group-hover:scale-110 transition-transform"
+                size={28}
+              />
               <h3 className="text-lg font-light mb-2">GitHub</h3>
               <p className="text-sm font-light opacity-70 group-hover:opacity-100 transition-opacity">
                 View my projects
@@ -69,11 +77,13 @@ const Contact = () => {
             href="https://twitter.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden"
-          >
+            className="group border border-black/10 p-8 rounded-xl hover:border-black hover:bg-black hover:text-stone-50 transition-all hover-lift relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/0 group-hover:from-black/5 group-hover:to-black/0 transition-all" />
             <div className="relative z-10">
-              <Twitter className="mx-auto mb-4 group-hover:scale-110 transition-transform" size={28} />
+              <Twitter
+                className="mx-auto mb-4 group-hover:scale-110 transition-transform"
+                size={28}
+              />
               <h3 className="text-lg font-light mb-2">Twitter</h3>
               <p className="text-sm font-light opacity-70 group-hover:opacity-100 transition-opacity">
                 Follow me
@@ -90,8 +100,7 @@ const Contact = () => {
           </p>
           <a
             href="mailto:abhishekjangid3489@gmail.com"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-black text-stone-50 font-light rounded-lg hover:bg-black/90 transition-all hover-lift"
-          >
+            className="inline-flex items-center gap-2 px-8 py-3 bg-black text-stone-50 font-light rounded-lg hover:bg-black/90 transition-all hover-lift">
             Get In Touch
             <ArrowRight size={18} />
           </a>

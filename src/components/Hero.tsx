@@ -18,7 +18,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="min-h-screen flex items-center justify-center px-6 pt-20 relative overflow-hidden">
+      className="min-h-screen flex items-center justify-center px-6 sm:pt-20 relative overflow-hidden pt-36  ">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-10 w-72 h-72 bg-black/2 rounded-full blur-3xl" />
         <div className="absolute bottom-20 left-10 w-96 h-96 bg-black/2 rounded-full blur-3xl" />
@@ -35,12 +35,13 @@ const Hero = () => {
         <h1 className="text-6xl md:text-8xl font-extralight tracking-tighter mb-6 fade-in-up stagger-2 leading-tight">
           Building
           <br />
-          <span className="gradient-text">Softwares</span>
+          <span className="gradient-text">Software's</span>
         </h1>
 
         <p className="text-lg md:text-xl font-light text-black/60 mb-12 max-w-2xl mx-auto leading-relaxed fade-in-up stagger-3">
           Hi, I'm Abhishek Jangid. Full Stack Developer • Backend Systems • APIs
-          • Infrastructure Building scalable products with Golang and TypeScript
+          • Infrastructure Building scalable products with Golang and
+          TypeScript.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 fade-in-up stagger-4">
