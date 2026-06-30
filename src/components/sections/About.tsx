@@ -1,17 +1,13 @@
-import { useState } from "react";
 import { Code2, Coffee, Lightbulb } from "lucide-react";
 import { about } from "../../data/content";
 import Reveal from "../ui/Reveal";
 import SectionHeader from "../ui/SectionHeader";
 import HandCircle from "../ui/HandCircle";
 import Squiggle from "../ui/Squiggle";
-import Sketch from "../ui/Sketch";
 
 const icons = [Code2, Lightbulb, Coffee];
 
 export default function About() {
-  const [bioSettled, setBioSettled] = useState(false);
-
   return (
     <section id="about" className="relative bg-white py-28 md:py-36">
       <div className="section-container">
@@ -20,29 +16,9 @@ export default function About() {
         <div className="mt-16 grid gap-16 md:grid-cols-2 md:gap-12">
           <div>
             {about.paragraphs.map((paragraph, i) => (
-              <Reveal
-                key={paragraph}
-                delay={i * 0.1}
-                onAnimationComplete={i === 1 ? () => setBioSettled(true) : undefined}
-              >
+              <Reveal key={paragraph} delay={i * 0.1}>
                 <p className="mb-5 font-light leading-relaxed text-black/65">
-                  {i === 1 ? (
-                    <>
-                      I&apos;m currently working on open-source projects like{" "}
-                      <Sketch
-                        type="underline"
-                        color="#0a0a0a"
-                        enabled={bioSettled}
-                      >
-                        Forge and DevCon
-                      </Sketch>
-                      . I have experience with TypeScript, JavaScript, and
-                      I&apos;m currently expanding my skill set by learning
-                      Golang.
-                    </>
-                  ) : (
-                    paragraph
-                  )}
+                  {paragraph}
                 </p>
               </Reveal>
             ))}
