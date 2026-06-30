@@ -1,42 +1,29 @@
-import { useState, useEffect } from 'react';
-import Hero from './components/Hero';
-import About from './components/About';
-import Projects from './components/Projects';
-import Skills from './components/Skills';
-import Contact from './components/Contact';
-import Navigation from './components/Navigation';
+import Navbar from './components/layout/Navbar'
+import Footer from './components/layout/Footer'
+import ScrollProgress from './components/ui/ScrollProgress'
+import Hero from './components/sections/Hero'
+import About from './components/sections/About'
+import Experience from './components/sections/Experience'
+import Projects from './components/sections/Projects'
+import Skills from './components/sections/Skills'
+import Contact from './components/sections/Contact'
 
 function App() {
-  const [activeSection, setActiveSection] = useState('home');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'about', 'projects', 'skills', 'contact'];
-      const current = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) setActiveSection(current);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <div className="bg-stone-50 text-black">
-      <Navigation activeSection={activeSection} />
-      <Hero />
-      <About />
-      <Projects />
-      <Skills />
-      <Contact />
+    <div className="relative bg-white">
+      <ScrollProgress />
+      <Navbar />
+      <main>
+        <Hero />
+        <About />
+        <Experience />
+        <Projects />
+        <Skills />
+        <Contact />
+      </main>
+      <Footer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
