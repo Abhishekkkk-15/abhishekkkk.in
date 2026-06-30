@@ -1,6 +1,7 @@
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import ScrollProgress from './components/ui/ScrollProgress'
+import SectionDivider from './components/ui/SectionDivider'
 import Hero from './components/sections/Hero'
 import About from './components/sections/About'
 import Experience from './components/sections/Experience'
@@ -15,10 +16,15 @@ function App() {
       <Navbar />
       <main>
         <Hero />
+        <SectionDivider />
         <About />
+        <SectionDivider />
         <Experience />
+        <SectionDivider />
         <Projects />
+        <SectionDivider />
         <Skills />
+        <SectionDivider />
         <Contact />
       </main>
       <Footer />
