@@ -1,16 +1,31 @@
+import { useRef } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { experience } from "../../data/content";
 import Reveal from "../ui/Reveal";
 import SectionHeader from "../ui/SectionHeader";
 import HandCircle from "../ui/HandCircle";
 
 export default function Experience() {
+  const timelineRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start center", "end center"],
+  });
+  const scaleY = useSpring(scrollYProgress, { stiffness: 80, damping: 20 });
+
   return (
     <section id="experience" className="relative bg-white py-28 md:py-36">
       <div className="section-container">
         <SectionHeader index="03" title="Where I've Worked" />
 
-        <div className="relative mt-16">
-          <div className="absolute inset-y-0 left-5 w-px bg-black/10 md:left-7" />
+        <div className="relative mt-16" ref={timelineRef}>
+          {/* static faint track */}
+          <div className="absolute inset-y-0 left-5 w-px bg-black/6 md:left-7" />
+          {/* scroll-driven fill */}
+          <motion.div
+            style={{ scaleY }}
+            className="absolute inset-y-0 left-5 w-px origin-top bg-black/40 md:left-7"
+          />
 
           <div className="flex flex-col gap-16">
             {experience.map((item, i) => (
