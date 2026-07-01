@@ -1,6 +1,3 @@
-import { useRef } from "react";
-import { useInView } from "framer-motion";
-import { RoughNotation } from "react-rough-notation";
 import { Code2, Coffee, Lightbulb } from "lucide-react";
 import { about } from "../../data/content";
 import Reveal from "../ui/Reveal";
@@ -11,39 +8,28 @@ import Squiggle from "../ui/Squiggle";
 const icons = [Code2, Lightbulb, Coffee];
 
 export default function About() {
-  const bioRef = useRef(null);
-  const inView = useInView(bioRef, { once: true, amount: 0.4 });
-
   return (
     <section id="about" className="relative bg-white py-28 md:py-36">
       <div className="section-container">
         <SectionHeader index="02" title="About Me" />
 
         <div className="mt-16 grid gap-16 md:grid-cols-2 md:gap-12">
-          <div ref={bioRef}>
+          <div>
             <Reveal delay={0}>
               <p className="mb-5 font-light leading-relaxed text-black/65">
                 I'm Abhishek Jangid, a software engineer specializing in{" "}
-                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600}>
-                  autonomous AI agents
-                </RoughNotation>
+                <span className="rounded-sm bg-black/[0.06] px-0.5 font-normal text-black/80">autonomous AI agents</span>
                 ,{" "}
-                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600} animationDelay={250}>
-                  RAG systems
-                </RoughNotation>
+                <span className="rounded-sm bg-black/[0.06] px-0.5 font-normal text-black/80">RAG systems</span>
                 , and developer-automation tooling. I build backend-heavy products with{" "}
-                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600} animationDelay={500}>
-                  TypeScript, Go, and Rust
-                </RoughNotation>
+                <span className="rounded-sm bg-black/[0.06] px-0.5 font-normal text-black/80">TypeScript, Go, and Rust</span>
                 .
               </p>
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mb-5 font-light leading-relaxed text-black/65">
-                Currently learning Rust & diving deeper into{" "}
-                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600} animationDelay={750}>
-                  distributed systems design
-                </RoughNotation>
+                Currently learning Rust &amp; diving deeper into{" "}
+                <span className="rounded-sm bg-black/[0.06] px-0.5 font-normal text-black/80">distributed systems design</span>
                 . My work focuses on building systems that are intelligent, scalable, and developer-friendly.
               </p>
             </Reveal>
