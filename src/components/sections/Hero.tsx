@@ -78,25 +78,44 @@ export default function Hero() {
           </span>
         </motion.p>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          onAnimationComplete={() => setHeadlineSettled(true)}
-          className="mt-6 max-w-3xl text-6xl font-semibold leading-[1.05] tracking-tight text-black sm:text-7xl md:text-8xl"
-        >
-          {profile.headline[0]}
-          <br />
-          <Sketch
-            type="circle"
-            color="#0a0a0a"
-            strokeWidth={2}
-            padding={[4, 14]}
-            enabled={headlineSettled}
-          >
-            {profile.headline[1]}
-          </Sketch>
-        </motion.h1>
+        <h1 className="mt-6 max-w-3xl text-6xl font-semibold leading-[1.05] tracking-tight text-black sm:text-7xl md:text-8xl">
+          <span className="block">
+            {profile.headline[0].split(" ").map((word, i) => (
+              <span key={i} className="inline-block overflow-hidden">
+                <motion.span
+                  className="inline-block"
+                  initial={{ y: "110%" }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.75, delay: 0.2 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {word}
+                </motion.span>
+                {i < profile.headline[0].split(" ").length - 1 && " "}
+              </span>
+            ))}
+          </span>
+          <span className="block">
+            <Sketch
+              type="circle"
+              color="#0a0a0a"
+              strokeWidth={2}
+              padding={[4, 14]}
+              enabled={headlineSettled}
+            >
+              <span className="inline-block overflow-hidden">
+                <motion.span
+                  className="inline-block"
+                  initial={{ y: "110%" }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.75, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                  onAnimationComplete={() => setHeadlineSettled(true)}
+                >
+                  {profile.headline[1]}
+                </motion.span>
+              </span>
+            </Sketch>
+          </span>
+        </h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
