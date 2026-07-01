@@ -1,12 +1,20 @@
-import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, Github, Linkedin, Mail } from "lucide-react";
 import { profile } from "../../data/content";
 import Sketch from "../ui/Sketch";
 
+const taglineWords = profile.tagline.split(" · ");
+
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const [headlineSettled, setHeadlineSettled] = useState(false);
+  const [wordIndex, setWordIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setWordIndex(i => (i + 1) % taglineWords.length), 2500);
+    return () => clearInterval(id);
+  }, []);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -51,9 +59,23 @@ export default function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="eyebrow"
+          className="eyebrow flex items-center gap-1.5"
         >
-          {profile.role} · {profile.tagline}
+          {profile.role} ·{" "}
+          <span className="relative inline-block overflow-hidden" style={{ minWidth: "9rem" }}>
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={taglineWords[wordIndex]}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="inline-block"
+              >
+                {taglineWords[wordIndex]}
+              </motion.span>
+            </AnimatePresence>
+          </span>
         </motion.p>
 
         <motion.h1

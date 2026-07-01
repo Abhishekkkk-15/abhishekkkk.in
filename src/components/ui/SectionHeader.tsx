@@ -1,3 +1,6 @@
+import { useRef } from 'react'
+import { useInView } from 'framer-motion'
+import { RoughNotation } from 'react-rough-notation'
 import Reveal from './Reveal'
 import Squiggle from './Squiggle'
 
@@ -17,12 +20,23 @@ export default function SectionHeader({
   total = '06',
 }: SectionHeaderProps) {
   const isCenter = align === 'center'
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.5 })
 
   return (
     <div className={isCenter ? 'flex flex-col items-center text-center' : ''}>
       <Reveal>
-        <div className="flex items-center gap-3">
-          <span className="section-index">{index}</span>
+        <div ref={ref} className="flex items-center gap-3">
+          <RoughNotation
+            type="circle"
+            show={inView}
+            color="#0a0a0a"
+            strokeWidth={1.5}
+            animationDuration={600}
+            padding={6}
+          >
+            <span className="section-index">{index}</span>
+          </RoughNotation>
           <Squiggle width={40} className="text-black/30" />
           <span className="eyebrow">/ {total}</span>
         </div>
