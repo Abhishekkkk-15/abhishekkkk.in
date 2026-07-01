@@ -1,3 +1,6 @@
+import { useRef } from "react";
+import { useInView } from "framer-motion";
+import { RoughNotation } from "react-rough-notation";
 import { Code2, Coffee, Lightbulb } from "lucide-react";
 import { about } from "../../data/content";
 import Reveal from "../ui/Reveal";
@@ -8,20 +11,42 @@ import Squiggle from "../ui/Squiggle";
 const icons = [Code2, Lightbulb, Coffee];
 
 export default function About() {
+  const bioRef = useRef(null);
+  const inView = useInView(bioRef, { once: true, amount: 0.4 });
+
   return (
     <section id="about" className="relative bg-white py-28 md:py-36">
       <div className="section-container">
         <SectionHeader index="02" title="About Me" />
 
         <div className="mt-16 grid gap-16 md:grid-cols-2 md:gap-12">
-          <div>
-            {about.paragraphs.map((paragraph, i) => (
-              <Reveal key={paragraph} delay={i * 0.1}>
-                <p className="mb-5 font-light leading-relaxed text-black/65">
-                  {paragraph}
-                </p>
-              </Reveal>
-            ))}
+          <div ref={bioRef}>
+            <Reveal delay={0}>
+              <p className="mb-5 font-light leading-relaxed text-black/65">
+                I'm Abhishek Jangid, a software engineer specializing in{" "}
+                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600}>
+                  autonomous AI agents
+                </RoughNotation>
+                ,{" "}
+                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600} animationDelay={250}>
+                  RAG systems
+                </RoughNotation>
+                , and developer-automation tooling. I build backend-heavy products with{" "}
+                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600} animationDelay={500}>
+                  TypeScript, Go, and Rust
+                </RoughNotation>
+                .
+              </p>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="mb-5 font-light leading-relaxed text-black/65">
+                Currently learning Rust & diving deeper into{" "}
+                <RoughNotation type="highlight" show={inView} color="rgba(0,0,0,0.07)" animationDuration={600} animationDelay={750}>
+                  distributed systems design
+                </RoughNotation>
+                . My work focuses on building systems that are intelligent, scalable, and developer-friendly.
+              </p>
+            </Reveal>
           </div>
 
           <div className="flex flex-col gap-5">
