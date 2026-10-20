@@ -18,6 +18,8 @@ import {
   GitCommit,
   Terminal,
   Send,
+  ShieldCheck,
+  Key,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
 
@@ -29,7 +31,8 @@ type TabKey =
   | "dossier"
   | "activity"
   | "skills"
-  | "contact";
+  | "contact"
+  | "security";
 
 export default function EditorPage() {
   const router = useRouter();
@@ -41,6 +44,16 @@ export default function EditorPage() {
     text: string;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
+
+  // Security & Password Change State
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     async function loadPortfolio() {
@@ -102,6 +115,59 @@ export default function EditorPage() {
     await fetch("/api/admin/auth/logout", { method: "POST" });
     router.push("/admin/login");
     router.refresh();
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordStatus({
+        type: "error",
+        text: "Please fill in all password fields.",
+      });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordStatus({
+        type: "error",
+        text: "New password and confirmation do not match.",
+      });
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordStatus({
+        type: "error",
+        text: "New password must be at least 8 characters long.",
+      });
+      return;
+    }
+
+    setPasswordSaving(true);
+    setPasswordStatus(null);
+    try {
+      const res = await fetch("/api/admin/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error || "Failed to update password.");
+      }
+      setPasswordStatus({
+        type: "success",
+        text: "Password updated successfully! Your admin credentials are now secured.",
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setPasswordStatus({
+        type: "error",
+        text: err?.message || "Failed to update password.",
+      });
+    } finally {
+      setPasswordSaving(false);
+    }
   };
 
   if (loading) {
@@ -195,6 +261,7 @@ export default function EditorPage() {
             { id: "activity", label: "04.2 // GitHub Activity", icon: GitCommit },
             { id: "skills", label: "05 // Skills & Stack", icon: Terminal },
             { id: "contact", label: "06 // Contact & Colophon", icon: Send },
+            { id: "security", label: "07 // Security & Access", icon: ShieldCheck },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -1399,6 +1466,131 @@ export default function EditorPage() {
                   ))}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* TAB 7: SECURITY & ACCESS CONTROL */}
+          {activeTab === "security" && (
+            <div className="space-y-6 max-w-2xl">
+              <div className="border-b border-[#E2E0D8] pb-4">
+                <h2 className="text-2xl font-display font-medium text-[#111111]">
+                  Security &amp; Access Control (07 //)
+                </h2>
+                <p className="font-mono text-xs text-[#6E6D68] mt-1">
+                  Rotate your admin credentials and manage defense-in-depth settings.
+                </p>
+              </div>
+
+              {/* Security Telemetry Status Card */}
+              <div className="p-4 bg-[#EBEAE4]/40 border border-[#E2E0D8] space-y-3 font-mono text-xs">
+                <div className="text-[11px] uppercase tracking-wider text-[#111111] font-semibold border-b border-[#E2E0D8] pb-2">
+                  SECURITY POLICY &amp; DEFENSE POSTURE
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11.5px]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block"></span>
+                    <span className="text-[#6E6D68]">Encryption:</span>
+                    <span className="font-medium text-[#111111]">Bcrypt (Cost 10)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block"></span>
+                    <span className="text-[#6E6D68]">Token:</span>
+                    <span className="font-medium text-[#111111]">HMAC-SHA256 JWT</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block"></span>
+                    <span className="text-[#6E6D68]">Cookies:</span>
+                    <span className="font-medium text-[#111111]">HttpOnly + SameSite=Lax</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] inline-block animate-pulse"></span>
+                    <span className="text-[#6E6D68]">Rate Limiter:</span>
+                    <span className="font-medium text-[#2563EB]">5-Attempt / 15m Lockout</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Change Password Form */}
+              <form onSubmit={handleChangePassword} className="space-y-4 font-mono text-xs">
+                <div className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4">
+                  <div className="text-xs uppercase tracking-wider font-semibold text-[#111111] flex items-center gap-2">
+                    <Key size={14} />
+                    <span>Change Admin Password</span>
+                  </div>
+
+                  {passwordStatus && (
+                    <div
+                      className={`p-3 border text-xs flex items-center gap-2 ${
+                        passwordStatus.type === "success"
+                          ? "bg-green-50 text-green-800 border-green-200"
+                          : "bg-red-50 text-red-800 border-red-200"
+                      }`}
+                    >
+                      {passwordStatus.type === "success" ? (
+                        <CheckCircle size={15} />
+                      ) : (
+                        <AlertCircle size={15} />
+                      )}
+                      <span>{passwordStatus.text}</span>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="text-[#6E6D68] block mb-1">
+                      CURRENT PASSWORD
+                    </label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      required
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none focus:outline-none focus:border-[#111111]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[#6E6D68] block mb-1">
+                        NEW PASSWORD (MIN 8 CHARS)
+                      </label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        required
+                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none focus:outline-none focus:border-[#111111]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[#6E6D68] block mb-1">
+                        CONFIRM NEW PASSWORD
+                      </label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        required
+                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none focus:outline-none focus:border-[#111111]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={passwordSaving}
+                      className="bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-5 py-2 font-mono text-xs uppercase tracking-wider transition-colors disabled:opacity-50 rounded-none flex items-center gap-2"
+                    >
+                      <ShieldCheck size={14} />
+                      {passwordSaving ? "Updating Password..." : "Update Password"}
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
           )}
         </main>

@@ -20,12 +20,22 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Protecting /admin/editor
+  // Protecting /admin/editor UI route
   if (pathname.startsWith("/admin/editor")) {
     if (!isAuthenticated) {
       const loginUrl = new URL("/admin/login", req.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // Protecting admin API mutation/data routes at the Edge
+  if (
+    pathname.startsWith("/api/admin/portfolio") ||
+    pathname.startsWith("/api/admin/auth/change-password")
+  ) {
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
 
@@ -40,5 +50,9 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/admin/portfolio/:path*",
+    "/api/admin/auth/change-password",
+  ],
 };

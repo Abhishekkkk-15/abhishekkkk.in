@@ -7,8 +7,33 @@ import {
   AUTH_COOKIE_NAME,
 } from "@/lib/auth";
 import { ensureInitialAdminUser } from "@/lib/portfolioService";
+import {
+  checkLoginRateLimit,
+  recordFailedLogin,
+  resetLoginRateLimit,
+  getClientIp,
+} from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+
+  // 1. Check Rate Limit (Anti Brute-Force)
+  const rateLimitStatus = checkLoginRateLimit(ip);
+  if (!rateLimitStatus.allowed) {
+    const minutesLeft = Math.ceil((rateLimitStatus.retryAfterSeconds || 60) / 60);
+    return NextResponse.json(
+      {
+        error: `Too many failed login attempts. For security, your IP has been temporarily locked out. Please try again in ${minutesLeft} minute(s).`,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimitStatus.retryAfterSeconds || 900),
+        },
+      }
+    );
+  }
+
   try {
     const { email, password } = await req.json();
 
@@ -24,19 +49,34 @@ export async function POST(req: NextRequest) {
 
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
+      const { remainingAttempts } = recordFailedLogin(ip);
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        {
+          error:
+            remainingAttempts > 0
+              ? `Invalid credentials. (${remainingAttempts} attempt(s) remaining before temporary lockout)`
+              : "Invalid credentials. Maximum attempts reached. Account locked for 15 minutes.",
+        },
         { status: 401 }
       );
     }
 
     const isValid = await verifyPassword(password, user.password);
     if (!isValid) {
+      const { remainingAttempts } = recordFailedLogin(ip);
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        {
+          error:
+            remainingAttempts > 0
+              ? `Invalid credentials. (${remainingAttempts} attempt(s) remaining before temporary lockout)`
+              : "Invalid credentials. Maximum attempts reached. Account locked for 15 minutes.",
+        },
         { status: 401 }
       );
     }
+
+    // Reset rate limit on successful authentication
+    resetLoginRateLimit(ip);
 
     const token = await createSessionToken({
       userId: user._id.toString(),
