@@ -1,6 +1,15 @@
 import mongoose from "mongoose";
+import dns from "node:dns";
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/portfolio";
+// Ensure Atlas SRV records resolve cleanly even if local ISP/router DNS blocks SRV queries
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch {
+  // Ignore if restricted in sandboxed edge/runtime
+}
+
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/portfolio";
 
 interface MongooseCache {
   conn: typeof mongoose | null;
