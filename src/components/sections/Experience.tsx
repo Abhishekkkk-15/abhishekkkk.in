@@ -9,11 +9,11 @@ interface ExperienceProps {
 
 export default function Experience({ items = defaultExperience }: ExperienceProps) {
   return (
-    <section className="border-b border-[#e2e0d8]" data-purpose="experience-timeline" id="experience">
+    <section className="border-b border-[#E2E0D8]" data-purpose="experience-timeline" id="experience">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between">
+      <div className="px-6 sm:px-8 py-5 border-b border-[#E2E0D8] flex items-baseline justify-between">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-xs text-[#8a8883]">03 //</span>
+          <span className="font-mono text-xs text-[#6E6D68]">03 //</span>
           <CharFadeText
             as="h3"
             className="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium inline-block"
@@ -21,21 +21,21 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
             EXPERIENCE // 経歴
           </CharFadeText>
         </div>
-        <span className="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">
+        <span className="font-mono text-[10px] text-[#6E6D68] uppercase tracking-wider">
           CAREER TIMELINE
         </span>
       </div>
 
       {/* Experience Rows */}
-      <div className="divide-y divide-[#e2e0d8]">
+      <div className="divide-y divide-[#E2E0D8]">
         {items.map((item, index) => (
           <article
             key={`${item.company}-${index}`}
-            className="px-6 sm:px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#f7f6f0]/40 transition-colors"
+            className="px-6 sm:px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#EBEAE4] transition-colors"
           >
             <Reveal className="contents">
               {/* Left Column: Period & Location */}
-              <div className="md:col-span-3 font-mono text-xs text-[#8a8883]">
+              <div className="md:col-span-3 font-mono text-xs text-[#6E6D68]">
                 {item.period}
                 <div className="text-[#111111] text-[11px] pt-1">{item.location}</div>
               </div>
@@ -48,8 +48,8 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
                 >
                   {item.role}
                 </CharFadeText>
-                <div className="font-mono text-xs text-[#555452]">{item.company}</div>
-                <p className="text-sm text-[#555452] leading-relaxed pt-1">
+                <div className="font-mono text-xs text-[#444442]">{item.company}</div>
+                <p className="text-sm text-[#444442] leading-relaxed pt-1">
                   {item.description}
                 </p>
                 {/* Tech Pills */}
@@ -58,7 +58,7 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
                     {item.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-block bg-[#efeeea] border border-[#e2e0d8] px-2 py-0.5 text-[#555452] rounded-sm"
+                        className="inline-block bg-[#EBEAE4] border border-[#E2E0D8] px-2 py-0.5 text-[#444442] rounded-none"
                       >
                         {tag}
                       </span>
@@ -70,7 +70,7 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
               {/* Right Column: Key Technical Metric */}
               <div className="md:col-span-3 md:text-right font-mono text-xs text-[#111111] pt-2 md:pt-0">
                 {item.metric}
-                <div className="text-[#8a8883] text-[10.5px] pt-0.5">{item.metricSub}</div>
+                <div className="text-[#6E6D68] text-[10.5px] pt-0.5">{item.metricSub}</div>
               </div>
             </Reveal>
           </article>

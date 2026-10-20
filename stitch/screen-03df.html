@@ -1,0 +1,482 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KAI / LAB — Applied AI Engineer &amp; Inference Architect</title>
+<!-- Tailwind CSS CDN with forms & container plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Space Grotesk, Hanken Grotesk & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Custom Configuration adhering to design tokens -->
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          background: '#faf9f5',
+          surface: '#faf9f5',
+          'surface-dim': '#f2f0ea',
+          'surface-container': '#efeeea',
+          'surface-container-high': '#e9e8e4',
+          'hairline': '#e2e0d8',
+          'hairline-dark': '#cbc8be',
+          'ink': '#111111',
+          'ink-muted': '#555452',
+          'ink-light': '#8a8883',
+          'cobalt': '#0051d5',
+          'cobalt-dim': '#316bf3',
+        },
+        fontFamily: {
+          sans: ['Hanken Grotesk', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          display: ['Space Grotesk', 'sans-serif'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        },
+        letterSpacing: {
+          'widest-mono': '0.14em',
+        }
+      }
+    }
+  }
+</script>
+<!-- Typography and Base Styles -->
+<style data-purpose="typography">
+  body {
+    background-color: #faf9f5;
+    color: #111111;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: #111111;
+    color: #faf9f5;
+  }
+</style>
+<!-- Minimal Scroll Reveal Styles: subtle opacity and translateY fade-in only, no bouncy gimmicks -->
+<style data-purpose="scroll-animations">
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+  .reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-on-scroll {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body class="bg-[#faf9f5] text-[#111111] font-sans min-h-screen flex flex-col justify-start selection:bg-[#111111] selection:text-[#faf9f5]">
+<!-- Desktop Container (max-w-7xl: ~1440px viewport grid with crisp hairlines) -->
+<div class="w-full max-w-7xl mx-auto min-h-screen flex flex-col bg-[#faf9f5] border-x border-[#e2e0d8] relative shadow-sm">
+<!-- BEGIN: Desktop Header / Nav -->
+<header class="sticky top-0 z-40 bg-[#faf9f5]/95 backdrop-blur-sm border-b border-[#e2e0d8] px-8 py-4 transition-colors" data-purpose="top-navigation">
+<div class="flex items-center justify-between font-mono text-xs tracking-widest uppercase">
+<!-- Brandmark -->
+<a aria-label="KAI LAB Home" class="font-bold tracking-tight text-sm flex items-center gap-2 text-[#111111]" href="#hero"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP4v5wD_VKe9cmGFA16xO1wYoSLZ5AswMtSiNBjSm1aIiG4UWONenGLcqBEmW8m4_OhCkh1oGtAYqZFCXx7mVqC2IIbyWF_0pi94RvFvp8nprxNQSNolGxvlO4C5YQMvEIJmNhAFoW5Q6A0symy-KCWT7uXzo-64Pc70Ob9rTTmEctwqxK-fcDK3P0MSFbZZDgG5PxBCyXmv0QWG5KCoL1zYUm03FEVH7v0Na2XE7wNEvv_rEC2ZUOMbGarGNj6EQ3Fw" alt="Kai" class="w-6 h-6 object-cover grayscale rounded-full border border-[#cbc8be]"><span class="font-display font-semibold text-base">KAI</span><span class="text-[#8a8883]">/</span><span class="font-display font-light text-base">LAB</span></a>
+<!-- Status Pill -->
+<div class="hidden md:flex items-center gap-3 px-3.5 py-1 border border-[#e2e0d8] bg-[#f2f0ea]/60 rounded-full" data-purpose="system-status">
+<span aria-hidden="true" class="inline-block w-1.5 h-1.5 rounded-full bg-[#0051d5] animate-pulse"></span>
+<span class="text-[10.5px] text-[#555452] tracking-wider">ONLINE // V4.2 — SF &amp; TOKYO</span>
+</div>
+<!-- Desktop Nav Items -->
+<nav class="flex items-center gap-8 text-[11px] text-[#555452]">
+<a class="text-[#111111] hover:underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="#focus">
+          ARCHITECTURAL FOCUS
+        </a>
+
+<a class="text-[#111111] hover:underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="#publications">
+          PUBLICATIONS
+        </a>
+<a class="text-[#111111] hover:underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="#contact">
+          CONNECT
+        </a>
+<div class="h-3 w-px bg-[#e2e0d8] hidden sm:block"></div>
+<div class="hidden sm:flex items-center gap-4 text-[#8a8883]">
+<a class="hover:text-[#111111] transition-colors" href="https://github.com" rel="noreferrer" target="_blank">GH ↗</a>
+<a class="hover:text-[#111111] transition-colors" href="https://x.com" rel="noreferrer" target="_blank">X ↗</a>
+</div>
+</nav>
+</div>
+</header>
+<!-- END: Desktop Header / Nav -->
+<!-- BEGIN: MainContent -->
+<main class="flex-grow flex flex-col">
+<!-- BEGIN: Hero Section (Editorial Japanese Modern Split Layout) -->
+<section class="border-b border-[#e2e0d8]" data-purpose="hero-statement" id="hero">
+<div class="grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
+<!-- Left Hero Column: Metadata, Massive Title, Tagline -->
+<div class="lg:col-span-7 p-8 md:p-14 lg:border-r border-[#e2e0d8] flex flex-col justify-between"><div class="reveal-on-scroll is-visible flex flex-col h-full justify-between">
+  <div class="flex items-center justify-between font-mono text-[11px] tracking-widest uppercase text-[#8a8883] mb-8 pb-4 border-b border-[#e2e0d8]">
+    <span class="">EST. 2021 // TOKYO &amp; SAN FRANCISCO</span>
+    <span class="">PROFILE // 01</span>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 items-start my-auto">
+    <!-- Profile Identity Lockup -->
+    <div class="sm:col-span-6 space-y-5">
+      <div class="w-44 h-44 sm:w-48 sm:h-48 bg-[#f2f0ea] border border-[#e2e0d8] overflow-hidden">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzFJNdoOACZflCMHbdmrZsy2fWjI3-0Jeiyt3PCF4PrNLM0ZJ-Ysmif-J8k5RHvMldYQkZnxaobyzcI9aYb2xa-qcsajFFDa2EQJzLdHDozm2tc8-7GhiYeaKi4GaosYYPv2-mjCoEdhmPNreSKCxP-6nakfWFpL6kVvSEQwDz-o1rd3tSev137XM9hsraOBVmylBUO-u9QPIsjKtT2zWqyYBeGRWCTN-661zrEPqf5hAIhjqX7aW9bK09iMWu9j9UVA" alt="Kai T." class="w-full h-full object-cover grayscale block">
+      </div>
+      <div class="space-y-1">
+        <h1 class="text-4xl lg:text-5xl font-display font-normal tracking-tight text-[#111111]">Kai T.</h1>
+        <div class="font-mono text-xs uppercase tracking-widest text-[#8a8883]">APPLIED AI ENGINEER</div>
+        <div class="font-mono text-xs text-[#555452] flex items-center gap-1 pt-1">
+          <span class="">Tokyo &amp; SF</span>
+          <span class="text-[#8a8883]">↗</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telemetry & Metrics Cluster directly beside profile (inspired by Anna K. reference) -->
+    <div class="sm:col-span-6 flex flex-col justify-between h-full border-t sm:border-t-0 sm:border-l border-[#e2e0d8] pt-6 sm:pt-0 sm:pl-8 space-y-6">
+      <div>
+        <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#8a8883] mb-1">
+          <span class="">PIPELINES // DEPLOYED</span>
+          <span class="">01</span>
+        </div>
+        <div class="text-6xl sm:text-7xl font-display font-normal tracking-tight text-[#111111] leading-none mb-3">
+          04
+        </div>
+        <div class="flex items-center gap-2 font-mono text-[11px] text-[#555452]">
+          <span class="w-2 h-2 rounded-full bg-[#0051d5] animate-pulse inline-block"></span>
+          <span class="font-medium text-[#111111]">ACTIVE NOW</span>
+          <span class="text-[#8a8883]">· PROD CLUSTER</span>
+        </div>
+      </div>
+
+      <div class="pt-5 border-t border-[#e2e0d8]">
+        <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#8a8883] mb-1">
+          <span class="">LATENCY // TTFT</span>
+          <span class="">02</span>
+        </div>
+        <div class="text-4xl sm:text-5xl font-display font-normal tracking-tight text-[#111111] leading-none mb-2">
+          &lt;38<span class="text-xl font-light text-[#8a8883] ml-1">ms</span>
+        </div>
+        <div class="font-mono text-[10px] uppercase text-[#8a8883] tracking-wider">
+          VISIBLE IN <span class="text-[#111111] font-semibold">P99 LATENCY ENVELOPE</span>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[#e2e0d8]">
+        <div class="font-mono text-[10px] uppercase text-[#8a8883] tracking-widest mb-2">PRIMARY ENGINES</div>
+        <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-[#111111]">
+          <span class="px-2 py-0.5 border border-[#cbc8be] bg-[#f2f0ea]">vLLM</span>
+          <span class="px-2 py-0.5 border border-[#cbc8be] bg-[#f2f0ea]">TensorRT-LLM</span>
+          <span class="px-2 py-0.5 border border-[#cbc8be] bg-[#f2f0ea]">Speculative</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-6 mt-8 border-t border-[#e2e0d8] max-w-xl">
+    <p class="font-mono text-xs md:text-[13px] leading-relaxed uppercase tracking-wider text-[#555452]">
+      Applied AI Engineer &amp; Inference Architect. Engineering deterministic reliability on non-deterministic substrate.
+    </p>
+  </div>
+</div></div>
+<!-- Right Hero Column: Bilingual Abstract + Prominent Telemetry KPIs -->
+<div class="lg:col-span-5 flex flex-col justify-between bg-[#f2f0ea]/30"><!-- Bilingual Abstract -->
+<div class="p-8 md:p-12 border-b border-[#e2e0d8] space-y-6">
+  <div class="reveal-on-scroll is-visible">
+    <span class="font-mono text-[10px] uppercase tracking-widest text-[#8a8883] block mb-3">STATEMENT // 概要</span>
+    <p class="text-base text-[#111111] leading-relaxed font-normal">
+      Specialized in low-latency multimodal LLM pipelines, speculative decoding, and production agent alignment.
+    </p>
+  </div>
+  <div class="reveal-on-scroll pt-5 border-t border-[#e2e0d8] is-visible">
+    <p class="font-mono text-xs leading-relaxed text-[#555452]">
+      現在、自律エージェントの推論最適化と大規模リアルタイム検索基盤の開発に従事。不確実な基盤モデル上に決定論的な信頼性と極小レイテンシを設計。
+    </p>
+  </div>
+</div>
+
+<!-- System Specifications & Compute Environment -->
+<div class="p-8 md:p-10 flex flex-col justify-between flex-grow bg-[#faf9f5]" data-purpose="system-specifications">
+  <div class="reveal-on-scroll is-visible space-y-5">
+    <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#8a8883] pb-3 border-b border-[#e2e0d8]">
+      <span class="">INFRASTRUCTURE &amp; COMPUTE</span>
+      <span class="">SPEC.01</span>
+    </div>
+    <div class="space-y-3 font-mono text-xs">
+      <div class="flex items-baseline justify-between py-1 border-b border-[#e2e0d8]/60">
+        <span class="text-[#8a8883]">COMPUTE TOPOLOGY</span>
+        <span class="text-[#111111] font-medium">8x H100 SXM5 80GB</span>
+      </div>
+      <div class="flex items-baseline justify-between py-1 border-b border-[#e2e0d8]/60">
+        <span class="text-[#8a8883]">QUANTIZATION FORMAT</span>
+        <span class="text-[#111111] font-medium">FP8 / AWQ 4-BIT</span>
+      </div>
+      <div class="flex items-baseline justify-between py-1 border-b border-[#e2e0d8]/60">
+        <span class="text-[#8a8883]">PEAK THROUGHPUT</span>
+        <span class="text-[#111111] font-medium">1,420 TOK/S / NODE</span>
+      </div>
+      <div class="flex items-baseline justify-between py-1">
+        <span class="text-[#8a8883]">INTERCONNECT FABRIC</span>
+        <span class="text-[#111111] font-medium">3.2 Tbps NVLink 4</span>
+      </div>
+    </div>
+  </div>
+  <div class="reveal-on-scroll is-visible pt-4 mt-6 border-t border-[#e2e0d8] flex items-center justify-between font-mono text-[10px] text-[#8a8883]">
+    <span class="flex items-center gap-1.5">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#0051d5]"></span>
+      <span class="">CLUSTER HEALTH: OPTIMAL</span>
+    </span>
+    <span class="text-[#555452]">NV-SMI VERIFIED ↗</span>
+  </div>
+</div></div>
+</div>
+</section>
+<!-- END: Hero Section -->
+<!-- BEGIN: Architectural Focus (3-Column Desktop Grid) -->
+<section class="border-b border-[#e2e0d8]" data-purpose="core-competencies" id="focus">
+<!-- Section Header Ribbon -->
+<div class="px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between bg-[#f2f0ea]/20">
+<div class="flex items-center gap-3">
+<span class="font-mono text-xs text-[#8a8883]">02 //</span>
+<h3 class="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium">
+            ARCHITECTURAL FOCUS
+          </h3>
+</div>
+<span class="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">COMPETENCIES &amp; STACK</span>
+</div>
+<!-- 3-Column Desktop Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e2e0d8]">
+<!-- Capability 01 -->
+<article class="reveal-on-scroll p-8 md:p-10 flex flex-col justify-between bg-[#faf9f5] is-visible">
+<div>
+<div class="flex items-baseline justify-between mb-4">
+<span class="font-mono text-xs text-[#8a8883]">#01</span>
+<span class="font-mono text-[10px] uppercase tracking-wider text-[#8a8883]">LATENCY &amp; COMPRESSION</span>
+</div>
+<h4 class="text-xl font-display font-medium text-[#111111] tracking-tight mb-4">
+              Inference &amp; Quantization
+            </h4>
+<p class="text-sm text-[#555452] leading-relaxed mb-8">
+              vLLM &amp; TensorRT-LLM custom kernels, speculative decoding algorithms, and AWQ/FP4 weight-activation quantization tailored for latency-critical production envelopes.
+            </p>
+</div>
+<div class="flex flex-wrap gap-2 font-mono text-[10px] text-[#111111] pt-6 border-t border-[#e2e0d8]">
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">CUDA</span>
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">vLLM</span>
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">Speculative Decoding</span>
+</div>
+</article>
+<!-- Capability 02 -->
+<article class="reveal-on-scroll p-8 md:p-10 flex flex-col justify-between bg-[#faf9f5] is-visible">
+<div>
+<div class="flex items-baseline justify-between mb-4">
+<span class="font-mono text-xs text-[#8a8883]">#02</span>
+<span class="font-mono text-[10px] uppercase tracking-wider text-[#8a8883]">MULTIMODAL WORKFLOWS</span>
+</div>
+<h4 class="text-xl font-display font-medium text-[#111111] tracking-tight mb-4">
+              Vision-Language Reasoning
+            </h4>
+<p class="text-sm text-[#555452] leading-relaxed mb-8">
+              Fine-tuning visual tokenizers, spatial grounding architectures, and high-frequency real-time edge processing for multimodal agent reasoning environments.
+            </p>
+</div>
+<div class="flex flex-wrap gap-2 font-mono text-[10px] text-[#111111] pt-6 border-t border-[#e2e0d8]">
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">VLM</span>
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">Function Calling</span>
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">Streaming GRPC</span>
+</div>
+</article>
+<!-- Capability 03 -->
+<article class="reveal-on-scroll p-8 md:p-10 flex flex-col justify-between bg-[#faf9f5] is-visible">
+<div>
+<div class="flex items-baseline justify-between mb-4">
+<span class="font-mono text-xs text-[#8a8883]">#03</span>
+<span class="font-mono text-[10px] uppercase tracking-wider text-[#8a8883]">ALIGNMENT &amp; EVALS</span>
+</div>
+<h4 class="text-xl font-display font-medium text-[#111111] tracking-tight mb-4">
+              Preference Alignment &amp; Verification
+            </h4>
+<p class="text-sm text-[#555452] leading-relaxed mb-8">
+              Offline DPO/KTO optimization paired with synthetically generated test sets, formal verification of structured JSON outputs, and red-teaming harness setups.
+            </p>
+</div>
+<div class="flex flex-wrap gap-2 font-mono text-[10px] text-[#111111] pt-6 border-t border-[#e2e0d8]">
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">DPO</span>
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">Deterministic Evals</span>
+<span class="px-2.5 py-1 border border-[#cbc8be] bg-[#f2f0ea]">Guardrails</span>
+</div>
+</article>
+</div>
+</section>
+<!-- END: Architectural Focus -->
+<!-- BEGIN: Selected Systems (3 Desktop Columns) -->
+
+<!-- END: Selected Systems -->
+<!-- BEGIN: Publications & Logs (Two-Column Desktop Editorial Table) -->
+<section class="border-b border-[#e2e0d8]" data-purpose="publications" id="publications">
+<!-- Section Header Ribbon -->
+<div class="px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between bg-[#f2f0ea]/20">
+<div class="flex items-center gap-3"><span class="font-mono text-xs text-[#8a8883]">03 //</span><h3 class="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium">PUBLICATIONS &amp; LOGS</h3></div>
+<span class="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">ARCHIVAL PAPERS</span>
+</div>
+<div class="divide-y divide-[#e2e0d8]">
+<!-- Paper 1 -->
+<div class="reveal-on-scroll px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#f2f0ea]/30 transition-colors is-visible">
+<div class="flex items-center gap-6 md:w-1/4">
+<span class="font-mono text-xs text-[#8a8883]">2024.11</span>
+<span class="font-mono text-[10.5px] uppercase tracking-wider text-[#0051d5] px-2 py-0.5 border border-[#0051d5]/30 bg-[#0051d5]/5">
+              NeurIPS WORKSHOP
+            </span>
+</div>
+<div class="md:w-1/2">
+<h4 class="text-base font-medium text-[#111111] leading-snug">
+              Adaptive Speculative Token Verification via Lightweight Critic Heads
+            </h4>
+</div>
+<div class="md:w-1/4 flex items-center md:justify-end gap-6 font-mono text-xs text-[#8a8883]">
+<span class="">arXiv:2411.08914</span>
+<a class="text-[#111111] underline underline-offset-4 decoration-[#cbc8be] hover:text-[#0051d5]" href="#">PDF ↗</a>
+</div>
+</div>
+<!-- Paper 2 -->
+<div class="reveal-on-scroll px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#f2f0ea]/30 transition-colors is-visible">
+<div class="flex items-center gap-6 md:w-1/4">
+<span class="font-mono text-xs text-[#8a8883]">2023.08</span>
+<span class="font-mono text-[10.5px] uppercase tracking-wider text-[#555452] px-2 py-0.5 border border-[#e2e0d8] bg-[#f2f0ea]">
+              ICML POSTER
+            </span>
+</div>
+<div class="md:w-1/2">
+<h4 class="text-base font-medium text-[#111111] leading-snug">
+              Low-Rank Calibration for Context Compression in Streaming Multi-turn Agents
+            </h4>
+</div>
+<div class="md:w-1/4 flex items-center md:justify-end gap-6 font-mono text-xs text-[#8a8883]">
+<span class="">arXiv:2308.04102</span>
+<a class="text-[#111111] underline underline-offset-4 decoration-[#cbc8be] hover:text-[#0051d5]" href="#">PDF ↗</a>
+</div>
+</div>
+<!-- Paper 3 -->
+<div class="reveal-on-scroll px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#f2f0ea]/30 transition-colors is-visible">
+<div class="flex items-center gap-6 md:w-1/4">
+<span class="font-mono text-xs text-[#8a8883]">2023.02</span>
+<span class="font-mono text-[10.5px] uppercase tracking-wider text-[#555452] px-2 py-0.5 border border-[#e2e0d8] bg-[#f2f0ea]">
+              TECH MEMO
+            </span>
+</div>
+<div class="md:w-1/2">
+<h4 class="text-base font-medium text-[#111111] leading-snug">
+              Notes on Real-Time KV Cache Tiering Across Heterogeneous Accelerators
+            </h4>
+</div>
+<div class="md:w-1/4 flex items-center md:justify-end gap-6 font-mono text-xs text-[#8a8883]">
+<span class="">GITHUB/LOGS</span>
+<a class="text-[#111111] underline underline-offset-4 decoration-[#cbc8be] hover:text-[#0051d5]" href="#">TEXT ↗</a>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Publications & Logs -->
+<!-- BEGIN: Connect & Footer -->
+<section class="p-8 md:p-14 bg-[#faf9f5]" data-purpose="contact-colophon" id="contact">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-12 border-b border-[#e2e0d8]">
+<!-- Left Footer Info: Location & Identity -->
+<div class="reveal-on-scroll lg:col-span-4 space-y-4 is-visible">
+<span class="font-mono text-xs uppercase tracking-widest text-[#8a8883] block">LOCATION // 拠点</span>
+<p class="font-mono text-sm text-[#111111] leading-relaxed">
+            Roppongi Hills Mori Tower<br>
+            Minato-ku, Tokyo 106-6108<br>
+            SF SoMa Laboratory
+          </p>
+</div>
+<!-- Middle Footer Info: Network & Keys -->
+<div class="reveal-on-scroll lg:col-span-4 space-y-4 is-visible">
+<span class="font-mono text-xs uppercase tracking-widest text-[#8a8883] block">NETWORK &amp; KEYS // 接続</span>
+<div class="space-y-2 font-mono text-xs">
+<div>
+<span class="text-[#8a8883] mr-2">NET:</span>
+<a class="text-[#111111] underline underline-offset-4 decoration-[#cbc8be] hover:text-[#0051d5] mr-4" href="https://github.com" rel="noreferrer" target="_blank">github.com/kai-systems ↗</a>
+</div>
+<div>
+<span class="text-[#8a8883] mr-2">NET:</span>
+<a class="text-[#111111] underline underline-offset-4 decoration-[#cbc8be] hover:text-[#0051d5]" href="https://x.com" rel="noreferrer" target="_blank">x.com/kai_applied_ai ↗</a>
+</div>
+<div class="pt-2">
+<span class="text-[#8a8883] mr-2">PGP:</span>
+<span class="text-[#555452] tracking-wider font-mono text-[11px] select-all">4A89 2F01 CB52 9E80 1488 FF21</span>
+</div>
+</div>
+</div>
+<!-- Right Footer Info: Availability Statement Card -->
+<div class="reveal-on-scroll lg:col-span-4 is-visible">
+<div class="p-6 border border-[#e2e0d8] bg-[#f2f0ea]/50 flex flex-col justify-between h-full">
+<div>
+<div class="flex items-center justify-between text-[11px] font-mono mb-3">
+<span class="text-[#111111] font-semibold uppercase">DEPLOYMENT AVAILABILITY</span>
+<span class="text-[#0051d5] font-medium">Q2 2025 ACTIVE</span>
+</div>
+<p class="text-xs text-[#555452] leading-relaxed font-sans">
+                Open for fractional advisory, model distillation contracts, and production inference efficiency audits.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-[#e2e0d8] flex items-center justify-between font-mono text-[10px] text-[#8a8883]">
+<span class="">RESPONSE: &lt;24H</span>
+<a class="text-[#111111] hover:underline" href="mailto:kai@example.com">INITIATE ↗</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Footnote / Credits -->
+<footer class="reveal-on-scroll pt-8 flex items-center justify-between text-xs font-mono text-[#8a8883] uppercase is-visible">
+<div class="flex items-center gap-4">
+<span class="">© 2025 KAI / LAB</span>
+<span class="">·</span>
+<span class="">KINETIC SILENCE ARCHITECTURE</span>
+</div>
+<a class="hover:text-[#111111] text-[#555452] transition-colors flex items-center gap-1" href="#hero">
+<span class="">RETURN TO TOP</span>
+<span class="">↑</span>
+</a>
+</footer>
+</section>
+<!-- END: Connect & Footer -->
+</main>
+<!-- END: MainContent -->
+</div>
+<!-- JavaScript: Lightweight IntersectionObserver for Minimal Scroll Reveal Only -->
+<script data-purpose="scroll-observer">
+  document.addEventListener('DOMContentLoaded', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealElements = document.querySelectorAll('.reveal-on-scroll');
+
+    if (prefersReducedMotion) {
+      revealElements.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -40px 0px',
+      threshold: 0.08
+    };
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    revealElements.forEach(el => observer.observe(el));
+  });
+</script>
+
+
+</body></html>

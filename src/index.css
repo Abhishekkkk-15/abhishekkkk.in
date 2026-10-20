@@ -4,11 +4,11 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: #faf9f5;
+  background-color: #F4F3EF;
 }
 
 body {
-  background-color: #faf9f5;
+  background-color: #F4F3EF;
   color: #111111;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
@@ -17,21 +17,20 @@ body {
 
 ::selection {
   background: #111111;
-  color: #faf9f5;
+  color: #F4F3EF;
 }
 
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #faf9f5;
+  background: #F4F3EF;
 }
 ::-webkit-scrollbar-thumb {
-  background: #e2e0d8;
-  border-radius: 4px;
+  background: #E2E0D8;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #cbc8be;
+  background: #D8D6CE;
 }
 
 /* Character fade scroll styles */

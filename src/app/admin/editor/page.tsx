@@ -50,7 +50,7 @@ export default function EditorPage() {
         }
         const json = await res.json();
         setData(json);
-      } catch (err: any) {
+      } catch {
         setStatusMessage({
           type: "error",
           text: "Failed to load portfolio data.",
@@ -104,7 +104,7 @@ export default function EditorPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center font-mono text-xs text-[#8a8883]">
+      <div className="min-h-screen bg-[#F4F3EF] flex items-center justify-center font-mono text-xs text-[#6E6D68]">
         INITIALIZING CMS DATA STORE...
       </div>
     );
@@ -112,21 +112,21 @@ export default function EditorPage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center font-mono text-xs text-red-600">
+      <div className="min-h-screen bg-[#F4F3EF] flex items-center justify-center font-mono text-xs text-red-600">
         Failed to initialize portfolio document.
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#faf9f5] text-[#111111] font-sans selection:bg-[#111111] selection:text-[#faf9f5]">
+    <div className="min-h-screen bg-[#F4F3EF] text-[#111111] font-sans selection:bg-[#111111] selection:text-[#F4F3EF]">
       {/* Top Admin Sticky Navigation Bar */}
-      <header className="sticky top-0 z-50 bg-[#faf9f5]/95 backdrop-blur-sm border-b border-[#e2e0d8] px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <header className="sticky top-0 z-50 bg-[#F4F3EF]/95 backdrop-blur-sm border-b border-[#E2E0D8] px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <span className="font-display font-medium text-base tracking-tight text-[#111111]">
             {data.profile.labBrand || "PORTFOLIO"} // CMS
           </span>
-          <span className="font-mono text-[10.5px] uppercase tracking-wider bg-[#0051d5]/10 text-[#0051d5] border border-[#0051d5]/20 px-2 py-0.5 rounded-sm">
+          <span className="font-mono text-[10.5px] uppercase tracking-wider bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/25 px-2 py-0.5 rounded-none">
             SSR Mongo Connected
           </span>
         </div>
@@ -136,7 +136,7 @@ export default function EditorPage() {
             href="/"
             target="_blank"
             rel="noreferrer"
-            className="font-mono text-xs text-[#555452] hover:text-[#111111] flex items-center gap-1 transition-colors px-3 py-1.5 border border-[#e2e0d8] rounded-sm hover:border-[#111111]"
+            className="font-mono text-xs text-[#444442] hover:text-[#111111] flex items-center gap-1 transition-colors px-3 py-1.5 border border-[#E2E0D8] rounded-none hover:border-[#111111]"
           >
             Live Site <ExternalLink size={13} />
           </a>
@@ -144,7 +144,7 @@ export default function EditorPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="font-mono text-xs uppercase tracking-wider bg-[#111111] text-[#faf9f5] hover:bg-[#0051d5] px-4 py-1.5 flex items-center gap-2 transition-colors disabled:opacity-50 rounded-sm"
+            className="font-mono text-xs uppercase tracking-wider bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-4 py-1.5 flex items-center gap-2 transition-colors disabled:opacity-50 rounded-none"
           >
             <Save size={14} />
             {saving ? "Saving..." : "Save Changes"}
@@ -153,7 +153,7 @@ export default function EditorPage() {
           <button
             onClick={handleLogout}
             title="Log Out"
-            className="text-[#8a8883] hover:text-[#111111] p-1.5 transition-colors border border-transparent hover:border-[#e2e0d8] rounded-sm"
+            className="text-[#6E6D68] hover:text-[#111111] p-1.5 transition-colors border border-transparent hover:border-[#E2E0D8] rounded-none"
           >
             <LogOut size={16} />
           </button>
@@ -179,10 +179,10 @@ export default function EditorPage() {
       )}
 
       {/* Editor Body Grid */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row border-x border-[#e2e0d8] min-h-[calc(100vh-60px)]">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row border-x border-[#E2E0D8] min-h-[calc(100vh-60px)]">
         {/* Left Side Tab Navigation */}
-        <nav className="w-full md:w-64 border-b md:border-b-0 md:border-r border-[#e2e0d8] bg-[#f7f6f0]/60 p-4 space-y-1 font-mono text-xs uppercase tracking-wider shrink-0">
-          <div className="text-[10px] text-[#8a8883] px-3 py-2">SECTIONS</div>
+        <nav className="w-full md:w-64 border-b md:border-b-0 md:border-r border-[#E2E0D8] bg-[#EBEAE4]/40 p-4 space-y-1 font-mono text-xs uppercase tracking-wider shrink-0">
+          <div className="text-[10px] text-[#6E6D68] px-3 py-2">SECTIONS</div>
 
           {[
             { id: "profile", label: "01 // Profile & Hero", icon: User },
@@ -198,10 +198,10 @@ export default function EditorPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabKey)}
-                className={`w-full text-left px-3.5 py-2.5 rounded-sm flex items-center gap-2.5 transition-colors ${
+                className={`w-full text-left px-3.5 py-2.5 rounded-none flex items-center gap-2.5 transition-colors ${
                   activeTab === tab.id
-                    ? "bg-[#111111] text-[#faf9f5]"
-                    : "text-[#555452] hover:text-[#111111] hover:bg-[#efeeea]"
+                    ? "bg-[#111111] text-[#F4F3EF]"
+                    : "text-[#444442] hover:text-[#111111] hover:bg-[#EBEAE4]"
                 }`}
               >
                 <Icon size={14} />
@@ -212,22 +212,22 @@ export default function EditorPage() {
         </nav>
 
         {/* Right Side Tab Form Content */}
-        <main className="flex-1 p-6 sm:p-10 bg-[#faf9f5]">
+        <main className="flex-1 p-6 sm:p-10 bg-[#F4F3EF]">
           {/* TAB 1: PROFILE & HERO */}
           {activeTab === "profile" && (
             <div className="space-y-8 max-w-3xl">
-              <div className="border-b border-[#e2e0d8] pb-4">
+              <div className="border-b border-[#E2E0D8] pb-4">
                 <h2 className="text-2xl font-display font-medium text-[#111111]">
                   Profile &amp; Hero Section
                 </h2>
-                <p className="font-mono text-xs text-[#8a8883] mt-1">
+                <p className="font-mono text-xs text-[#6E6D68] mt-1">
                   Manage primary identity, avatars, headline statements, and live telemetry badges.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 font-mono text-xs">
                 <div className="space-y-1.5">
-                  <label className="text-[#8a8883] uppercase">Full Name</label>
+                  <label className="text-[#6E6D68] uppercase">Full Name</label>
                   <input
                     type="text"
                     value={data.profile.name}
@@ -237,12 +237,12 @@ export default function EditorPage() {
                         profile: { ...data.profile, name: e.target.value },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111]"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[#8a8883] uppercase">Short Brand / Logo</label>
+                  <label className="text-[#6E6D68] uppercase">Short Brand / Logo</label>
                   <input
                     type="text"
                     value={data.profile.labBrand}
@@ -252,12 +252,12 @@ export default function EditorPage() {
                         profile: { ...data.profile, labBrand: e.target.value },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111]"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[#8a8883] uppercase">Professional Role</label>
+                  <label className="text-[#6E6D68] uppercase">Professional Role</label>
                   <input
                     type="text"
                     value={data.profile.role}
@@ -267,12 +267,12 @@ export default function EditorPage() {
                         profile: { ...data.profile, role: e.target.value },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111]"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[#8a8883] uppercase">Location</label>
+                  <label className="text-[#6E6D68] uppercase">Location</label>
                   <input
                     type="text"
                     value={data.profile.location}
@@ -282,12 +282,12 @@ export default function EditorPage() {
                         profile: { ...data.profile, location: e.target.value },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111]"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
 
                 <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#8a8883] uppercase">Avatar Image URL</label>
+                  <label className="text-[#6E6D68] uppercase">Avatar Image URL</label>
                   <input
                     type="text"
                     value={data.profile.avatar}
@@ -297,12 +297,12 @@ export default function EditorPage() {
                         profile: { ...data.profile, avatar: e.target.value },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111]"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
 
                 <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#8a8883] uppercase">
+                  <label className="text-[#6E6D68] uppercase">
                     Lead Headline Statement (Character Fade)
                   </label>
                   <textarea
@@ -314,12 +314,12 @@ export default function EditorPage() {
                         profile: { ...data.profile, headline: e.target.value },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111]"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
 
                 <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#8a8883] uppercase">
+                  <label className="text-[#6E6D68] uppercase">
                     Japanese Subtitle Translation
                   </label>
                   <input
@@ -331,19 +331,19 @@ export default function EditorPage() {
                         profile: { ...data.profile, japaneseBio: e.target.value },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111]"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
               </div>
 
               {/* Telemetry Stats Bar Section */}
-              <div className="pt-6 border-t border-[#e2e0d8]">
+              <div className="pt-6 border-t border-[#E2E0D8]">
                 <h3 className="font-mono text-xs uppercase tracking-widest text-[#111111] mb-4">
                   Telemetry Stats Bar
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 font-mono text-xs">
                   <div className="space-y-1.5">
-                    <label className="text-[#8a8883]">Throughput Label</label>
+                    <label className="text-[#6E6D68]">Throughput Label</label>
                     <input
                       type="text"
                       value={data.profile.stats.throughput.label}
@@ -362,9 +362,9 @@ export default function EditorPage() {
                           },
                         })
                       }
-                      className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs focus:outline-none"
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
                     />
-                    <label className="text-[#8a8883] pt-1 block">Value &amp; Unit</label>
+                    <label className="text-[#6E6D68] pt-1 block">Value &amp; Unit</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -384,7 +384,7 @@ export default function EditorPage() {
                             },
                           })
                         }
-                        className="w-2/3 bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs focus:outline-none"
+                        className="w-2/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
                       />
                       <input
                         type="text"
@@ -404,13 +404,13 @@ export default function EditorPage() {
                             },
                           })
                         }
-                        className="w-1/3 bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs focus:outline-none"
+                        className="w-1/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[#8a8883]">Core Engines Label</label>
+                    <label className="text-[#6E6D68]">Core Engines Label</label>
                     <input
                       type="text"
                       value={data.profile.stats.coreEngines.label}
@@ -429,9 +429,9 @@ export default function EditorPage() {
                           },
                         })
                       }
-                      className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs focus:outline-none"
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
                     />
-                    <label className="text-[#8a8883] pt-1 block">Core Engines Value</label>
+                    <label className="text-[#6E6D68] pt-1 block">Core Engines Value</label>
                     <input
                       type="text"
                       value={data.profile.stats.coreEngines.value}
@@ -450,12 +450,12 @@ export default function EditorPage() {
                           },
                         })
                       }
-                      className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs focus:outline-none"
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[#8a8883]">Status Label</label>
+                    <label className="text-[#6E6D68]">Status Label</label>
                     <input
                       type="text"
                       value={data.profile.stats.status.label}
@@ -474,9 +474,9 @@ export default function EditorPage() {
                           },
                         })
                       }
-                      className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs focus:outline-none"
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
                     />
-                    <label className="text-[#8a8883] pt-1 block">Status Value</label>
+                    <label className="text-[#6E6D68] pt-1 block">Status Value</label>
                     <input
                       type="text"
                       value={data.profile.stats.status.value}
@@ -495,7 +495,7 @@ export default function EditorPage() {
                           },
                         })
                       }
-                      className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs focus:outline-none"
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
                     />
                   </div>
                 </div>
@@ -506,11 +506,11 @@ export default function EditorPage() {
           {/* TAB 2: ARCHITECTURAL FOCUS */}
           {activeTab === "focus" && (
             <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#e2e0d8] pb-4">
+              <div className="border-b border-[#E2E0D8] pb-4">
                 <h2 className="text-2xl font-display font-medium text-[#111111]">
                   Architectural Focus (02 //)
                 </h2>
-                <p className="font-mono text-xs text-[#8a8883] mt-1">
+                <p className="font-mono text-xs text-[#6E6D68] mt-1">
                   Configure the 3 core competency pillars.
                 </p>
               </div>
@@ -519,7 +519,7 @@ export default function EditorPage() {
                 {data.architecturalFocus.map((focus, index) => (
                   <div
                     key={index}
-                    className="p-5 border border-[#e2e0d8] bg-[#f7f6f0]/40 space-y-4"
+                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 rounded-none"
                   >
                     <div className="flex items-center justify-between font-mono text-xs">
                       <span className="font-medium text-[#111111]">
@@ -533,11 +533,11 @@ export default function EditorPage() {
                           updated[index].index = e.target.value;
                           setData({ ...data, architecturalFocus: updated });
                         }}
-                        className="w-16 bg-[#f2f0ea] border border-[#e2e0d8] px-2 py-1 text-xs text-center"
+                        className="w-16 bg-[#EBEAE4] border border-[#E2E0D8] px-2 py-1 text-xs text-center rounded-none"
                       />
                     </div>
                     <div className="space-y-1 font-mono text-xs">
-                      <label className="text-[#8a8883]">Pillar Title</label>
+                      <label className="text-[#6E6D68]">Pillar Title</label>
                       <input
                         type="text"
                         value={focus.title}
@@ -546,11 +546,11 @@ export default function EditorPage() {
                           updated[index].title = e.target.value;
                           setData({ ...data, architecturalFocus: updated });
                         }}
-                        className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans focus:outline-none"
+                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none rounded-none"
                       />
                     </div>
                     <div className="space-y-1 font-mono text-xs">
-                      <label className="text-[#8a8883]">Description</label>
+                      <label className="text-[#6E6D68]">Description</label>
                       <textarea
                         rows={3}
                         value={focus.description}
@@ -559,7 +559,7 @@ export default function EditorPage() {
                           updated[index].description = e.target.value;
                           setData({ ...data, architecturalFocus: updated });
                         }}
-                        className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans focus:outline-none"
+                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none rounded-none"
                       />
                     </div>
                   </div>
@@ -571,12 +571,12 @@ export default function EditorPage() {
           {/* TAB 3: WORK EXPERIENCE */}
           {activeTab === "experience" && (
             <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#e2e0d8] pb-4 flex items-center justify-between">
+              <div className="border-b border-[#E2E0D8] pb-4 flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-display font-medium text-[#111111]">
                     Experience Timeline (03 //)
                   </h2>
-                  <p className="font-mono text-xs text-[#8a8883] mt-1">
+                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
                     Manage roles, engineering accomplishments, and technical tags.
                   </p>
                 </div>
@@ -599,7 +599,7 @@ export default function EditorPage() {
                       ],
                     });
                   }}
-                  className="font-mono text-xs bg-[#111111] text-[#faf9f5] px-3 py-1.5 flex items-center gap-1.5 rounded-sm hover:bg-[#0051d5] transition-colors"
+                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors"
                 >
                   <Plus size={13} /> Add Role
                 </button>
@@ -609,7 +609,7 @@ export default function EditorPage() {
                 {data.experience.map((item, index) => (
                   <div
                     key={index}
-                    className="p-5 border border-[#e2e0d8] bg-[#f7f6f0]/40 space-y-4 relative"
+                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 relative rounded-none"
                   >
                     <button
                       onClick={() => {
@@ -617,14 +617,14 @@ export default function EditorPage() {
                         setData({ ...data, experience: updated });
                       }}
                       title="Remove Role"
-                      className="absolute right-4 top-4 text-[#8a8883] hover:text-red-600 transition-colors"
+                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors"
                     >
                       <Trash2 size={15} />
                     </button>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
                       <div>
-                        <label className="text-[#8a8883]">Period</label>
+                        <label className="text-[#6E6D68]">Period</label>
                         <input
                           type="text"
                           value={item.period}
@@ -633,11 +633,11 @@ export default function EditorPage() {
                             updated[index].period = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                       <div>
-                        <label className="text-[#8a8883]">Location / Office</label>
+                        <label className="text-[#6E6D68]">Location / Office</label>
                         <input
                           type="text"
                           value={item.location}
@@ -646,11 +646,11 @@ export default function EditorPage() {
                             updated[index].location = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                       <div>
-                        <label className="text-[#8a8883]">Role Title</label>
+                        <label className="text-[#6E6D68]">Role Title</label>
                         <input
                           type="text"
                           value={item.role}
@@ -659,11 +659,11 @@ export default function EditorPage() {
                             updated[index].role = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                       <div>
-                        <label className="text-[#8a8883]">Company Name</label>
+                        <label className="text-[#6E6D68]">Company Name</label>
                         <input
                           type="text"
                           value={item.company}
@@ -672,11 +672,11 @@ export default function EditorPage() {
                             updated[index].company = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                       <div className="sm:col-span-2">
-                        <label className="text-[#8a8883]">Description</label>
+                        <label className="text-[#6E6D68]">Description</label>
                         <textarea
                           rows={2}
                           value={item.description}
@@ -685,11 +685,11 @@ export default function EditorPage() {
                             updated[index].description = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs font-sans"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-sans rounded-none"
                         />
                       </div>
                       <div>
-                        <label className="text-[#8a8883]">Right Metric Title</label>
+                        <label className="text-[#6E6D68]">Right Metric Title</label>
                         <input
                           type="text"
                           value={item.metric}
@@ -698,11 +698,11 @@ export default function EditorPage() {
                             updated[index].metric = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                       <div>
-                        <label className="text-[#8a8883]">Right Metric Sub</label>
+                        <label className="text-[#6E6D68]">Right Metric Sub</label>
                         <input
                           type="text"
                           value={item.metricSub}
@@ -711,11 +711,11 @@ export default function EditorPage() {
                             updated[index].metricSub = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                       <div className="sm:col-span-2">
-                        <label className="text-[#8a8883]">
+                        <label className="text-[#6E6D68]">
                           Tags (comma-separated)
                         </label>
                         <input
@@ -729,7 +729,7 @@ export default function EditorPage() {
                               .filter(Boolean);
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                     </div>
@@ -742,12 +742,12 @@ export default function EditorPage() {
           {/* TAB 4: SELECTED PROJECTS */}
           {activeTab === "projects" && (
             <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#e2e0d8] pb-4 flex items-center justify-between">
+              <div className="border-b border-[#E2E0D8] pb-4 flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-display font-medium text-[#111111]">
                     Selected Projects (04 //)
                   </h2>
-                  <p className="font-mono text-xs text-[#8a8883] mt-1">
+                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
                     Manage featured engineering repositories, demos, and live metrics.
                   </p>
                 </div>
@@ -774,7 +774,7 @@ export default function EditorPage() {
                       ],
                     });
                   }}
-                  className="font-mono text-xs bg-[#111111] text-[#faf9f5] px-3 py-1.5 flex items-center gap-1.5 rounded-sm hover:bg-[#0051d5] transition-colors"
+                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors"
                 >
                   <Plus size={13} /> Add Project
                 </button>
@@ -784,7 +784,7 @@ export default function EditorPage() {
                 {data.projects.map((project, index) => (
                   <div
                     key={index}
-                    className="p-5 border border-[#e2e0d8] bg-[#f7f6f0]/40 space-y-4 relative"
+                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 relative rounded-none"
                   >
                     <button
                       onClick={() => {
@@ -792,14 +792,14 @@ export default function EditorPage() {
                         setData({ ...data, projects: updated });
                       }}
                       title="Remove Project"
-                      className="absolute right-4 top-4 text-[#8a8883] hover:text-red-600 transition-colors"
+                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors"
                     >
                       <Trash2 size={15} />
                     </button>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
                       <div>
-                        <label className="text-[#8a8883]">Code Index</label>
+                        <label className="text-[#6E6D68]">Code Index</label>
                         <input
                           type="text"
                           value={project.codeIndex}
@@ -808,11 +808,11 @@ export default function EditorPage() {
                             updated[index].codeIndex = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                       <div>
-                        <label className="text-[#8a8883]">Title</label>
+                        <label className="text-[#6E6D68]">Title</label>
                         <input
                           type="text"
                           value={project.title}
@@ -821,11 +821,11 @@ export default function EditorPage() {
                             updated[index].title = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs font-semibold"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-semibold rounded-none"
                         />
                       </div>
                       <div>
-                        <label className="text-[#8a8883]">Version &amp; Status</label>
+                        <label className="text-[#6E6D68]">Version &amp; Status</label>
                         <div className="flex gap-2">
                           <input
                             type="text"
@@ -835,7 +835,7 @@ export default function EditorPage() {
                               updated[index].version = e.target.value;
                               setData({ ...data, projects: updated });
                             }}
-                            className="w-1/2 bg-[#f2f0ea] border border-[#e2e0d8] px-2 py-1.5 text-xs"
+                            className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-2 py-1.5 text-xs rounded-none"
                           />
                           <input
                             type="text"
@@ -846,13 +846,13 @@ export default function EditorPage() {
                               setData({ ...data, projects: updated });
                             }}
                             placeholder="Active"
-                            className="w-1/2 bg-[#f2f0ea] border border-[#e2e0d8] px-2 py-1.5 text-xs"
+                            className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-2 py-1.5 text-xs rounded-none"
                           />
                         </div>
                       </div>
 
                       <div className="sm:col-span-3">
-                        <label className="text-[#8a8883]">Tech Stack Summary</label>
+                        <label className="text-[#6E6D68]">Tech Stack Summary</label>
                         <input
                           type="text"
                           value={project.techStack}
@@ -861,12 +861,12 @@ export default function EditorPage() {
                             updated[index].techStack = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
 
                       <div className="sm:col-span-3">
-                        <label className="text-[#8a8883]">Project Description</label>
+                        <label className="text-[#6E6D68]">Project Description</label>
                         <textarea
                           rows={2}
                           value={project.description}
@@ -875,13 +875,13 @@ export default function EditorPage() {
                             updated[index].description = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs font-sans"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-sans rounded-none"
                         />
                       </div>
 
                       <div className="sm:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-[#8a8883]">GitHub URL</label>
+                          <label className="text-[#6E6D68]">GitHub URL</label>
                           <input
                             type="text"
                             value={project.github}
@@ -890,11 +890,11 @@ export default function EditorPage() {
                               updated[index].github = e.target.value;
                               setData({ ...data, projects: updated });
                             }}
-                            className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                            className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                           />
                         </div>
                         <div>
-                          <label className="text-[#8a8883]">Live Demo URL</label>
+                          <label className="text-[#6E6D68]">Live Demo URL</label>
                           <input
                             type="text"
                             value={project.live || ""}
@@ -903,13 +903,13 @@ export default function EditorPage() {
                               updated[index].live = e.target.value;
                               setData({ ...data, projects: updated });
                             }}
-                            className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                            className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="text-[#8a8883]">Metric Highlight</label>
+                        <label className="text-[#6E6D68]">Metric Highlight</label>
                         <input
                           type="text"
                           value={project.metric}
@@ -918,12 +918,12 @@ export default function EditorPage() {
                             updated[index].metric = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
 
                       <div className="sm:col-span-2">
-                        <label className="text-[#8a8883]">Metric Subtext</label>
+                        <label className="text-[#6E6D68]">Metric Subtext</label>
                         <input
                           type="text"
                           value={project.metricSub}
@@ -932,7 +932,7 @@ export default function EditorPage() {
                             updated[index].metricSub = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
-                          className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
                     </div>
@@ -945,18 +945,18 @@ export default function EditorPage() {
           {/* TAB 5: FLAGSHIP DOSSIER DEEP DIVE */}
           {activeTab === "dossier" && (
             <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#e2e0d8] pb-4">
+              <div className="border-b border-[#E2E0D8] pb-4">
                 <h2 className="text-2xl font-display font-medium text-[#111111]">
                   Flagship Architectural Dossier (04.1 //)
                 </h2>
-                <p className="font-mono text-xs text-[#8a8883] mt-1">
+                <p className="font-mono text-xs text-[#6E6D68] mt-1">
                   Configure the deep-dive technical showcase for your flagship system.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
                 <div>
-                  <label className="text-[#8a8883]">Dossier Title</label>
+                  <label className="text-[#6E6D68]">Dossier Title</label>
                   <input
                     type="text"
                     value={data.flagshipDossier.title}
@@ -969,11 +969,11 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans rounded-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[#8a8883]">Subtitle Tag</label>
+                  <label className="text-[#6E6D68]">Subtitle Tag</label>
                   <input
                     type="text"
                     value={data.flagshipDossier.subtitle}
@@ -986,11 +986,11 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans rounded-none"
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="text-[#8a8883]">Deep Dive Architecture Summary</label>
+                  <label className="text-[#6E6D68]">Deep Dive Architecture Summary</label>
                   <textarea
                     rows={3}
                     value={data.flagshipDossier.description}
@@ -1003,11 +1003,11 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans rounded-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[#8a8883]">GitHub Code Target</label>
+                  <label className="text-[#6E6D68]">GitHub Code Target</label>
                   <input
                     type="text"
                     value={data.flagshipDossier.github}
@@ -1020,11 +1020,11 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[#8a8883]">Live Target</label>
+                  <label className="text-[#6E6D68]">Live Target</label>
                   <input
                     type="text"
                     value={data.flagshipDossier.live || ""}
@@ -1037,13 +1037,13 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#e2e0d8] space-y-3 font-mono text-xs">
-                <label className="text-[#8a8883] block uppercase tracking-wider">
+              <div className="pt-4 border-t border-[#E2E0D8] space-y-3 font-mono text-xs">
+                <label className="text-[#6E6D68] block uppercase tracking-wider">
                   Specification Telemetry (Key/Value)
                 </label>
                 {data.flagshipDossier.metrics.map((m, idx) => (
@@ -1062,7 +1062,7 @@ export default function EditorPage() {
                           },
                         });
                       }}
-                      className="w-1/3 bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                      className="w-1/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                     />
                     <input
                       type="text"
@@ -1078,7 +1078,7 @@ export default function EditorPage() {
                           },
                         });
                       }}
-                      className="w-2/3 bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                      className="w-2/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                     />
                   </div>
                 ))}
@@ -1089,11 +1089,11 @@ export default function EditorPage() {
           {/* TAB 6: SKILLS & INFRASTRUCTURE */}
           {activeTab === "skills" && (
             <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#e2e0d8] pb-4">
+              <div className="border-b border-[#E2E0D8] pb-4">
                 <h2 className="text-2xl font-display font-medium text-[#111111]">
                   Technical Capabilities (05 //)
                 </h2>
-                <p className="font-mono text-xs text-[#8a8883] mt-1">
+                <p className="font-mono text-xs text-[#6E6D68] mt-1">
                   Manage core technology categories and skill tags.
                 </p>
               </div>
@@ -1102,10 +1102,10 @@ export default function EditorPage() {
                 {data.skillMatrix.map((matrix, index) => (
                   <div
                     key={index}
-                    className="p-5 border border-[#e2e0d8] bg-[#f7f6f0]/40 space-y-3"
+                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-3 rounded-none"
                   >
                     <div className="font-mono text-xs">
-                      <label className="text-[#8a8883] uppercase">
+                      <label className="text-[#6E6D68] uppercase">
                         Category 0{index + 1}
                       </label>
                       <input
@@ -1116,11 +1116,11 @@ export default function EditorPage() {
                           updated[index].category = e.target.value;
                           setData({ ...data, skillMatrix: updated });
                         }}
-                        className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-sm font-sans focus:outline-none mt-1"
+                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-sm font-sans focus:outline-none mt-1 rounded-none"
                       />
                     </div>
                     <div className="font-mono text-xs">
-                      <label className="text-[#8a8883] uppercase">
+                      <label className="text-[#6E6D68] uppercase">
                         Skills (comma-separated)
                       </label>
                       <input
@@ -1134,7 +1134,7 @@ export default function EditorPage() {
                             .filter(Boolean);
                           setData({ ...data, skillMatrix: updated });
                         }}
-                        className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans focus:outline-none mt-1"
+                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
                       />
                     </div>
                   </div>
@@ -1146,18 +1146,18 @@ export default function EditorPage() {
           {/* TAB 7: CONTACT & AVAILABILITY */}
           {activeTab === "contact" && (
             <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#e2e0d8] pb-4">
+              <div className="border-b border-[#E2E0D8] pb-4">
                 <h2 className="text-2xl font-display font-medium text-[#111111]">
                   Contact &amp; Availability (06 //)
                 </h2>
-                <p className="font-mono text-xs text-[#8a8883] mt-1">
+                <p className="font-mono text-xs text-[#6E6D68] mt-1">
                   Configure location details, direct links, and open-to-work status.
                 </p>
               </div>
 
               <div className="space-y-4 font-mono text-xs">
                 <div>
-                  <label className="text-[#8a8883] uppercase">
+                  <label className="text-[#6E6D68] uppercase">
                     Location Lines (one per line)
                   </label>
                   <textarea
@@ -1174,12 +1174,12 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans focus:outline-none mt-1"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[#8a8883] uppercase">
+                  <label className="text-[#6E6D68] uppercase">
                     Availability Statement
                   </label>
                   <textarea
@@ -1194,12 +1194,12 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-2 text-sm font-sans focus:outline-none mt-1"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
                   />
                 </div>
 
-                <div className="pt-4 border-t border-[#e2e0d8]">
-                  <label className="text-[#8a8883] uppercase block mb-3">
+                <div className="pt-4 border-t border-[#E2E0D8]">
+                  <label className="text-[#6E6D68] uppercase block mb-3">
                     Connect Links
                   </label>
                   {data.contactInfo.connectLinks.map((link, idx) => (
@@ -1218,7 +1218,7 @@ export default function EditorPage() {
                             },
                           });
                         }}
-                        className="w-1/2 bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                        className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                       />
                       <input
                         type="text"
@@ -1234,7 +1234,7 @@ export default function EditorPage() {
                             },
                           });
                         }}
-                        className="w-1/2 bg-[#f2f0ea] border border-[#e2e0d8] px-3 py-1.5 text-xs"
+                        className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                       />
                     </div>
                   ))}

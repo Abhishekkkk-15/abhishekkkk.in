@@ -38,10 +38,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f5] flex flex-col justify-center items-center px-6 py-12 selection:bg-[#111111] selection:text-[#faf9f5]">
-      <div className="w-full max-w-md border border-[#e2e0d8] bg-[#faf9f5] p-8 sm:p-10 shadow-sm relative">
+    <div className="min-h-screen bg-[#F4F3EF] flex flex-col justify-center items-center px-6 py-12 selection:bg-[#111111] selection:text-[#F4F3EF]">
+      <div className="w-full max-w-md border border-[#E2E0D8] bg-[#F4F3EF] p-8 sm:p-10 shadow-sm relative rounded-none">
         {/* Top Header Badge */}
-        <div className="flex items-center justify-between border-b border-[#e2e0d8] pb-4 mb-8 font-mono text-[10.5px] uppercase tracking-widest text-[#8a8883]">
+        <div className="flex items-center justify-between border-b border-[#E2E0D8] pb-4 mb-8 font-mono text-[10.5px] uppercase tracking-widest text-[#6E6D68]">
           <span>ADMIN AUTHENTICATION</span>
           <span>CMS // 01</span>
         </div>
@@ -50,20 +50,20 @@ export default function LoginPage() {
           <h1 className="text-2xl sm:text-3xl font-display font-medium text-[#111111] tracking-tight">
             Portfolio Editor
           </h1>
-          <p className="mt-2 text-xs font-mono text-[#555452] leading-relaxed">
+          <p className="mt-2 text-xs font-mono text-[#444442] leading-relaxed">
             Enter authorized administrator credentials to manage portfolio telemetry, projects, and architecture records.
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-mono">
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-mono rounded-none">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-1.5 font-mono text-xs">
-            <label className="text-[#8a8883] uppercase tracking-wider block">
+            <label className="text-[#6E6D68] uppercase tracking-wider block">
               Admin Email
             </label>
             <div className="relative">
@@ -73,17 +73,17 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@example.com"
-                className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2.5 text-sm font-sans focus:outline-none focus:border-[#111111] transition-colors"
+                className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2.5 text-sm font-sans focus:outline-none focus:border-[#111111] transition-colors rounded-none"
               />
               <Mail
                 size={16}
-                className="absolute right-3.5 top-3 text-[#8a8883] pointer-events-none"
+                className="absolute right-3.5 top-3 text-[#6E6D68] pointer-events-none"
               />
             </div>
           </div>
 
           <div className="space-y-1.5 font-mono text-xs">
-            <label className="text-[#8a8883] uppercase tracking-wider block">
+            <label className="text-[#6E6D68] uppercase tracking-wider block">
               Password
             </label>
             <div className="relative">
@@ -93,11 +93,11 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full bg-[#f2f0ea] border border-[#e2e0d8] text-[#111111] px-3.5 py-2.5 text-sm font-sans focus:outline-none focus:border-[#111111] transition-colors"
+                className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2.5 text-sm font-sans focus:outline-none focus:border-[#111111] transition-colors rounded-none"
               />
               <Lock
                 size={16}
-                className="absolute right-3.5 top-3 text-[#8a8883] pointer-events-none"
+                className="absolute right-3.5 top-3 text-[#6E6D68] pointer-events-none"
               />
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#111111] text-[#faf9f5] font-mono text-xs uppercase tracking-widest py-3 px-4 hover:bg-[#0051d5] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full bg-[#111111] text-[#F4F3EF] font-mono text-xs uppercase tracking-widest py-3 px-4 hover:bg-[#2563EB] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 rounded-none"
             >
               {loading ? (
                 "Authenticating..."
@@ -119,7 +119,7 @@ export default function LoginPage() {
           </div>
         </form>
 
-        <div className="mt-8 pt-4 border-t border-[#e2e0d8] flex justify-between items-center font-mono text-[11px] text-[#8a8883]">
+        <div className="mt-8 pt-4 border-t border-[#E2E0D8] flex justify-between items-center font-mono text-[11px] text-[#6E6D68]">
           <a href="/" className="hover:text-[#111111] transition-colors">
             ← Return to Live Site
           </a>

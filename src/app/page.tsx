@@ -11,12 +11,11 @@ import Contact from "../components/sections/Contact";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  // Ensure the default admin exists on first launch if DB is connected
   await ensureInitialAdminUser();
   const portfolio = await getPortfolioData();
 
   return (
-    <div className="w-full max-w-7xl mx-auto min-h-screen flex flex-col bg-[#faf9f5] border-x border-[#e2e0d8] relative shadow-sm">
+    <div className="w-full max-w-7xl mx-auto min-h-screen flex flex-col bg-[#F4F3EF] border-x border-[#E2E0D8] relative shadow-sm">
       <Navbar labBrand={portfolio.profile?.labBrand} />
       <main className="flex-grow flex flex-col">
         <Hero profile={portfolio.profile} />

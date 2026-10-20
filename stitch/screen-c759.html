@@ -1,0 +1,139 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KAI / LAB — Applied AI Engineer &amp; Inference Architect</title>
+<!-- Tailwind CSS CDN with forms & container plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Space Grotesk, Hanken Grotesk & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Custom Configuration adhering to design tokens -->
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          background: '#faf9f5',
+          surface: '#faf9f5',
+          'surface-dim': '#f2f0ea',
+          'surface-container': '#efeeea',
+          'surface-container-high': '#e9e8e4',
+          'hairline': '#e2e0d8',
+          'hairline-dark': '#cbc8be',
+          'ink': '#111111',
+          'ink-muted': '#555452',
+          'ink-light': '#8a8883',
+          'cobalt': '#0051d5',
+          'cobalt-dim': '#316bf3',
+        },
+        fontFamily: {
+          sans: ['Hanken Grotesk', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          display: ['Space Grotesk', 'sans-serif'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        },
+        letterSpacing: {
+          'widest-mono': '0.14em',
+        }
+      }
+    }
+  }
+</script>
+<!-- Typography and Base Styles -->
+<style data-purpose="typography">
+  body {
+    background-color: #faf9f5;
+    color: #111111;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: #111111;
+    color: #faf9f5;
+  }
+</style>
+<!-- Minimal Scroll Reveal Styles: subtle opacity and translateY fade-in only, no bouncy gimmicks -->
+<style data-purpose="scroll-animations">
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+  .reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-on-scroll {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body class="bg-[#faf9f5] text-[#111111] font-sans min-h-screen flex flex-col justify-start selection:bg-[#111111] selection:text-[#faf9f5]">
+<!-- Desktop Container (max-w-7xl: ~1440px viewport grid with crisp hairlines) -->
+<div class="w-full max-w-7xl mx-auto min-h-screen flex flex-col bg-[#faf9f5] border-x border-[#e2e0d8] relative shadow-sm">
+<!-- BEGIN: Desktop Header / Nav -->
+<header class="sticky top-0 z-40 bg-[#faf9f5]/95 backdrop-blur-sm border-b border-[#e2e0d8] px-8 py-4 transition-colors" data-purpose="top-navigation"><div class="flex items-center justify-between font-mono text-[11px] tracking-widest uppercase"><a aria-label="KAI LAB Home" class="font-display font-medium text-sm tracking-tight text-[#111111] hover:text-[#0051d5] transition-colors" href="#hero">KAI / LAB</a><nav class="flex items-center gap-8 text-[11px] text-[#555452]"><a class="hover:text-[#111111] transition-colors" href="#focus">FOCUS</a><a class="hover:text-[#111111] transition-colors" href="#experience">EXPERIENCE</a><a class="hover:text-[#111111] transition-colors" href="#projects">WORK</a><a class="hover:text-[#111111] transition-colors" href="#publications">PUBLICATIONS</a><a class="hover:text-[#111111] transition-colors" href="#contact">CONTACT</a></nav></div></header>
+<!-- END: Desktop Header / Nav -->
+<!-- BEGIN: MainContent -->
+<main class="flex-grow flex flex-col">
+<!-- BEGIN: Hero Section (Editorial Japanese Modern Split Layout) -->
+<section class="border-b border-[#e2e0d8]" data-purpose="hero-statement" id="hero"><div class="p-8 md:p-14 lg:p-16"><div class="reveal-on-scroll is-visible w-full"><div class="flex items-center justify-between font-mono text-[10.5px] uppercase tracking-widest text-[#8a8883] mb-12 pb-4 border-b border-[#e2e0d8]"><span class="">EST. 2021 // TOKYO &amp; SAN FRANCISCO</span><span class="">AI RESEARCH &amp; SYSTEMS</span></div><div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start"><div class="lg:col-span-5 flex flex-col items-start gap-6"><div class="w-full max-w-[280px] sm:max-w-[320px] aspect-square bg-[#f2f0ea] border border-[#e2e0d8] overflow-hidden shrink-0 shadow-sm"><img alt="Kai T." class="w-full h-full object-cover grayscale block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB7VTPQuZWOpRHCfmrKwt1cLEWdrMLmt4fIAge-Atw5GFx1V2dkCi9H1W2akQc8gWR5_Pp-yLIF8PVlcou7xmSUcLpm2Qvj51HUTq41CKsOPds9S6RdaH7UctaPHPcMBt3-lvH7TiTqd1WyNLs-RvcbpwuBWwm7emLXIOH72u6mC5krs-wYEsFtWH3QSWRgmVR8zHW2YaJkbifwaPAX2dMt7NciVkq7Yf-JyTYnm-fEg1Km7ebGTC6ds6M85dfK0PXjw"></div><div class="space-y-1.5 pt-2"><h1 class="text-4xl sm:text-5xl font-display font-normal tracking-tight text-[#111111] mb-2">Kai T.</h1><div class="font-mono text-xs uppercase tracking-widest text-[#8a8883]">Applied AI Engineer &amp; Inference Architect</div><div class="font-mono text-xs text-[#555452] flex items-center gap-1 pt-1"><span class="">Tokyo &amp; San Francisco</span></div></div></div><div class="lg:col-span-7 space-y-8"><div class="space-y-4"><p class="text-xl sm:text-2xl font-light text-[#111111] leading-relaxed">Specializing in low-latency multimodal LLM pipelines, speculative decoding, and production inference optimization.</p><p class="font-mono text-xs leading-relaxed text-[#8a8883]">自律エージェントの推論最適化と大規模リアルタイム検索基盤の開発に従事。不確実な基盤モデル上に決定論的な信頼性と極小レイテンシを設計。</p></div><div class="grid grid-cols-2 gap-6 pt-8 border-t border-[#e2e0d8] font-mono md:grid-cols-3"><div class="space-y-1"><div class="text-[10px] text-[#8a8883] uppercase tracking-wider">THROUGHPUT</div><div class="text-2xl font-display text-[#111111]">2,840 <span class="text-xs text-[#8a8883]">tok/s</span></div></div><div class="space-y-1"><div class="text-[10px] text-[#8a8883] uppercase tracking-wider">CORE ENGINES</div><div class="text-sm text-[#111111] pt-1">vLLM · TensorRT-LLM</div></div><div class="space-y-1"><div class="text-[10px] text-[#8a8883] uppercase tracking-wider">STATUS</div><div class="text-sm text-[#111111] pt-1 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#0051d5] inline-block"></span>Active in Production</div></div></div></div></div></div></div></section>
+<!-- END: Hero Section -->
+<!-- BEGIN: Architectural Focus (3-Column Desktop Grid) -->
+<section class="border-b border-[#e2e0d8]" data-purpose="core-competencies" id="focus"><div class="px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between"><div class="flex items-center gap-3"><span class="font-mono text-xs text-[#8a8883]">02 //</span><h3 class="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium">ARCHITECTURAL FOCUS</h3></div><span class="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">COMPETENCIES</span></div><div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e2e0d8]"><article class="reveal-on-scroll p-8 md:p-12 space-y-4 is-visible"><span class="font-mono text-xs text-[#8a8883] block">↘ 01</span><h4 class="text-xl font-display font-medium text-[#111111] tracking-tight">Inference &amp; Quantization</h4><p class="text-sm text-[#555452] leading-relaxed">Custom CUDA kernels, speculative decoding algorithms, and AWQ/FP4 quantization tailored for latency-critical production envelopes.</p></article><article class="reveal-on-scroll p-8 md:p-12 space-y-4 is-visible"><span class="font-mono text-xs text-[#8a8883] block">↘ 02</span><h4 class="text-xl font-display font-medium text-[#111111] tracking-tight">Vision-Language Reasoning</h4><p class="text-sm text-[#555452] leading-relaxed">Visual tokenizers, spatial grounding architectures, and high-frequency edge streaming pipelines for autonomous agent environments.</p></article><article class="reveal-on-scroll p-8 md:p-12 space-y-4 is-visible"><span class="font-mono text-xs text-[#8a8883] block">↘ 03</span><h4 class="text-xl font-display font-medium text-[#111111] tracking-tight">Alignment &amp; Verification</h4><p class="text-sm text-[#555452] leading-relaxed">Offline DPO/KTO optimization, formal verification of structured outputs, and deterministic evaluation harnesses.</p></article></div></section><!-- BEGIN: Experience & Track Record -->
+<section class="border-b border-[#e2e0d8]" data-purpose="experience-timeline" id="experience"><div class="px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between"><div class="flex items-center gap-3"><span class="font-mono text-xs text-[#8a8883]">03 //</span><h3 class="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium">EXPERIENCE // 経歴</h3></div><span class="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">2019 — PRESENT</span></div><div class="divide-y divide-[#e2e0d8]"><article class="reveal-on-scroll is-visible px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline"><div class="md:col-span-3 font-mono text-xs text-[#8a8883]">2023 — PRESENT<div class="text-[#111111] text-[11px] pt-1">Tokyo &amp; SF</div></div><div class="md:col-span-6 space-y-2"><h4 class="text-lg font-display font-medium text-[#111111]">Staff Applied AI &amp; Inference Architect</h4><div class="font-mono text-xs text-[#555452]">Foundation Labs</div><p class="text-sm text-[#555452] leading-relaxed pt-1">Directing speculative decoding infrastructure and distributed serving topologies for 70B+ parameter multimodal agent models across heterogeneous H100 clusters.</p></div><div class="md:col-span-3 md:text-right font-mono text-xs text-[#111111]">&lt;38ms P99 TTFT<div class="text-[#8a8883] text-[10.5px] pt-0.5">128x H100 Node Cluster</div></div></article><article class="reveal-on-scroll is-visible px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline"><div class="md:col-span-3 font-mono text-xs text-[#8a8883]">2021 — 2023<div class="text-[#111111] text-[11px] pt-1">San Francisco</div></div><div class="md:col-span-6 space-y-2"><h4 class="text-lg font-display font-medium text-[#111111]">Lead ML Systems Engineer</h4><div class="font-mono text-xs text-[#555452]">Autonomous Perception</div><p class="text-sm text-[#555452] leading-relaxed pt-1">Architected high-throughput vision-language perception pipeline with streaming gRPC, dynamic KV cache paging, and TensorRT-LLM integration.</p></div><div class="md:col-span-3 md:text-right font-mono text-xs text-[#111111]">-64% Latency<div class="text-[#8a8883] text-[10.5px] pt-0.5">2.4x Req/sec throughput</div></div></article><article class="reveal-on-scroll is-visible px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline"><div class="md:col-span-3 font-mono text-xs text-[#8a8883]">2019 — 2021<div class="text-[#111111] text-[11px] pt-1">Tokyo</div></div><div class="md:col-span-6 space-y-2"><h4 class="text-lg font-display font-medium text-[#111111]">Research Engineer</h4><div class="font-mono text-xs text-[#555452]">Frontier AI</div><p class="text-sm text-[#555452] leading-relaxed pt-1">Developed quantization-aware training (QAT INT4/FP8) regimes and hand-tuned Triton kernels for memory-bound sparse matrix multiplications.</p></div><div class="md:col-span-3 md:text-right font-mono text-xs text-[#111111]">-52% VRAM<div class="text-[#8a8883] text-[10.5px] pt-0.5">1.85x Kernel Speedup</div></div></article></div></section>
+<!-- END: Experience & Track Record -->
+<!-- BEGIN: Featured Project Deep Dive -->
+<section class="border-b border-[#e2e0d8]" data-purpose="selected-projects-list" id="projects"><div class="px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between"><div class="flex items-center gap-3"><span class="font-mono text-xs text-[#8a8883]">04 //</span><h3 class="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium">SELECTED PROJECTS</h3></div><span class="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">SYSTEMS &amp; INFRASTRUCTURE</span></div><div class="divide-y divide-[#e2e0d8]"><article class="reveal-on-scroll is-visible px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline"><div class="md:col-span-3 font-mono text-xs text-[#8a8883]"><span class="block">01 // SYSTEM</span><div class="text-[#111111] text-[11px] pt-1 font-mono">Python · CUDA · Triton</div></div><div class="md:col-span-6 space-y-2"><div class="flex items-baseline gap-3"><h4 class="text-lg font-display font-medium text-[#111111]">NEXUS-SPEC // v3.4</h4><span class="font-mono text-[10.5px] text-[#0051d5] uppercase tracking-wider">Active</span></div><p class="text-sm text-[#555452] leading-relaxed pt-1">Speculative decoding tree acceleration engine and continuous verification filter for 70B+ multimodal agent models.</p><div class="flex items-center gap-4 pt-2 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="https://github.com" rel="noreferrer" target="_blank">Code ↗</a><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="#" rel="noreferrer">Paper ↗</a></div></div><div class="md:col-span-3 md:text-right font-mono text-xs text-[#111111]">4.1x Speedup<div class="text-[#8a8883] text-[10.5px] pt-0.5">0% Perplexity Degradation</div></div></article><article class="reveal-on-scroll is-visible px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline"><div class="md:col-span-3 font-mono text-xs text-[#8a8883]"><span class="block">02 // KERNEL</span><div class="text-[#111111] text-[11px] pt-1 font-mono">C++ · TensorRT-LLM</div></div><div class="md:col-span-6 space-y-2"><div class="flex items-baseline gap-3"><h4 class="text-lg font-display font-medium text-[#111111]">FLASH-KV // v1.2</h4></div><p class="text-sm text-[#555452] leading-relaxed pt-1">Dynamic KV-cache paging and context compression kernel for long-context multi-turn agents on heterogeneous GPU clusters.</p><div class="flex items-center gap-4 pt-2 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="https://github.com" rel="noreferrer" target="_blank">GitHub ↗</a></div></div><div class="md:col-span-3 md:text-right font-mono text-xs text-[#111111]">-64% Memory<div class="text-[#8a8883] text-[10.5px] pt-0.5">2.4x Throughput Gain</div></div></article><article class="reveal-on-scroll is-visible px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline"><div class="md:col-span-3 font-mono text-xs text-[#8a8883]"><span class="block">03 // ALIGNMENT</span><div class="text-[#111111] text-[11px] pt-1 font-mono">PyTorch · Ray</div></div><div class="md:col-span-6 space-y-2"><div class="flex items-baseline gap-3"><h4 class="text-lg font-display font-medium text-[#111111]">SYNAPSE-RL // v0.9</h4></div><p class="text-sm text-[#555452] leading-relaxed pt-1">Offline Direct Preference Optimization (DPO) and formal verification harness for structured tool calling and schema adherence.</p><div class="flex items-center gap-4 pt-2 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="https://github.com" rel="noreferrer" target="_blank">GitHub ↗</a></div></div><div class="md:col-span-3 md:text-right font-mono text-xs text-[#111111]">99.4% Determinism<div class="text-[#8a8883] text-[10.5px] pt-0.5">Zero Schema Failures</div></div></article><article class="reveal-on-scroll is-visible px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline"><div class="md:col-span-3 font-mono text-xs text-[#8a8883]"><span class="block">04 // STREAMING</span><div class="text-[#111111] text-[11px] pt-1 font-mono">Rust · CUDA · WebRTC</div></div><div class="md:col-span-6 space-y-2"><div class="flex items-baseline gap-3"><h4 class="text-lg font-display font-medium text-[#111111]">SIGHT-STREAM // v2.0</h4></div><p class="text-sm text-[#555452] leading-relaxed pt-1">Zero-copy WebRTC video tokenization pipeline for real-time spatial vision-language agents in physical robotics setups.</p><div class="flex items-center gap-4 pt-2 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="#" rel="noreferrer">Demo ↗</a></div></div><div class="md:col-span-3 md:text-right font-mono text-xs text-[#111111]">14ms End-to-End<div class="text-[#8a8883] text-[10.5px] pt-0.5">60 FPS Ingestion</div></div></article></div></section><section class="border-b border-[#e2e0d8] bg-[#faf9f5]" data-purpose="project-dossier" id="project-spec"><div class="px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between"><div class="flex items-center gap-3"><span class="font-mono text-xs text-[#8a8883]">04.1 //</span><h3 class="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium">ARCHITECTURAL DOSSIER // NEXUS-SPEC</h3></div><span class="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">OPEN SOURCE CORE</span></div><div class="p-8 md:p-14 lg:p-16"><div class="reveal-on-scroll is-visible max-w-3xl space-y-6"><div class="font-mono text-xs text-[#8a8883] uppercase tracking-widest">ARCHITECTURE V3.4</div><h2 class="text-3xl md:text-5xl font-display font-normal text-[#111111] tracking-tight">NEXUS-SPEC // v3.4</h2><p class="text-base text-[#111111] leading-relaxed">Dual-draft speculative tree acceleration and continuous verification filter for production multimodal agent systems. Delivers 4.1x time-to-first-token speedup with zero perplexity loss.</p><div class="flex flex-wrap items-center gap-8 pt-4 font-mono text-sm"><div class="space-y-0.5"><div class="text-[10px] text-[#8a8883] uppercase">TTFT</div><div class="font-medium text-[#111111]">34ms (-76%)</div></div><div class="space-y-0.5"><div class="text-[10px] text-[#8a8883] uppercase">THROUGHPUT</div><div class="font-medium text-[#111111]">2,840 tok/s</div></div><div class="space-y-0.5"><div class="text-[10px] text-[#8a8883] uppercase">FOOTPRINT</div><div class="font-medium text-[#111111]">70B FP8</div></div></div><div class="flex items-center gap-6 pt-6 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="https://github.com" rel="noreferrer" target="_blank">Code Repository ↗</a><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors" href="#">Paper PDF ↗</a></div></div></div></section>
+<!-- END: Featured Project Deep Dive -->
+<!-- END: Architectural Focus -->
+<!-- BEGIN: Selected Systems (3 Desktop Columns) -->
+<!-- END: Selected Systems -->
+<!-- BEGIN: Publications & Logs (Two-Column Desktop Editorial Table) -->
+<section class="border-b border-[#e2e0d8]" data-purpose="publications" id="publications"><div class="px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between"><div class="flex items-center gap-3"><span class="font-mono text-xs text-[#8a8883]">05 //</span><h3 class="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium">PUBLICATIONS</h3></div><span class="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">PAPERS &amp; WRITING</span></div><div class="divide-y divide-[#e2e0d8]"><div class="reveal-on-scroll px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4 is-visible"><div class="md:w-1/4 font-mono text-xs text-[#8a8883]">2024.11 · NeurIPS</div><div class="md:w-1/2"><h4 class="text-base font-normal text-[#111111]">Adaptive Speculative Token Verification via Lightweight Critic Heads</h4></div><div class="md:w-1/4 flex items-center md:justify-end gap-4 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be]" href="#">PDF ↗</a></div></div><div class="reveal-on-scroll px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4 is-visible"><div class="md:w-1/4 font-mono text-xs text-[#8a8883]">2023.08 · ICML</div><div class="md:w-1/2"><h4 class="text-base font-normal text-[#111111]">Low-Rank Calibration for Context Compression in Streaming Multi-turn Agents</h4></div><div class="md:w-1/4 flex items-center md:justify-end gap-4 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be]" href="#">PDF ↗</a></div></div><div class="reveal-on-scroll px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4 is-visible"><div class="md:w-1/4 font-mono text-xs text-[#8a8883]">2023.02 · MEMO</div><div class="md:w-1/2"><h4 class="text-base font-normal text-[#111111]">Notes on Real-Time KV Cache Tiering Across Heterogeneous Accelerators</h4></div><div class="md:w-1/4 flex items-center md:justify-end gap-4 font-mono text-xs"><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be]" href="#">TEXT ↗</a></div></div></div></section>
+<!-- END: Publications & Logs -->
+<!-- BEGIN: Connect & Footer -->
+<section class="p-8 md:p-14 bg-[#faf9f5]" data-purpose="contact-colophon" id="contact"><div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-14 border-b border-[#e2e0d8]"><div class="md:col-span-4 space-y-3 font-mono text-xs"><span class="text-[#8a8883] uppercase tracking-widest block">LOCATION</span><p class="text-[#111111] leading-relaxed">Roppongi Hills Mori Tower<br>Minato-ku, Tokyo 106-6108<br>SF SoMa Laboratory</p></div><div class="md:col-span-4 space-y-3 font-mono text-xs"><span class="text-[#8a8883] uppercase tracking-widest block">CONNECT</span><div class="space-y-1.5"><div><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be]" href="https://github.com" rel="noreferrer" target="_blank">github.com/kai-systems ↗</a></div><div><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be]" href="https://x.com" rel="noreferrer" target="_blank">x.com/kai_applied_ai ↗</a></div><div><a class="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be]" href="mailto:kai@example.com">kai@example.com ↗</a></div></div></div><div class="md:col-span-4 space-y-3 font-mono text-xs"><span class="text-[#8a8883] uppercase tracking-widest block">AVAILABILITY</span><p class="text-[#555452] leading-relaxed">Available for fractional advisory and production inference optimization audits.</p></div></div><footer class="pt-8 flex items-center justify-between text-xs font-mono text-[#8a8883] uppercase"><div class="">© 2025 KAI / LAB</div><a class="hover:text-[#111111] transition-colors" href="#hero">↑ TOP</a></footer></section>
+<!-- END: Connect & Footer -->
+</main>
+<!-- END: MainContent -->
+</div>
+<!-- JavaScript: Lightweight IntersectionObserver for Minimal Scroll Reveal Only -->
+<script data-purpose="scroll-observer">
+  document.addEventListener('DOMContentLoaded', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealElements = document.querySelectorAll('.reveal-on-scroll');
+
+    if (prefersReducedMotion) {
+      revealElements.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -40px 0px',
+      threshold: 0.08
+    };
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    revealElements.forEach(el => observer.observe(el));
+  });
+</script>
+
+
+</body></html>

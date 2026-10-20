@@ -39,18 +39,18 @@ export default function Navbar({
   }, [navLinks]);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#faf9f5]/95 backdrop-blur-sm border-b border-[#e2e0d8] px-6 sm:px-8 py-4 transition-colors">
+    <header className="sticky top-0 z-40 bg-[#F4F3EF]/95 backdrop-blur-sm border-b border-[#E2E0D8] px-6 sm:px-8 py-4 transition-colors">
       <div className="flex items-center justify-between font-mono text-[11px] tracking-widest uppercase">
         <a
           aria-label="Home"
           href="#hero"
-          className="font-display font-medium text-sm tracking-tight text-[#111111] hover:text-[#0051d5] transition-colors flex items-center gap-2"
+          className="font-display font-medium text-sm tracking-tight text-[#111111] hover:text-[#2563EB] transition-colors flex items-center gap-2"
         >
           {labBrand}
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 text-[11px] text-[#555452]">
+        <nav className="hidden md:flex items-center gap-8 text-[11px] text-[#6E6D68]">
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -78,7 +78,7 @@ export default function Navbar({
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-[#e2e0d8] mt-4 pt-4 pb-2 flex flex-col gap-3 font-mono text-xs uppercase tracking-widest text-[#555452]">
+        <div className="md:hidden border-t border-[#E2E0D8] mt-4 pt-4 pb-2 flex flex-col gap-3 font-mono text-xs uppercase tracking-widest text-[#6E6D68] bg-[#F4F3EF]">
           {navLinks.map((link) => (
             <a
               key={link.href}
