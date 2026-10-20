@@ -1,7 +1,11 @@
+"use client";
+
 import type { IExperienceItem } from "../../models/Portfolio";
 import { experience as defaultExperience } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
+import TelemetryCounter from "../ui/TelemetryCounter";
+import HairlineDivider from "../ui/HairlineDivider";
 
 interface ExperienceProps {
   items?: IExperienceItem[];
@@ -11,7 +15,7 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="experience-timeline" id="experience">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 border-b border-[#E2E0D8] flex items-baseline justify-between">
+      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">03 //</span>
           <CharFadeText
@@ -25,6 +29,8 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
           CAREER TIMELINE
         </span>
       </div>
+
+      <HairlineDivider leftLabel="03" rightLabel="TIMELINE" />
 
       {/* Experience Rows */}
       <div className="divide-y divide-[#E2E0D8]">
@@ -67,9 +73,9 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
                 )}
               </div>
 
-              {/* Right Column: Key Technical Metric */}
+              {/* Right Column: Key Technical Metric with Telemetry Counter */}
               <div className="md:col-span-3 md:text-right font-mono text-xs text-[#111111] pt-2 md:pt-0">
-                {item.metric}
+                <TelemetryCounter value={item.metric} />
                 <div className="text-[#6E6D68] text-[10.5px] pt-0.5">{item.metricSub}</div>
               </div>
             </Reveal>

@@ -1,7 +1,11 @@
+"use client";
+
 import type { IProjectItem } from "../../models/Portfolio";
 import { projects as defaultProjects } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
+import TelemetryCounter from "../ui/TelemetryCounter";
+import HairlineDivider from "../ui/HairlineDivider";
 
 interface ProjectsProps {
   items?: IProjectItem[];
@@ -11,7 +15,7 @@ export default function Projects({ items = defaultProjects }: ProjectsProps) {
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="selected-projects-list" id="projects">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 border-b border-[#E2E0D8] flex items-baseline justify-between">
+      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">04 //</span>
           <CharFadeText
@@ -25,6 +29,8 @@ export default function Projects({ items = defaultProjects }: ProjectsProps) {
           SYSTEMS &amp; INFRASTRUCTURE
         </span>
       </div>
+
+      <HairlineDivider leftLabel="04" rightLabel="PROJECTS" />
 
       {/* Projects List */}
       <div className="divide-y divide-[#E2E0D8]">
@@ -83,9 +89,9 @@ export default function Projects({ items = defaultProjects }: ProjectsProps) {
                 </div>
               </div>
 
-              {/* Right Column: Performance Metric */}
+              {/* Right Column: Performance Metric with Telemetry Counter */}
               <div className="md:col-span-3 md:text-right font-mono text-xs text-[#111111] pt-2 md:pt-0">
-                {project.metric}
+                <TelemetryCounter value={project.metric} />
                 <div className="text-[#6E6D68] text-[10.5px] pt-0.5">
                   {project.metricSub}
                 </div>

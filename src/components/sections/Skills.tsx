@@ -1,7 +1,10 @@
+"use client";
+
 import type { ISkillMatrix } from "../../models/Portfolio";
 import { skillMatrix as defaultSkills } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
+import HairlineDivider from "../ui/HairlineDivider";
 
 interface SkillsProps {
   skills?: ISkillMatrix[];
@@ -11,7 +14,7 @@ export default function Skills({ skills = defaultSkills }: SkillsProps) {
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="technical-capabilities" id="skills">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 border-b border-[#E2E0D8] flex items-baseline justify-between">
+      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">05 //</span>
           <CharFadeText
@@ -25,6 +28,8 @@ export default function Skills({ skills = defaultSkills }: SkillsProps) {
           CORE STACK &amp; INFRASTRUCTURE
         </span>
       </div>
+
+      <HairlineDivider leftLabel="05" rightLabel="CAPABILITIES" />
 
       {/* Editorial Matrix */}
       <div className="divide-y divide-[#E2E0D8]">

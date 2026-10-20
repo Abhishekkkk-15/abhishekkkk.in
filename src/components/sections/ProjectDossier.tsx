@@ -1,7 +1,12 @@
+"use client";
+
 import type { IFlagshipDossier } from "../../models/Portfolio";
 import { flagshipDossier as defaultDossier } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
+import TokenDecodingScrub from "../ui/TokenDecodingScrub";
+import TelemetryCounter from "../ui/TelemetryCounter";
+import HairlineDivider from "../ui/HairlineDivider";
 
 interface DossierProps {
   dossier?: IFlagshipDossier;
@@ -11,7 +16,7 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
   return (
     <section className="border-b border-[#E2E0D8] bg-[#F4F3EF]" data-purpose="project-dossier" id="project-spec">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 border-b border-[#E2E0D8] flex items-baseline justify-between">
+      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">{dossier.sectionIndex}</span>
           <CharFadeText
@@ -25,6 +30,11 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
           {dossier.category}
         </span>
       </div>
+
+      <HairlineDivider leftLabel="04.1" rightLabel="SPEC_ENGINE" />
+
+      {/* Live Token Stream & Decoding Timeline (Speculative Decoding Scrub) */}
+      <TokenDecodingScrub />
 
       {/* Dossier Body */}
       <div className="p-8 md:p-14 lg:p-16">
@@ -47,12 +57,14 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
             {dossier.description}
           </CharFadeText>
 
-          {/* Metric Specifications */}
+          {/* Metric Specifications with TelemetryCounter Interpolation */}
           <div className="flex flex-wrap items-center gap-8 pt-4 font-mono text-sm">
             {dossier.metrics.map((spec) => (
               <div key={spec.label} className="space-y-0.5">
                 <div className="text-[10px] text-[#6E6D68] uppercase">{spec.label}</div>
-                <div className="font-medium text-[#111111]">{spec.value}</div>
+                <div className="font-medium text-[#111111]">
+                  <TelemetryCounter value={spec.value} />
+                </div>
               </div>
             ))}
           </div>

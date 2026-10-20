@@ -1,7 +1,10 @@
+"use client";
+
 import type { IArchitecturalFocus } from "../../models/Portfolio";
 import { architecturalFocus as defaultFocus } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
+import HairlineDivider from "../ui/HairlineDivider";
 
 interface FocusProps {
   items?: IArchitecturalFocus[];
@@ -11,7 +14,7 @@ export default function Focus({ items = defaultFocus }: FocusProps) {
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="core-competencies" id="focus">
       {/* Section Header */}
-      <div className="px-6 sm:px-8 py-5 border-b border-[#E2E0D8] flex items-baseline justify-between">
+      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">02 //</span>
           <CharFadeText
@@ -25,6 +28,8 @@ export default function Focus({ items = defaultFocus }: FocusProps) {
           COMPETENCIES
         </span>
       </div>
+
+      <HairlineDivider leftLabel="02" rightLabel="FOCUS_AREAS" />
 
       {/* 3-Column Editorial Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#E2E0D8]">

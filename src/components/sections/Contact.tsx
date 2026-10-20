@@ -1,9 +1,12 @@
+"use client";
+
 import type { IContactInfo, IProfile } from "../../models/Portfolio";
 import {
   contactInfo as defaultContact,
   profile as defaultProfile,
 } from "../../data/content";
 import Reveal from "../ui/Reveal";
+import HairlineDivider from "../ui/HairlineDivider";
 
 interface ContactProps {
   contactInfo?: IContactInfo;
@@ -19,7 +22,7 @@ export default function Contact({
   return (
     <section className="p-8 md:p-14 bg-[#F4F3EF]" data-purpose="contact-colophon" id="contact">
       <Reveal>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-14 border-b border-[#E2E0D8]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-14">
           {/* Location */}
           <div className="md:col-span-4 space-y-3 font-mono text-xs">
             <span className="text-[#6E6D68] uppercase tracking-widest block">LOCATION</span>
@@ -57,11 +60,21 @@ export default function Contact({
             <p className="text-[#444442] leading-relaxed">
               {contactInfo.availability}
             </p>
+            <p className="text-[11px] text-[#6E6D68] pt-2">
+              <a
+                className="underline underline-offset-4 decoration-[#D8D6CE] hover:text-[#2563EB] transition-colors"
+                href={`mailto:${profile.email}`}
+              >
+                {profile.email}
+              </a>
+            </p>
           </div>
         </div>
 
+        <HairlineDivider leftLabel="06" rightLabel="COLOPHON" className="my-8" />
+
         {/* Footer Bar */}
-        <footer className="pt-8 flex items-center justify-between text-xs font-mono text-[#6E6D68] uppercase">
+        <footer className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs font-mono text-[#6E6D68] uppercase gap-4">
           <div>© {currentYear} {profile.labBrand || profile.name}</div>
           <div className="flex items-center gap-6">
             <a
