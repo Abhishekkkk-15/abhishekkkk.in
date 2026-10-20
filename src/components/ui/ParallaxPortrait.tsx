@@ -29,14 +29,14 @@ export default function ParallaxPortrait({
       ref={containerRef}
       className={`relative w-full max-w-[280px] sm:max-w-[320px] aspect-square bg-[#EBEAE4] border border-[#E2E0D8] overflow-hidden shrink-0 shadow-sm rounded-none select-none ${className}`}
     >
-      {/* Base Image in authentic, full natural color without filters or grayscale */}
+      {/* High-contrast monochrome black & white portrait */}
       <motion.img
         alt={alt}
         src={src}
         style={{
           y: imageY,
         }}
-        className="w-full h-full object-cover block scale-105"
+        className="w-full h-full object-cover block scale-105 grayscale contrast-110"
       />
     </div>
   );
