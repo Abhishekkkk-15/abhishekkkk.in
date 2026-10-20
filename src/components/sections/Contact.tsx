@@ -1,98 +1,64 @@
-import { useState } from "react";
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { contact, profile } from "../../data/content";
+import { contactInfo, profile } from "../../data/content";
 import Reveal from "../ui/Reveal";
-import SectionHeader from "../ui/SectionHeader";
-import Sketch from "../ui/Sketch";
-import HandCircle from "../ui/HandCircle";
-
-type ContactLink = {
-  label: string;
-  value: string;
-  href: string;
-  icon: LucideIcon;
-  external: boolean;
-};
-
-const links: ContactLink[] = [
-  {
-    label: "Email",
-    value: profile.email,
-    href: `mailto:${profile.email}`,
-    icon: Mail,
-    external: false,
-  },
-  {
-    label: "LinkedIn",
-    value: "Abhishek Jangid",
-    href: profile.socials.linkedin,
-    icon: Linkedin,
-    external: true,
-  },
-  {
-    label: "GitHub",
-    value: "View my projects",
-    href: profile.socials.github,
-    icon: Github,
-    external: true,
-  },
-];
 
 export default function Contact() {
-  const [ctaSettled, setCtaSettled] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   return (
-    <section id="contact" className="relative bg-white py-28 md:py-40">
-      <div className="section-container text-center">
-        <SectionHeader
-          index="06"
-          title={contact.title}
-          description={contact.description}
-          align="center"
-        />
-
-        <Reveal delay={0.2}>
-          <div className="mt-16 grid gap-4 sm:grid-cols-3">
-            {links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noreferrer" : undefined}
-                className="group rounded-2xl border border-black/10 p-8 transition-all hover:border-black hover:bg-black hover:text-white"
-              >
-                <div className="relative mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center">
-                  <HandCircle className="text-black/20 group-hover:text-white/30" />
-                  <link.icon size={22} className="relative z-10" />
-                </div>
-                <h3 className="text-base font-semibold">{link.label}</h3>
-                <p className="mt-1 text-sm font-light opacity-60 group-hover:opacity-90">
-                  {link.value}
-                </p>
-              </a>
-            ))}
-          </div>
-        </Reveal>
-
-        <Reveal delay={0.3} onAnimationComplete={() => setCtaSettled(true)}>
-          <div className="mt-16">
-            <p className="mb-6 font-light text-black/60">
-              Ready to start your{" "}
-              <Sketch type="underline" color="#0a0a0a" enabled={ctaSettled}>
-                next project
-              </Sketch>
-              ?
+    <section className="p-8 md:p-14 bg-[#faf9f5]" data-purpose="contact-colophon" id="contact">
+      <Reveal>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-14 border-b border-[#e2e0d8]">
+          {/* Location */}
+          <div className="md:col-span-4 space-y-3 font-mono text-xs">
+            <span className="text-[#8a8883] uppercase tracking-widest block">LOCATION</span>
+            <p className="text-[#111111] leading-relaxed">
+              {contactInfo.locationLines.map((line, idx) => (
+                <span key={idx} className="block">
+                  {line}
+                </span>
+              ))}
             </p>
-            <a
-              href={`mailto:${profile.email}`}
-              className="inline-flex items-center gap-2 rounded-full bg-black px-8 py-3.5 text-sm font-medium text-white transition-opacity hover:opacity-80"
-            >
-              Get In Touch <ArrowRight size={16} />
-            </a>
           </div>
-        </Reveal>
-      </div>
+
+          {/* Connect */}
+          <div className="md:col-span-4 space-y-3 font-mono text-xs">
+            <span className="text-[#8a8883] uppercase tracking-widest block">CONNECT</span>
+            <div className="space-y-1.5">
+              {contactInfo.connectLinks.map((link) => (
+                <div key={link.label}>
+                  <a
+                    className="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors"
+                    href={link.href}
+                    rel="noreferrer"
+                    target={link.href.startsWith("http") ? "_blank" : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Availability */}
+          <div className="md:col-span-4 space-y-3 font-mono text-xs">
+            <span className="text-[#8a8883] uppercase tracking-widest block">AVAILABILITY</span>
+            <p className="text-[#555452] leading-relaxed">
+              {contactInfo.availability}
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Bar */}
+        <footer className="pt-8 flex items-center justify-between text-xs font-mono text-[#8a8883] uppercase">
+          <div>© {currentYear} {profile.labBrand}</div>
+          <a
+            className="hover:text-[#111111] transition-colors flex items-center gap-1"
+            href="#hero"
+          >
+            ↑ TOP
+          </a>
+        </footer>
+      </Reveal>
     </section>
   );
 }

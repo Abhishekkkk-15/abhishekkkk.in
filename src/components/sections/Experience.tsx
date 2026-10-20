@@ -1,67 +1,73 @@
-import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
 import { experience } from "../../data/content";
+import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
-import SectionHeader from "../ui/SectionHeader";
-import HandCircle from "../ui/HandCircle";
 
 export default function Experience() {
-  const timelineRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ["start center", "end center"],
-  });
-  const scaleY = useSpring(scrollYProgress, { stiffness: 80, damping: 20 });
-
   return (
-    <section id="experience" className="relative bg-white py-28 md:py-36">
-      <div className="section-container">
-        <SectionHeader index="03" title="Where I've Worked" />
-
-        <div className="relative mt-16" ref={timelineRef}>
-          {/* static faint track */}
-          <div className="absolute inset-y-0 left-5 w-px bg-black/6 md:left-7" />
-          {/* scroll-driven fill */}
-          <motion.div
-            style={{ scaleY }}
-            className="absolute inset-y-0 left-5 w-px origin-top bg-black/40 md:left-7"
-          />
-
-          <div className="flex flex-col gap-16">
-            {experience.map((item, i) => (
-              <Reveal key={`${item.company}-${item.period}`} delay={i * 0.08}>
-                <div className="flex gap-6 md:gap-10">
-                  <div className="flex w-10 flex-shrink-0 justify-center md:w-14">
-                    <div className="relative mt-1.5 flex h-4 w-4 items-center justify-center">
-                      <HandCircle className="text-black/70" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-black" />
-                    </div>
-                  </div>
-                  <div className="flex-1 pb-2">
-                    <span className="eyebrow">{item.period}</span>
-                    <h3 className="mt-2 text-2xl font-semibold text-black md:text-3xl">
-                      {item.role}{" "}
-                      <span className="text-black/40">· {item.company}</span>
-                    </h3>
-                    <p className="mt-4 max-w-2xl font-light leading-relaxed text-black/60">
-                      {item.description}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {item.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-black/15 px-3 py-1 text-xs text-black/60"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+    <section className="border-b border-[#e2e0d8]" data-purpose="experience-timeline" id="experience">
+      {/* Header bar */}
+      <div className="px-6 sm:px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-xs text-[#8a8883]">03 //</span>
+          <CharFadeText
+            as="h3"
+            className="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium inline-block"
+          >
+            EXPERIENCE // 経歴
+          </CharFadeText>
         </div>
+        <span className="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">
+          2024 — PRESENT
+        </span>
+      </div>
+
+      {/* Experience Rows */}
+      <div className="divide-y divide-[#e2e0d8]">
+        {experience.map((item, index) => (
+          <article
+            key={`${item.company}-${index}`}
+            className="px-6 sm:px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#f7f6f0]/40 transition-colors"
+          >
+            <Reveal className="contents">
+              {/* Left Column: Period & Location */}
+              <div className="md:col-span-3 font-mono text-xs text-[#8a8883]">
+                {item.period}
+                <div className="text-[#111111] text-[11px] pt-1">{item.location}</div>
+              </div>
+
+              {/* Middle Column: Role, Company & Description */}
+              <div className="md:col-span-6 space-y-2">
+                <CharFadeText
+                  as="h4"
+                  className="text-lg font-display font-medium text-[#111111] block"
+                >
+                  {item.role}
+                </CharFadeText>
+                <div className="font-mono text-xs text-[#555452]">{item.company}</div>
+                <p className="text-sm text-[#555452] leading-relaxed pt-1">
+                  {item.description}
+                </p>
+                {/* Tech Pills */}
+                <div className="flex flex-wrap gap-1.5 pt-2 font-mono text-[11px]">
+                  {item.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-block bg-[#efeeea] border border-[#e2e0d8] px-2 py-0.5 text-[#555452] rounded-sm"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Key Technical Metric */}
+              <div className="md:col-span-3 md:text-right font-mono text-xs text-[#111111] pt-2 md:pt-0">
+                {item.metric}
+                <div className="text-[#8a8883] text-[10.5px] pt-0.5">{item.metricSub}</div>
+              </div>
+            </Reveal>
+          </article>
+        ))}
       </div>
     </section>
   );

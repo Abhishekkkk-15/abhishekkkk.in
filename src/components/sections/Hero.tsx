@@ -1,201 +1,95 @@
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ArrowRight, Github, Linkedin, Mail } from "lucide-react";
 import { profile } from "../../data/content";
-import Sketch from "../ui/Sketch";
-
-const taglineWords = profile.tagline.split(" · ");
+import CharFadeText from "../ui/CharFadeText";
+import Reveal from "../ui/Reveal";
 
 export default function Hero() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [headlineSettled, setHeadlineSettled] = useState(false);
-  const [wordIndex, setWordIndex] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setWordIndex(i => (i + 1) % taglineWords.length), 2500);
-    return () => clearInterval(id);
-  }, []);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
   return (
-    <section
-      id="home"
-      ref={ref}
-      className="relative flex min-h-screen items-center overflow-hidden bg-white pt-24"
-    >
-      <div className="bg-grain pointer-events-none absolute inset-0" />
-      <motion.div
-        style={{ y: contentY, opacity }}
-        className="section-container relative z-10"
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mb-8 flex h-32 w-32 items-center justify-center"
-        >
-          {/*<HandCircle className="text-black/80" />*/}
-          <Sketch
-            type="circle"
-            color="#0a0a0a"
-            strokeWidth={1}
-            padding={[8, 8]}
-            enabled={headlineSettled}
-          >
-            <img
-              src={profile.avatar}
-              alt={profile.name}
-              className="relative z-10 h-24 w-24 rounded-full object-cover"
-            />
-          </Sketch>
-        </motion.div>
+    <section className="border-b border-[#e2e0d8]" data-purpose="hero-statement" id="hero">
+      <div className="p-8 md:p-14 lg:p-16">
+        <Reveal className="w-full">
+          {/* Top metadata strip */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between font-mono text-[10.5px] uppercase tracking-widest text-[#8a8883] mb-12 pb-4 border-b border-[#e2e0d8] gap-2">
+            <span>EST. 2024 // AUTONOMOUS AI &amp; DISTRIBUTED SYSTEMS</span>
+            <span>AI RESEARCH &amp; BACKEND SYSTEMS</span>
+          </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="eyebrow flex items-center gap-1.5"
-        >
-          {profile.role} ·{" "}
-          <span className="relative inline-block overflow-hidden" style={{ minWidth: "9rem" }}>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={taglineWords[wordIndex]}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="inline-block"
-              >
-                {taglineWords[wordIndex]}
-              </motion.span>
-            </AnimatePresence>
-          </span>
-        </motion.p>
-
-        <h1 className="mt-6 max-w-3xl text-6xl font-semibold leading-[1.05] tracking-tight text-black sm:text-7xl md:text-8xl">
-          <span className="block">
-            {profile.headline[0].split(" ").map((word, i) => (
-              <span key={i} className="inline-block overflow-hidden">
-                <motion.span
-                  className="inline-block"
-                  initial={{ y: "110%" }}
-                  animate={{ y: 0 }}
-                  transition={{ duration: 0.75, delay: 0.2 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            {/* Left Column: Portrait and Identity */}
+            <div className="lg:col-span-5 flex flex-col items-start gap-6">
+              <div className="w-full max-w-[280px] sm:max-w-[320px] aspect-square bg-[#f2f0ea] border border-[#e2e0d8] overflow-hidden shrink-0 shadow-sm">
+                <img
+                  alt={profile.name}
+                  className="w-full h-full object-cover grayscale contrast-105 block"
+                  src={profile.avatar}
+                />
+              </div>
+              <div className="space-y-1.5 pt-2">
+                <CharFadeText
+                  as="h1"
+                  className="text-4xl sm:text-5xl font-display font-normal tracking-tight text-[#111111] mb-2 block"
                 >
-                  {word}
-                </motion.span>
-                {i < profile.headline[0].split(" ").length - 1 && " "}
-              </span>
-            ))}
-          </span>
-          <span className="block">
-            <Sketch
-              type="circle"
-              color="#0a0a0a"
-              strokeWidth={2}
-              padding={[4, 14]}
-              enabled={headlineSettled}
-            >
-              <span className="inline-block overflow-hidden">
-                <motion.span
-                  className="inline-block"
-                  initial={{ y: "110%" }}
-                  animate={{ y: 0 }}
-                  transition={{ duration: 0.75, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}
-                  onAnimationComplete={() => setHeadlineSettled(true)}
+                  {profile.name}
+                </CharFadeText>
+                <div className="font-mono text-xs uppercase tracking-widest text-[#8a8883]">
+                  {profile.role}
+                </div>
+                <div className="font-mono text-xs text-[#555452] flex items-center gap-1 pt-1">
+                  <span>{profile.location}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Statement, Japanese Bio, and Telemetry Metrics */}
+            <div className="lg:col-span-7 space-y-8">
+              <div className="space-y-4">
+                <CharFadeText
+                  as="p"
+                  className="text-xl sm:text-2xl font-light text-[#111111] leading-relaxed block"
                 >
-                  {profile.headline[1]}
-                </motion.span>
-              </span>
-            </Sketch>
-          </span>
-        </h1>
+                  Specializing in autonomous AI agents, LangGraph multi-agent runtimes, low-latency streaming pipelines, and production backend infrastructure.
+                </CharFadeText>
+                <p className="font-mono text-xs leading-relaxed text-[#8a8883]">
+                  {profile.japaneseBio}
+                </p>
+              </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-8 max-w-xl text-lg font-light leading-relaxed text-black/60"
-        >
-          Hi, I&apos;m {profile.name}. {profile.bio}
-        </motion.p>
+              {/* Technical Telemetry Bar */}
+              <div className="grid grid-cols-2 gap-6 pt-8 border-t border-[#e2e0d8] font-mono md:grid-cols-3">
+                <div className="space-y-1">
+                  <div className="text-[10px] text-[#8a8883] uppercase tracking-wider">
+                    {profile.stats.throughput.label}
+                  </div>
+                  <div className="text-2xl font-display text-[#111111]">
+                    {profile.stats.throughput.value}{" "}
+                    <span className="text-xs text-[#8a8883]">
+                      {profile.stats.throughput.unit}
+                    </span>
+                  </div>
+                </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.55 }}
-          className="mt-10 flex flex-wrap items-center gap-4"
-        >
-          <a
-            href="#projects"
-            className="inline-flex items-center gap-2 rounded-full bg-black px-7 py-3.5 text-sm font-medium text-white transition-opacity hover:opacity-80"
-          >
-            View My Work <ArrowRight size={16} />
-          </a>
-          <a
-            href="#about"
-            className="inline-flex items-center rounded-full border border-black/20 px-7 py-3.5 text-sm font-medium text-black transition-colors hover:border-black"
-          >
-            About Me
-          </a>
-        </motion.div>
+                <div className="space-y-1">
+                  <div className="text-[10px] text-[#8a8883] uppercase tracking-wider">
+                    {profile.stats.coreEngines.label}
+                  </div>
+                  <div className="text-sm text-[#111111] pt-1">
+                    {profile.stats.coreEngines.value}
+                  </div>
+                </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="mt-10 flex items-center gap-4"
-        >
-          <a
-            href={profile.socials.github}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub"
-            className="rounded-full border border-black/15 p-3 text-black/70 transition-colors hover:border-black hover:bg-black hover:text-white"
-          >
-            <Github size={18} />
-          </a>
-          <a
-            href={profile.socials.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="LinkedIn"
-            className="rounded-full border border-black/15 p-3 text-black/70 transition-colors hover:border-black hover:bg-black hover:text-white"
-          >
-            <Linkedin size={18} />
-          </a>
-          <a
-            href={`mailto:${profile.email}`}
-            aria-label="Email"
-            className="rounded-full border border-black/15 p-3 text-black/70 transition-colors hover:border-black hover:bg-black hover:text-white"
-          >
-            <Mail size={18} />
-          </a>
-        </motion.div>
-      </motion.div>
-
-      <motion.a
-        href="#about"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1 }}
-        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-2 text-black/40"
-        >
-          <span className="font-hand text-lg">scroll</span>
-          <ArrowDown size={16} />
-        </motion.div>
-      </motion.a>
+                <div className="space-y-1">
+                  <div className="text-[10px] text-[#8a8883] uppercase tracking-wider">
+                    {profile.stats.status.label}
+                  </div>
+                  <div className="text-sm text-[#111111] pt-1 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0051d5] inline-block animate-pulse"></span>
+                    {profile.stats.status.value}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
     </section>
   );
 }

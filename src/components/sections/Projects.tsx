@@ -1,101 +1,93 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { RoughNotation } from "react-rough-notation";
-import { ExternalLink, Github } from "lucide-react";
 import { projects } from "../../data/content";
+import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
-import SectionHeader from "../ui/SectionHeader";
-import Squiggle from "../ui/Squiggle";
-import HandCircle from "../ui/HandCircle";
 
 export default function Projects() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
   return (
-    <section id="projects" className="relative bg-white py-28 md:py-36">
-      <div className="section-container">
-        <SectionHeader
-          index="04"
-          title="Selected Work"
-          description="A selection of recent work showcasing full-stack development, modern architecture, and creative problem-solving."
-        />
-
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
-          {projects.map((project, i) => (
-            <Reveal key={project.title} delay={i * 0.06}>
-              <motion.div
-                whileHover={{ y: -6 }}
-                onHoverStart={() => setHoveredIndex(i)}
-                onHoverEnd={() => setHoveredIndex(null)}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="group flex h-full flex-col justify-between rounded-2xl border border-black/10 p-8"
-              >
-                <RoughNotation
-                  type="box"
-                  show={hoveredIndex === i}
-                  color="#0a0a0a"
-                  strokeWidth={1.5}
-                  animationDuration={450}
-                  padding={6}
-                >
-                  <div className="flex h-full flex-col justify-between">
-                    <div>
-                      <h3 className="text-2xl font-semibold text-black">
-                        {project.title}
-                      </h3>
-                      <Squiggle width={44} className="mt-1 text-black/20" />
-                      <p className="mt-4 font-light leading-relaxed text-black/60">
-                        {project.description}
-                      </p>
-                    </div>
-
-                    <div className="mt-8">
-                      <div className="flex flex-wrap gap-2">
-                        {project.tech.map((tech) => (
-                          <span
-                            key={tech}
-                            className="rounded-full border border-black/15 px-3 py-1 text-xs text-black/60"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="mt-6 flex items-center gap-5">
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sm text-black/70 transition-colors hover:text-black"
-                        >
-                          <span className="relative inline-flex h-6 w-6 items-center justify-center">
-                            <HandCircle className="text-black/20" />
-                            <Github size={14} className="relative z-10" />
-                          </span>
-                          Code
-                        </a>
-                        {project.live && (
-                          <a
-                            href={project.live}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 text-sm text-black/70 transition-colors hover:text-black"
-                          >
-                            <span className="relative inline-flex h-6 w-6 items-center justify-center">
-                              <HandCircle className="text-black/20" />
-                              <ExternalLink size={14} className="relative z-10" />
-                            </span>
-                            Live Demo
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </RoughNotation>
-              </motion.div>
-            </Reveal>
-          ))}
+    <section className="border-b border-[#e2e0d8]" data-purpose="selected-projects-list" id="projects">
+      {/* Header bar */}
+      <div className="px-6 sm:px-8 py-5 border-b border-[#e2e0d8] flex items-baseline justify-between">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-xs text-[#8a8883]">04 //</span>
+          <CharFadeText
+            as="h3"
+            className="font-mono text-xs uppercase tracking-widest text-[#111111] font-medium inline-block"
+          >
+            SELECTED PROJECTS
+          </CharFadeText>
         </div>
+        <span className="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">
+          SYSTEMS &amp; INFRASTRUCTURE
+        </span>
+      </div>
+
+      {/* Projects List */}
+      <div className="divide-y divide-[#e2e0d8]">
+        {projects.map((project) => (
+          <article
+            key={project.title}
+            className="px-6 sm:px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#f7f6f0]/40 transition-colors"
+          >
+            <Reveal className="contents">
+              {/* Left Column: Code Index and Tech Stack */}
+              <div className="md:col-span-3 font-mono text-xs text-[#8a8883]">
+                <span className="block">{project.codeIndex}</span>
+                <div className="text-[#111111] text-[11px] pt-1 font-mono">
+                  {project.techStack}
+                </div>
+              </div>
+
+              {/* Middle Column: Title, Version, Description & Links */}
+              <div className="md:col-span-6 space-y-2">
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <h4 className="text-lg font-display font-medium text-[#111111]">
+                    {project.title} // {project.version}
+                  </h4>
+                  {project.status && (
+                    <span className="font-mono text-[10.5px] text-[#0051d5] uppercase tracking-wider border border-[#0051d5]/20 px-1.5 py-0.2 rounded-sm bg-[#0051d5]/5">
+                      {project.status}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-sm text-[#555452] leading-relaxed pt-1">
+                  {project.description}
+                </p>
+
+                <div className="flex items-center gap-4 pt-2 font-mono text-xs">
+                  {project.github && (
+                    <a
+                      className="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors"
+                      href={project.github}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Code ↗
+                    </a>
+                  )}
+                  {project.live && (
+                    <a
+                      className="text-[#111111] hover:text-[#0051d5] underline underline-offset-4 decoration-[#cbc8be] transition-colors"
+                      href={project.live}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Live Demo ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column: Performance Metric */}
+              <div className="md:col-span-3 md:text-right font-mono text-xs text-[#111111] pt-2 md:pt-0">
+                {project.metric}
+                <div className="text-[#8a8883] text-[10.5px] pt-0.5">
+                  {project.metricSub}
+                </div>
+              </div>
+            </Reveal>
+          </article>
+        ))}
       </div>
     </section>
   );

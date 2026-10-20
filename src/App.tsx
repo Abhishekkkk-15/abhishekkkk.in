@@ -1,35 +1,25 @@
-import Navbar from './components/layout/Navbar'
-import Footer from './components/layout/Footer'
-import ScrollProgress from './components/ui/ScrollProgress'
-import SectionDivider from './components/ui/SectionDivider'
-import Hero from './components/sections/Hero'
-import About from './components/sections/About'
-import Experience from './components/sections/Experience'
-import Projects from './components/sections/Projects'
-import Skills from './components/sections/Skills'
-import Contact from './components/sections/Contact'
+import Navbar from "./components/layout/Navbar";
+import Hero from "./components/sections/Hero";
+import Focus from "./components/sections/Focus";
+import Experience from "./components/sections/Experience";
+import Projects from "./components/sections/Projects";
+import ProjectDossier from "./components/sections/ProjectDossier";
+import Skills from "./components/sections/Skills";
+import Contact from "./components/sections/Contact";
 
-function App() {
+export default function App() {
   return (
-    <div className="relative bg-white">
-      <ScrollProgress />
+    <div className="w-full max-w-7xl mx-auto min-h-screen flex flex-col bg-[#faf9f5] border-x border-[#e2e0d8] relative shadow-sm">
       <Navbar />
-      <main>
+      <main className="flex-grow flex flex-col">
         <Hero />
-        <SectionDivider />
-        <About />
-        <SectionDivider />
+        <Focus />
         <Experience />
-        <SectionDivider />
         <Projects />
-        <SectionDivider />
+        <ProjectDossier />
         <Skills />
-        <SectionDivider />
         <Contact />
       </main>
-      <Footer />
     </div>
-  )
+  );
 }
-
-export default App

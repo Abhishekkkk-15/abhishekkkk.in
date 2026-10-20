@@ -3,13 +3,27 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        hand: ['Caveat', 'cursive'],
+      colors: {
+        background: '#faf9f5',
+        surface: '#faf9f5',
+        'surface-dim': '#f2f0ea',
+        'surface-container': '#efeeea',
+        'surface-container-high': '#e9e8e4',
+        'hairline': '#e2e0d8',
+        'hairline-dark': '#cbc8be',
+        'ink': '#111111',
+        'ink-muted': '#555452',
+        'ink-light': '#8a8883',
+        'cobalt': '#0051d5',
+        'cobalt-dim': '#316bf3',
       },
-      backgroundImage: {
-        grain:
-          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E\")",
+      fontFamily: {
+        sans: ['"Hanken Grotesk"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['"Space Grotesk"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+      },
+      letterSpacing: {
+        'widest-mono': '0.14em',
       },
     },
   },

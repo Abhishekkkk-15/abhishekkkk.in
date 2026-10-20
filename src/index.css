@@ -4,44 +4,49 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #faf9f5;
 }
 
 body {
-  background-color: #ffffff;
-  color: #0a0a0a;
-  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #faf9f5;
+  color: #111111;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: #000000;
-  color: #ffffff;
+  background: #111111;
+  color: #faf9f5;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: #faf9f5;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d4;
-  border-radius: 6px;
+  background: #e2e0d8;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a3a3a3;
+  background: #cbc8be;
 }
 
-@layer components {
-  .section-container {
-    @apply mx-auto w-full max-w-6xl px-6 md:px-10;
-  }
+/* Character fade scroll styles */
+.char-unit {
+  display: inline-block;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+.char-unit.char-space {
+  display: inline;
+}
 
-  .section-index {
-    @apply font-hand text-3xl text-black/70;
-  }
-
-  .eyebrow {
-    @apply font-sans text-xs font-medium uppercase tracking-[0.25em] text-black/40;
+@media (prefers-reduced-motion: reduce) {
+  .char-unit {
+    opacity: 1 !important;
+    transition: none !important;
   }
 }
