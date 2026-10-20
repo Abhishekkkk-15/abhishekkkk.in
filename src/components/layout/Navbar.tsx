@@ -1,8 +1,18 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import { navLinks, profile } from "../../data/content";
+import { navLinks as defaultLinks, profile as defaultProfile } from "../../data/content";
 
-export default function Navbar() {
+interface NavbarProps {
+  labBrand?: string;
+  navLinks?: Array<{ label: string; href: string }>;
+}
+
+export default function Navbar({
+  labBrand = defaultProfile.labBrand,
+  navLinks = defaultLinks,
+}: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -15,7 +25,7 @@ export default function Navbar() {
       const scrollPos = window.scrollY + 120;
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = sections[i];
-        if (el.offsetTop <= scrollPos) {
+        if (el && el.offsetTop <= scrollPos) {
           setActiveSection(`#${el.id}`);
           return;
         }
@@ -26,17 +36,17 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [navLinks]);
 
   return (
     <header className="sticky top-0 z-40 bg-[#faf9f5]/95 backdrop-blur-sm border-b border-[#e2e0d8] px-6 sm:px-8 py-4 transition-colors">
       <div className="flex items-center justify-between font-mono text-[11px] tracking-widest uppercase">
         <a
-          aria-label={`${profile.name} Home`}
+          aria-label="Home"
           href="#hero"
           className="font-display font-medium text-sm tracking-tight text-[#111111] hover:text-[#0051d5] transition-colors flex items-center gap-2"
         >
-          {profile.labBrand}
+          {labBrand}
         </a>
 
         {/* Desktop Nav */}

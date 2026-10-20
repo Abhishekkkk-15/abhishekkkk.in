@@ -1,8 +1,13 @@
-import { profile } from "../../data/content";
+import type { IProfile } from "../../models/Portfolio";
+import { profile as defaultProfile } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
 
-export default function Hero() {
+interface HeroProps {
+  profile?: IProfile;
+}
+
+export default function Hero({ profile = defaultProfile }: HeroProps) {
   return (
     <section className="border-b border-[#e2e0d8]" data-purpose="hero-statement" id="hero">
       <div className="p-8 md:p-14 lg:p-16">
@@ -46,7 +51,7 @@ export default function Hero() {
                   as="p"
                   className="text-xl sm:text-2xl font-light text-[#111111] leading-relaxed block"
                 >
-                  Specializing in autonomous AI agents, LangGraph multi-agent runtimes, low-latency streaming pipelines, and production backend infrastructure.
+                  {profile.headline || profile.tagline}
                 </CharFadeText>
                 <p className="font-mono text-xs leading-relaxed text-[#8a8883]">
                   {profile.japaneseBio}
@@ -57,32 +62,32 @@ export default function Hero() {
               <div className="grid grid-cols-2 gap-6 pt-8 border-t border-[#e2e0d8] font-mono md:grid-cols-3">
                 <div className="space-y-1">
                   <div className="text-[10px] text-[#8a8883] uppercase tracking-wider">
-                    {profile.stats.throughput.label}
+                    {profile.stats?.throughput?.label || "THROUGHPUT"}
                   </div>
                   <div className="text-2xl font-display text-[#111111]">
-                    {profile.stats.throughput.value}{" "}
+                    {profile.stats?.throughput?.value}{" "}
                     <span className="text-xs text-[#8a8883]">
-                      {profile.stats.throughput.unit}
+                      {profile.stats?.throughput?.unit}
                     </span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="text-[10px] text-[#8a8883] uppercase tracking-wider">
-                    {profile.stats.coreEngines.label}
+                    {profile.stats?.coreEngines?.label || "CORE STACK"}
                   </div>
                   <div className="text-sm text-[#111111] pt-1">
-                    {profile.stats.coreEngines.value}
+                    {profile.stats?.coreEngines?.value}
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="text-[10px] text-[#8a8883] uppercase tracking-wider">
-                    {profile.stats.status.label}
+                    {profile.stats?.status?.label || "STATUS"}
                   </div>
                   <div className="text-sm text-[#111111] pt-1 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#0051d5] inline-block animate-pulse"></span>
-                    {profile.stats.status.value}
+                    {profile.stats?.status?.value}
                   </div>
                 </div>
               </div>

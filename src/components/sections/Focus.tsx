@@ -1,8 +1,13 @@
-import { architecturalFocus } from "../../data/content";
+import type { IArchitecturalFocus } from "../../models/Portfolio";
+import { architecturalFocus as defaultFocus } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
 
-export default function Focus() {
+interface FocusProps {
+  items?: IArchitecturalFocus[];
+}
+
+export default function Focus({ items = defaultFocus }: FocusProps) {
   return (
     <section className="border-b border-[#e2e0d8]" data-purpose="core-competencies" id="focus">
       {/* Section Header */}
@@ -23,7 +28,7 @@ export default function Focus() {
 
       {/* 3-Column Editorial Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e2e0d8]">
-        {architecturalFocus.map((focus) => (
+        {items.map((focus) => (
           <article
             key={focus.index}
             className="p-8 md:p-12 space-y-4 bg-transparent hover:bg-[#f7f6f0]/50 transition-colors"

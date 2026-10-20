@@ -1,7 +1,9 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 
 interface CharFadeTextProps {
-  children: string;
+  children: string | string[];
   className?: string;
   as?: "h1" | "h2" | "h3" | "h4" | "p" | "span" | "div";
 }
@@ -12,8 +14,10 @@ export default function CharFadeText({
   as: Component = "span",
 }: CharFadeTextProps) {
   const containerRef = useRef<HTMLElement>(null);
+  const text = Array.isArray(children) ? children.join("") : children;
+
   const [opacities, setOpacities] = useState<number[]>(() =>
-    Array.from({ length: children.length }, () => 1)
+    Array.from({ length: text.length }, () => 1)
   );
 
   useEffect(() => {
@@ -22,14 +26,14 @@ export default function CharFadeText({
     ).matches;
 
     if (prefersReducedMotion) {
-      setOpacities(Array.from({ length: children.length }, () => 1));
+      setOpacities(Array.from({ length: text.length }, () => 1));
       return;
     }
 
     const container = containerRef.current;
     if (!container) return;
 
-    const chars = Array.from(children);
+    const chars = Array.from(text);
     const total = chars.length;
     if (total === 0) return;
 
@@ -40,7 +44,7 @@ export default function CharFadeText({
       const rect = containerRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Range: start fading at 92% of viewport height, fully revealed at 40%
+      // Range: start fading at 92% of viewport height, fully revealed at 38%
       const startY = windowHeight * 0.92;
       const endY = windowHeight * 0.38;
 
@@ -76,9 +80,9 @@ export default function CharFadeText({
       window.removeEventListener("scroll", onScrollOrResize);
       window.removeEventListener("resize", onScrollOrResize);
     };
-  }, [children]);
+  }, [text]);
 
-  const chars = Array.from(children);
+  const chars = Array.from(text);
 
   return (
     // @ts-expect-error dynamic component tag

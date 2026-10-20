@@ -23,3 +23,7 @@ pnpm-lock.yaml
 *.sln
 *.sw?
 .env
+.next/
+out/
+.env*.local
+*.tsbuildinfo

@@ -1,8 +1,13 @@
-import { experience } from "../../data/content";
+import type { IExperienceItem } from "../../models/Portfolio";
+import { experience as defaultExperience } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
 
-export default function Experience() {
+interface ExperienceProps {
+  items?: IExperienceItem[];
+}
+
+export default function Experience({ items = defaultExperience }: ExperienceProps) {
   return (
     <section className="border-b border-[#e2e0d8]" data-purpose="experience-timeline" id="experience">
       {/* Header bar */}
@@ -17,13 +22,13 @@ export default function Experience() {
           </CharFadeText>
         </div>
         <span className="font-mono text-[10px] text-[#8a8883] uppercase tracking-wider">
-          2024 — PRESENT
+          CAREER TIMELINE
         </span>
       </div>
 
       {/* Experience Rows */}
       <div className="divide-y divide-[#e2e0d8]">
-        {experience.map((item, index) => (
+        {items.map((item, index) => (
           <article
             key={`${item.company}-${index}`}
             className="px-6 sm:px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#f7f6f0]/40 transition-colors"
@@ -48,16 +53,18 @@ export default function Experience() {
                   {item.description}
                 </p>
                 {/* Tech Pills */}
-                <div className="flex flex-wrap gap-1.5 pt-2 font-mono text-[11px]">
-                  {item.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-block bg-[#efeeea] border border-[#e2e0d8] px-2 py-0.5 text-[#555452] rounded-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                {item.tags && item.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-2 font-mono text-[11px]">
+                    {item.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-block bg-[#efeeea] border border-[#e2e0d8] px-2 py-0.5 text-[#555452] rounded-sm"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Right Column: Key Technical Metric */}

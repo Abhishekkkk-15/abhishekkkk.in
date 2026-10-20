@@ -1,8 +1,13 @@
-import { projects } from "../../data/content";
+import type { IProjectItem } from "../../models/Portfolio";
+import { projects as defaultProjects } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
 
-export default function Projects() {
+interface ProjectsProps {
+  items?: IProjectItem[];
+}
+
+export default function Projects({ items = defaultProjects }: ProjectsProps) {
   return (
     <section className="border-b border-[#e2e0d8]" data-purpose="selected-projects-list" id="projects">
       {/* Header bar */}
@@ -23,7 +28,7 @@ export default function Projects() {
 
       {/* Projects List */}
       <div className="divide-y divide-[#e2e0d8]">
-        {projects.map((project) => (
+        {items.map((project) => (
           <article
             key={project.title}
             className="px-6 sm:px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#f7f6f0]/40 transition-colors"

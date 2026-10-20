@@ -1,8 +1,13 @@
-import { skillMatrix } from "../../data/content";
+import type { ISkillMatrix } from "../../models/Portfolio";
+import { skillMatrix as defaultSkills } from "../../data/content";
 import CharFadeText from "../ui/CharFadeText";
 import Reveal from "../ui/Reveal";
 
-export default function Skills() {
+interface SkillsProps {
+  skills?: ISkillMatrix[];
+}
+
+export default function Skills({ skills = defaultSkills }: SkillsProps) {
   return (
     <section className="border-b border-[#e2e0d8]" data-purpose="technical-capabilities" id="skills">
       {/* Header bar */}
@@ -23,7 +28,7 @@ export default function Skills() {
 
       {/* Editorial Matrix */}
       <div className="divide-y divide-[#e2e0d8]">
-        {skillMatrix.map((item, idx) => (
+        {skills.map((item, idx) => (
           <div
             key={item.category}
             className="px-6 sm:px-8 py-6 flex flex-col md:flex-row md:items-start justify-between gap-4 hover:bg-[#f7f6f0]/40 transition-colors"
