@@ -16,17 +16,23 @@ export default function CharFadeText({
   const containerRef = useRef<HTMLElement>(null);
   const text = Array.isArray(children) ? children.join("") : children;
 
+  const [isComplete, setIsComplete] = useState(false);
   const [opacities, setOpacities] = useState<number[]>(() =>
     Array.from({ length: text.length }, () => 1)
   );
 
+  const maxProgressRef = useRef(0);
+
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    maxProgressRef.current = 0;
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (prefersReducedMotion) {
       setOpacities(Array.from({ length: text.length }, () => 1));
+      setIsComplete(true);
       return;
     }
 
@@ -35,7 +41,10 @@ export default function CharFadeText({
 
     const chars = Array.from(text);
     const total = chars.length;
-    if (total === 0) return;
+    if (total === 0) {
+      setIsComplete(true);
+      return;
+    }
 
     let ticking = false;
 
@@ -44,21 +53,41 @@ export default function CharFadeText({
       const rect = containerRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Range: start fading at 92% of viewport height, fully revealed at 38%
-      const startY = windowHeight * 0.92;
-      const endY = windowHeight * 0.38;
+      // Start fade-in wave at 96% of viewport (just as it enters view)
+      // Fully reveal at 75% of viewport (already 100% solid in the lower quarter of the screen)
+      const startY = windowHeight * 0.96;
+      const endY = windowHeight * 0.75;
 
-      let progress = (startY - rect.top) / (startY - endY);
+      let progress = 0;
+      if (rect.top <= endY) {
+        progress = 1;
+      } else if (rect.top < startY) {
+        progress = (startY - rect.top) / (startY - endY);
+      } else {
+        progress = 0;
+      }
+
       progress = Math.max(0, Math.min(1, progress));
 
-      const spread = 0.18;
+      // Latch to the maximum progress reached so text NEVER fades backward or looks washed out once in view
+      maxProgressRef.current = Math.max(maxProgressRef.current, progress);
+      const effectiveProgress = maxProgressRef.current;
+
+      if (effectiveProgress >= 1) {
+        setOpacities(Array.from({ length: total }, () => 1));
+        setIsComplete(true);
+        ticking = false;
+        return;
+      }
+
+      const spread = 0.22;
       const nextOpacities = chars.map((_, index) => {
         const charThreshold = index / total;
         const charProgress = Math.max(
           0,
-          Math.min(1, (progress - charThreshold * (1 - spread)) / spread)
+          Math.min(1, (effectiveProgress - charThreshold * (1 - spread)) / spread)
         );
-        return 0.2 + charProgress * 0.8;
+        return 0.35 + charProgress * 0.65;
       });
 
       setOpacities(nextOpacities);
@@ -66,6 +95,7 @@ export default function CharFadeText({
     };
 
     const onScrollOrResize = () => {
+      if (isComplete) return;
       if (!ticking) {
         window.requestAnimationFrame(update);
         ticking = true;
@@ -80,7 +110,7 @@ export default function CharFadeText({
       window.removeEventListener("scroll", onScrollOrResize);
       window.removeEventListener("resize", onScrollOrResize);
     };
-  }, [text]);
+  }, [text, isComplete]);
 
   const chars = Array.from(text);
 
@@ -100,7 +130,8 @@ export default function CharFadeText({
             key={index}
             className="char-unit"
             style={{
-              opacity: opacities[index] ?? 1,
+              opacity: isComplete ? 1 : (opacities[index] ?? 1),
+              transition: isComplete ? "none" : "opacity 100ms ease-out",
             }}
           >
             {char}
