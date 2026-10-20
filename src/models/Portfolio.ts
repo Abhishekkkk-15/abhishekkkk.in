@@ -85,6 +85,15 @@ export interface IFlagshipDossier {
   live?: string;
 }
 
+export interface IGithubActivity {
+  status?: string;
+  customCommits?: string;
+  customPrs?: string;
+  customReviews?: string;
+  customStars?: string;
+  customLanguages?: string;
+}
+
 export interface ISkillMatrix {
   category: string;
   items: string[];
@@ -102,6 +111,7 @@ export interface IPortfolioData {
   experience: IExperienceItem[];
   projects: IProjectItem[];
   flagshipDossier: IFlagshipDossier;
+  githubActivity?: IGithubActivity;
   skillMatrix: ISkillMatrix[];
   contactInfo: IContactInfo;
 }
@@ -195,6 +205,17 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
       github: { type: String, required: true },
       live: { type: String, default: "" },
     },
+    githubActivity: {
+      status: { type: String, default: "Active Development" },
+      customCommits: { type: String, default: "" },
+      customPrs: { type: String, default: "164" },
+      customReviews: { type: String, default: "312" },
+      customStars: { type: String, default: "4.2k" },
+      customLanguages: {
+        type: String,
+        default: "TypeScript (48%)\nGo (20%)\nRust (15%)",
+      },
+    },
     skillMatrix: [
       {
         category: { type: String, required: true },
@@ -217,12 +238,22 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
   }
 );
 
+export const defaultGithubActivity: IGithubActivity = {
+  status: "Active Development",
+  customCommits: "",
+  customPrs: "164",
+  customReviews: "312",
+  customStars: "4.2k",
+  customLanguages: "TypeScript (48%)\nGo (20%)\nRust (15%)",
+};
+
 export const defaultPortfolioData: IPortfolioData = {
   profile: defaultProfile,
   architecturalFocus: defaultFocus,
   experience: defaultExperience,
   projects: defaultProjects,
   flagshipDossier: defaultDossier,
+  githubActivity: defaultGithubActivity,
   skillMatrix: defaultSkills,
   contactInfo: defaultContact,
 };

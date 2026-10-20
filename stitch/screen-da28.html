@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAI / LAB — Applied AI Engineer</title>
+<!-- Tailwind CSS CDN with forms & container plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Custom Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            linen: '#f7f6f2',
+            'linen-dim': '#f0eeea',
+            'ink': '#111111',
+            'ink-muted': '#555452',
+            'ink-light': '#8a8883',
+            'hairline': '#e2e0d8',
+            'hairline-dark': '#cbc8be',
+            'cobalt': '#2563EB',
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
+          letterSpacing: {
+            'widest-mono': '0.14em',
+          }
+        }
+      }
+    }
+  </script>
+<!-- Typography and Base Styles -->
+<style data-purpose="typography">
+    body {
+      background-color: #f7f6f2;
+      color: #111111;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    ::selection {
+      background: #111111;
+      color: #f7f6f2;
+    }
+  </style>
+<!-- Minimal Scroll Reveal Styles -->
+<style data-purpose="scroll-animations">
+    /* Subtle, single-duty scroll transition with zero hover bloat */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-on-scroll.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-linen text-ink font-sans min-h-screen flex flex-col justify-start selection:bg-ink selection:text-linen">
+<!-- Mobile Screen Container -->
+<div class="w-full max-w-md mx-auto min-h-screen flex flex-col bg-linen border-x border-hairline relative">
+<!-- BEGIN: TopBar -->
+<header class="sticky top-0 z-40 bg-linen/95 backdrop-blur-sm border-b border-hairline px-5 py-3.5" data-purpose="top-navigation">
+<div class="flex items-center justify-between font-mono text-[11px] tracking-widest-mono uppercase text-ink">
+<a aria-label="KAI LAB Home" class="font-bold tracking-tight text-xs flex items-center gap-1.5" href="#hero">
+<span>KAI</span>
+<span class="text-ink-light">/</span>
+<span>LAB</span>
+</a>
+<!-- Live Status Pill -->
+<div class="flex items-center gap-2" data-purpose="system-status">
+<span aria-hidden="true" class="inline-block w-1.5 h-1.5 rounded-full bg-cobalt animate-pulse"></span>
+<span class="text-[10px] text-ink-muted">ONLINE · V4.2</span>
+</div>
+<a class="text-ink hover:underline underline-offset-4 decoration-hairline-dark" href="#contact">
+          INDEX
+        </a>
+</div>
+</header>
+<!-- END: TopBar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-grow flex flex-col">
+<!-- BEGIN: HeroSection -->
+<section class="px-5 pt-10 pb-8 border-b border-hairline" data-purpose="hero-statement" id="hero">
+<!-- Sub-index Tag -->
+<div class="reveal-on-scroll flex items-center justify-between font-mono text-[10px] tracking-widest uppercase text-ink-light mb-8">
+<span>EST. 2021</span>
+<span>SF // TOKYO</span>
+<span>01</span>
+</div>
+<!-- Brutalist Hero Heading -->
+<div class="reveal-on-scroll">
+<h1 class="text-[44px] leading-[0.92] tracking-[-0.04em] font-medium text-ink mb-1">
+            reasoning
+          </h1>
+<h2 class="text-[44px] leading-[0.92] tracking-[-0.04em] font-normal text-ink-light mb-6">
+            / systems.
+          </h2>
+</div>
+<p class="reveal-on-scroll font-mono text-[10.5px] leading-relaxed uppercase tracking-wider text-ink-muted mb-8 max-w-[280px]">
+          Applied AI Engineer &amp; Inference Architect. Engineering deterministic reliability on non-deterministic substrate.
+        </p>
+<!-- Asymmetric Dual Column Statement -->
+<div class="reveal-on-scroll grid grid-cols-2 gap-4 pt-5 border-t border-hairline">
+<div class="pr-2">
+<p class="text-[12.5px] leading-relaxed text-ink-muted font-normal">
+              Specialized in low-latency multimodal LLM pipelines, speculative decoding, and production agent alignment.
+            </p>
+</div>
+<div class="pl-2 border-l border-hairline">
+<p class="font-mono text-[10.5px] leading-relaxed text-ink-light uppercase">
+              現在、自律エージェントの推論最適化と大規模リアルタイム検索基盤の開発に従事。
+            </p>
+</div>
+</div>
+</section>
+<!-- END: HeroSection -->
+<!-- BEGIN: LiveTelemetryCards -->
+<!-- Editorial numeric stats inspired by Reference 2 -->
+<section class="border-b border-hairline grid grid-cols-2" data-purpose="live-metrics">
+<div class="reveal-on-scroll p-5 border-r border-hairline flex flex-col justify-between">
+<div class="flex items-center justify-between font-mono text-[10px] uppercase text-ink-light mb-4">
+<span>ACTIVE PIPELINES</span>
+<span>01</span>
+</div>
+<div>
+<div class="text-4xl tracking-tighter font-normal text-ink mb-1">04</div>
+<div class="flex items-center gap-1.5 font-mono text-[10px] text-ink-muted">
+<span class="w-1.5 h-1.5 rounded-full bg-cobalt"></span>
+<span>PROD DEPLOYED</span>
+</div>
+</div>
+</div>
+<div class="reveal-on-scroll p-5 flex flex-col justify-between">
+<div class="flex items-center justify-between font-mono text-[10px] uppercase text-ink-light mb-4">
+<span>P99 INFERENCE</span>
+<span>02</span>
+</div>
+<div>
+<div class="text-4xl tracking-tighter font-normal text-ink mb-1">&lt;38<span class="text-lg font-light text-ink-muted">ms</span></div>
+<div class="font-mono text-[10px] text-ink-muted">
+              TOKEN-TO-FIRST-BYTE
+            </div>
+</div>
+</div>
+</section>
+<!-- END: LiveTelemetryCards -->
+<!-- BEGIN: TechnicalFocus -->
+<section class="p-5 border-b border-hairline" data-purpose="core-competencies">
+<!-- Section Header -->
+<div class="reveal-on-scroll flex items-baseline justify-between mb-8 pb-2 border-b border-hairline">
+<h3 class="font-mono text-[11px] uppercase tracking-widest text-ink">
+            ARCHITECTURAL FOCUS
+          </h3>
+<span class="font-mono text-[10px] text-ink-light">WHAT / I / DO</span>
+</div>
+<!-- Capability Item 01 -->
+<article class="reveal-on-scroll mb-7 pb-6 border-b border-hairline/60 last:border-b-0 last:mb-0 last:pb-0">
+<div class="flex items-baseline justify-between mb-2">
+<span class="font-mono text-[11px] text-ink-light">01</span>
+<span class="font-mono text-[9px] uppercase tracking-wider text-ink-light">LATENCY &amp; COMPRESSION</span>
+</div>
+<h4 class="text-lg font-medium text-ink tracking-tight mb-2">
+            Inference &amp; Quantization
+          </h4>
+<p class="text-xs text-ink-muted leading-relaxed mb-3">
+            vLLM &amp; TensorRT-LLM custom kernels, speculative decoding algorithms, and AWQ/FP4 weight-activation quantization for latency-critical production envelopes.
+          </p>
+<div class="flex flex-wrap gap-1.5 font-mono text-[9.5px] text-ink">
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">CUDA</span>
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">vLLM</span>
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">Speculative Decoding</span>
+</div>
+</article>
+<!-- Capability Item 02 -->
+<article class="reveal-on-scroll mb-7 pb-6 border-b border-hairline/60">
+<div class="flex items-baseline justify-between mb-2">
+<span class="font-mono text-[11px] text-ink-light">02</span>
+<span class="font-mono text-[9px] uppercase tracking-wider text-ink-light">MULTIMODAL WORKFLOWS</span>
+</div>
+<h4 class="text-lg font-medium text-ink tracking-tight mb-2">
+            Vision-Language Reasoning
+          </h4>
+<p class="text-xs text-ink-muted leading-relaxed mb-3">
+            Fine-tuning visual tokenizers, spatial grounding architectures, and high-frequency real-time edge processing for multimodal reasoning environments.
+          </p>
+<div class="flex flex-wrap gap-1.5 font-mono text-[9.5px] text-ink">
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">VLM</span>
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">Function Calling</span>
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">Streaming GRPC</span>
+</div>
+</article>
+<!-- Capability Item 03 -->
+<article class="reveal-on-scroll">
+<div class="flex items-baseline justify-between mb-2">
+<span class="font-mono text-[11px] text-ink-light">03</span>
+<span class="font-mono text-[9px] uppercase tracking-wider text-ink-light">ALIGNMENT &amp; EVALS</span>
+</div>
+<h4 class="text-lg font-medium text-ink tracking-tight mb-2">
+            Preference Alignment &amp; Verification
+          </h4>
+<p class="text-xs text-ink-muted leading-relaxed mb-3">
+            Offline DPO/KTO optimization paired with synthetically generated test sets, formal verification of structured JSON outputs, and red-teaming harnesses.
+          </p>
+<div class="flex flex-wrap gap-1.5 font-mono text-[9.5px] text-ink">
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">DPO</span>
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">Deterministic Evals</span>
+<span class="px-2 py-0.5 border border-hairline-dark/70 bg-linen-dim">Guardrails</span>
+</div>
+</article>
+</section>
+<!-- END: TechnicalFocus -->
+<!-- BEGIN: SelectedSystems -->
+<section class="p-5 border-b border-hairline" data-purpose="selected-projects">
+<div class="reveal-on-scroll flex items-baseline justify-between mb-6 pb-2 border-b border-hairline">
+<h3 class="font-mono text-[11px] uppercase tracking-widest text-ink">
+            SELECTED SYSTEMS
+          </h3>
+<span class="font-mono text-[10px] text-ink-light">[ 03 RUNTIMES ]</span>
+</div>
+<div class="space-y-4">
+<!-- System 1 -->
+<article class="reveal-on-scroll p-4 border border-hairline bg-linen-dim/40 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between font-mono text-[10px] text-ink-light mb-2">
+<span>01 // PRODUCTION</span>
+<span>2024</span>
+</div>
+<div class="flex items-baseline justify-between mb-1.5">
+<h4 class="text-base font-semibold text-ink tracking-tight font-mono">SYNAPSE-V</h4>
+<span class="font-mono text-xs text-ink-muted">↗</span>
+</div>
+<p class="text-xs text-ink-muted leading-relaxed mb-3">
+                Sub-50ms vision-agent runtime deployed to 2.4M+ connected client devices. Built with fused FP8 operators and low-bit cache quantization.
+              </p>
+</div>
+<div class="pt-2 border-t border-hairline flex items-center justify-between font-mono text-[9px] text-ink-light">
+<span>LATENCY: 42MS</span>
+<span>SCALE: 12K QPS</span>
+</div>
+</article>
+<!-- System 2 -->
+<article class="reveal-on-scroll p-4 border border-hairline bg-linen-dim/40 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between font-mono text-[10px] text-ink-light mb-2">
+<span>02 // RETRIEVAL</span>
+<span>2023–24</span>
+</div>
+<div class="flex items-baseline justify-between mb-1.5">
+<h4 class="text-base font-semibold text-ink tracking-tight font-mono">KINETIC-EMBED</h4>
+<span class="font-mono text-xs text-ink-muted">↗</span>
+</div>
+<p class="text-xs text-ink-muted leading-relaxed mb-3">
+                Sparse-dense hybrid embedding engine with continuous index compaction and sub-10ms cross-modal retrieval across 80M vector records.
+              </p>
+</div>
+<div class="pt-2 border-t border-hairline flex items-center justify-between font-mono text-[9px] text-ink-light">
+<span>LATENCY: 9.2MS</span>
+<span>HNSW + BM25</span>
+</div>
+</article>
+<!-- System 3 -->
+<article class="reveal-on-scroll p-4 border border-hairline bg-linen-dim/40 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between font-mono text-[10px] text-ink-light mb-2">
+<span>03 // REASONING</span>
+<span>2024</span>
+</div>
+<div class="flex items-baseline justify-between mb-1.5">
+<h4 class="text-base font-semibold text-ink tracking-tight font-mono">NEXUS-REASON</h4>
+<span class="font-mono text-xs text-ink-muted">↗</span>
+</div>
+<p class="text-xs text-ink-muted leading-relaxed mb-3">
+                Domain-specialized 14B parameter reasoning model with programmatic tree-search verifier for static Rust/C++ memory-safety validation.
+              </p>
+</div>
+<div class="pt-2 border-t border-hairline flex items-center justify-between font-mono text-[9px] text-ink-light">
+<span>PASS@1: 88.4%</span>
+<span>MCTS SEARCH</span>
+</div>
+</article>
+</div>
+</section>
+<!-- END: SelectedSystems -->
+<!-- BEGIN: ResearchPapers -->
+<section class="p-5 border-b border-hairline" data-purpose="publications">
+<div class="reveal-on-scroll flex items-baseline justify-between mb-6 pb-2 border-b border-hairline">
+<h3 class="font-mono text-[11px] uppercase tracking-widest text-ink">
+            PUBLICATIONS &amp; LOGS
+          </h3>
+<span class="font-mono text-[10px] text-ink-light">INDEX</span>
+</div>
+<ul class="space-y-4">
+<!-- Paper 1 -->
+<li class="reveal-on-scroll pb-3 border-b border-hairline/60">
+<div class="flex items-center justify-between font-mono text-[10px] text-ink-light mb-1">
+<span>2024.11</span>
+<span class="text-cobalt">NeurIPS WORKSHOP</span>
+</div>
+<p class="text-xs font-medium text-ink leading-snug">
+              Adaptive Speculative Token Verification via Lightweight Critic Heads
+            </p>
+<div class="mt-1 flex items-center justify-between text-[10px] font-mono text-ink-light">
+<span>arXiv:2411.08914</span>
+<span>PDF ↗</span>
+</div>
+</li>
+<!-- Paper 2 -->
+<li class="reveal-on-scroll pb-3 border-b border-hairline/60">
+<div class="flex items-center justify-between font-mono text-[10px] text-ink-light mb-1">
+<span>2023.08</span>
+<span>ICML POSTER</span>
+</div>
+<p class="text-xs font-medium text-ink leading-snug">
+              Low-Rank Calibration for Context Compression in Streaming Multi-turn Agents
+            </p>
+<div class="mt-1 flex items-center justify-between text-[10px] font-mono text-ink-light">
+<span>arXiv:2308.04102</span>
+<span>PDF ↗</span>
+</div>
+</li>
+<!-- Paper 3 -->
+<li class="reveal-on-scroll pb-1">
+<div class="flex items-center justify-between font-mono text-[10px] text-ink-light mb-1">
+<span>2023.02</span>
+<span>TECH MEMO</span>
+</div>
+<p class="text-xs font-medium text-ink leading-snug">
+              Notes on Real-Time KV Cache Tiering Across Heterogeneous Accelerators
+            </p>
+<div class="mt-1 flex items-center justify-between text-[10px] font-mono text-ink-light">
+<span>READ ON GITHUB</span>
+<span>TEXT ↗</span>
+</div>
+</li>
+</ul>
+</section>
+<!-- END: ResearchPapers -->
+<!-- BEGIN: ColophonAndContact -->
+<section class="p-5 bg-linen flex-grow flex flex-col justify-between" data-purpose="contact-colophon" id="contact">
+<div class="reveal-on-scroll mb-8">
+<div class="flex items-baseline justify-between mb-4 pb-2 border-b border-hairline">
+<h3 class="font-mono text-[11px] uppercase tracking-widest text-ink">
+              CONNECT / ENGAGE
+            </h3>
+<span class="font-mono text-[10px] text-ink-light">P.04</span>
+</div>
+<!-- Structured Contact Block inspired by Reference 1 -->
+<div class="space-y-3 font-mono text-[11px]">
+<div class="grid grid-cols-4 gap-2">
+<span class="text-ink-light uppercase">LOC</span>
+<span class="col-span-3 text-ink">Roppongi Hills Mori Tower / SF SoMa</span>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<span class="text-ink-light uppercase">NET</span>
+<div class="col-span-3 space-y-1">
+<div><a class="text-ink underline underline-offset-2 decoration-hairline-dark" href="https://github.com">github.com/kai-systems ↗</a></div>
+<div><a class="text-ink underline underline-offset-2 decoration-hairline-dark" href="https://x.com">x.com/kai_applied_ai ↗</a></div>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-2 pt-1">
+<span class="text-ink-light uppercase">PGP</span>
+<span class="col-span-3 text-ink-muted text-[10px] font-mono break-all">
+                4A89 2F01 CB52 9E80 1488 FF21
+              </span>
+</div>
+</div>
+</div>
+<!-- Terminal Status Card -->
+<div class="reveal-on-scroll p-3.5 border border-hairline bg-linen-dim mb-8">
+<div class="flex items-center justify-between text-[10px] font-mono mb-2">
+<span class="text-ink font-semibold">DEPLOYMENT AVAILABILITY</span>
+<span class="text-cobalt font-medium">Q2 2025 ACTIVE</span>
+</div>
+<p class="text-xs text-ink-muted leading-relaxed font-sans">
+            Open for fractional advisory, model distillation contracts, and inference efficiency audits.
+          </p>
+</div>
+<!-- Footnote / Credits -->
+<footer class="reveal-on-scroll pt-5 border-t border-hairline flex items-center justify-between text-[10px] font-mono text-ink-light uppercase">
+<span>© 2025 KAI / LAB</span>
+<a class="hover:text-ink text-ink-muted" href="#hero">TOP ↑</a>
+</footer>
+</section>
+<!-- END: ColophonAndContact -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: MinimalMobileTabBar -->
+<!-- Minimal bottom indicator resembling high-end iOS editorial design -->
+<nav aria-label="Quick Navigation" class="sticky bottom-0 z-40 bg-linen/95 backdrop-blur-md border-t border-hairline px-6 py-2.5 flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-ink-muted" data-purpose="mobile-status-bar">
+<a class="flex flex-col items-center gap-0.5 text-ink" href="#hero">
+<span class="w-1 h-1 rounded-full bg-ink"></span>
+<span>INDEX</span>
+</a>
+<a class="flex flex-col items-center gap-0.5 hover:text-ink" href="#hero">
+<span class="w-1 h-1 rounded-full bg-transparent"></span>
+<span>MODELS</span>
+</a>
+<a class="flex flex-col items-center gap-0.5 hover:text-ink" href="#contact">
+<span class="w-1 h-1 rounded-full bg-transparent"></span>
+<span>CONTACT</span>
+</a>
+</nav>
+<!-- END: MinimalMobileTabBar -->
+</div>
+<!-- JavaScript: Lightweight IntersectionObserver for Minimal Scroll Reveal Only -->
+<script data-purpose="scroll-observer">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Respect user motion preferences
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealElements = document.querySelectorAll('.reveal-on-scroll');
+
+      if (prefersReducedMotion) {
+        revealElements.forEach(el => el.classList.add('is-visible'));
+        return;
+      }
+
+      // Configure Intersection Observer with subtle threshold
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.08
+      };
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target); // Reveal only once, no repeated triggers
+          }
+        });
+      }, observerOptions);
+
+      revealElements.forEach(el => observer.observe(el));
+    });
+  </script>
+</body></html>

@@ -42,6 +42,7 @@ export async function updatePortfolioData(
     if (newData.experience) doc.experience = newData.experience as any;
     if (newData.projects) doc.projects = newData.projects as any;
     if (newData.flagshipDossier) doc.flagshipDossier = newData.flagshipDossier as any;
+    if (newData.githubActivity) doc.githubActivity = newData.githubActivity as any;
     if (newData.skillMatrix) doc.skillMatrix = newData.skillMatrix as any;
     if (newData.contactInfo) doc.contactInfo = newData.contactInfo as any;
     await doc.save();

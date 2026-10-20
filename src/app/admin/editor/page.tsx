@@ -15,6 +15,7 @@ import {
   Briefcase,
   FolderGit2,
   FileCode,
+  GitCommit,
   Terminal,
   Send,
 } from "lucide-react";
@@ -26,6 +27,7 @@ type TabKey =
   | "experience"
   | "projects"
   | "dossier"
+  | "activity"
   | "skills"
   | "contact";
 
@@ -190,6 +192,7 @@ export default function EditorPage() {
             { id: "experience", label: "03 // Experience", icon: Briefcase },
             { id: "projects", label: "04 // Projects", icon: FolderGit2 },
             { id: "dossier", label: "04.1 // Deep Dive", icon: FileCode },
+            { id: "activity", label: "04.2 // GitHub Activity", icon: GitCommit },
             { id: "skills", label: "05 // Skills & Stack", icon: Terminal },
             { id: "contact", label: "06 // Contact & Colophon", icon: Send },
           ].map((tab) => {
@@ -1082,6 +1085,162 @@ export default function EditorPage() {
                     />
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5.5: GITHUB ACTIVITY (04.2) */}
+          {activeTab === "activity" && (
+            <div className="space-y-6 max-w-3xl">
+              <div className="border-b border-[#E2E0D8] pb-4">
+                <h2 className="text-2xl font-display font-medium text-[#111111]">
+                  Open Source Activity // GitHub (04.2)
+                </h2>
+                <p className="font-mono text-xs text-[#6E6D68] mt-1">
+                  Connected to your GitHub profile URL stored in 01 // Profile (
+                  <span className="text-[#111111] font-semibold">
+                    {data.profile.socials?.github || "Not configured"}
+                  </span>
+                  ). The 52-week commit density heatmap and live metrics are fetched dynamically via Next.js SSR.
+                </p>
+              </div>
+
+              <div className="p-4 bg-[#EBEAE4]/40 border border-[#E2E0D8] space-y-4 font-mono text-xs">
+                <div className="text-[11px] uppercase tracking-wider text-[#111111] font-semibold border-b border-[#E2E0D8] pb-2">
+                  TELEMETRY STATUS &amp; OVERRIDES
+                </div>
+
+                <div>
+                  <label className="text-[#6E6D68] block mb-1">
+                    Activity Status Badge (default: Active Development)
+                  </label>
+                  <input
+                    type="text"
+                    value={data.githubActivity?.status || ""}
+                    placeholder="Active Development"
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        githubActivity: {
+                          ...(data.githubActivity || {}),
+                          status: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[#6E6D68] block mb-1">
+                      Custom Commits Display (leave blank for live count)
+                    </label>
+                    <input
+                      type="text"
+                      value={data.githubActivity?.customCommits || ""}
+                      placeholder="e.g. 1,740+ (auto from API if blank)"
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          githubActivity: {
+                            ...(data.githubActivity || {}),
+                            customCommits: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[#6E6D68] block mb-1">
+                      PRs Merged Metric
+                    </label>
+                    <input
+                      type="text"
+                      value={data.githubActivity?.customPrs || ""}
+                      placeholder="e.g. 140+"
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          githubActivity: {
+                            ...(data.githubActivity || {}),
+                            customPrs: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[#6E6D68] block mb-1">
+                      Code Reviews Completed
+                    </label>
+                    <input
+                      type="text"
+                      value={data.githubActivity?.customReviews || ""}
+                      placeholder="e.g. 45"
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          githubActivity: {
+                            ...(data.githubActivity || {}),
+                            customReviews: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[#6E6D68] block mb-1">
+                      Stars Accumulated (leave blank for live repo star sum)
+                    </label>
+                    <input
+                      type="text"
+                      value={data.githubActivity?.customStars || ""}
+                      placeholder="e.g. 820+ (auto from public repos if blank)"
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          githubActivity: {
+                            ...(data.githubActivity || {}),
+                            customStars: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="text-[#6E6D68] block mb-1">
+                      Top Languages (leave blank to auto-detect from repos)
+                    </label>
+                    <input
+                      type="text"
+                      value={data.githubActivity?.customLanguages || ""}
+                      placeholder="e.g. TypeScript, Python, C++"
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          githubActivity: {
+                            ...(data.githubActivity || {}),
+                            customLanguages: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3 bg-[#EBEAE4] border border-[#E2E0D8] text-[11px] text-[#6E6D68]">
+                  Tip: To switch the GitHub account, update the GitHub URL in the &quot;01 // Profile &amp; Hero&quot; tab. The system will automatically fetch that profile&apos;s live contributions, public repos, and primary languages.
+                </div>
               </div>
             </div>
           )}
