@@ -41,6 +41,7 @@ export interface IProfile {
     };
   };
   showCurlBadge?: boolean;
+  showJapaneseBio?: boolean;
 }
 
 export interface IArchitecturalFocus {
@@ -157,6 +158,7 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
         },
       },
       showCurlBadge: { type: Boolean, default: false },
+      showJapaneseBio: { type: Boolean, default: true },
     },
     architecturalFocus: [
       {

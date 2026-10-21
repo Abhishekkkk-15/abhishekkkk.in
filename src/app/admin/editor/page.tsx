@@ -390,9 +390,41 @@ export default function EditorPage() {
                 </div>
 
                 <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">
-                    Japanese Subtitle Translation
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[#6E6D68] uppercase">
+                      Japanese Subtitle Translation
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[9.5px] px-1.5 py-0.2 bg-[#E2E0D8] text-[#6E6D68]">
+                        {data.profile.showJapaneseBio !== false ? "VISIBLE (DEFAULT)" : "HIDDEN"}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setData({
+                            ...data,
+                            profile: {
+                              ...data.profile,
+                              showJapaneseBio: data.profile.showJapaneseBio === false ? true : false,
+                            },
+                          })
+                        }
+                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                          data.profile.showJapaneseBio !== false ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
+                        }`}
+                        role="switch"
+                        aria-checked={data.profile.showJapaneseBio !== false}
+                        title="Toggle Japanese Bio visibility"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            data.profile.showJapaneseBio !== false ? "translate-x-4" : "translate-x-0"
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
                   <input
                     type="text"
                     value={data.profile.japaneseBio}
@@ -404,6 +436,9 @@ export default function EditorPage() {
                     }
                     className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
+                  <p className="font-mono text-[10.5px] text-[#6E6D68]">
+                    Toggle ON/OFF to control whether the Japanese text is displayed under the headline in the Hero section.
+                  </p>
                 </div>
               </div>
 
@@ -1416,56 +1451,117 @@ export default function EditorPage() {
           {/* TAB 6: SKILLS & INFRASTRUCTURE */}
           {activeTab === "skills" && (
             <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-display font-medium text-[#111111]">
-                  Technical Capabilities (05 //)
-                </h2>
-                <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Manage core technology categories and skill tags.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E2E0D8] pb-4 gap-4">
+                <div>
+                  <h2 className="text-2xl font-display font-medium text-[#111111]">
+                    Technical Capabilities (05 //)
+                  </h2>
+                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
+                    Manage core technology categories and skill tags. Add as many categories as needed.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setData({
+                      ...data,
+                      skillMatrix: [
+                        ...data.skillMatrix,
+                        {
+                          category: `DOMAIN ${String(data.skillMatrix.length + 1).padStart(2, "0")}`,
+                          items: ["Tool A", "Tool B", "Framework"],
+                        },
+                      ],
+                    });
+                  }}
+                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3.5 py-2 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+                >
+                  <Plus size={13} /> Add Category
+                </button>
               </div>
 
               <div className="space-y-6">
-                {data.skillMatrix.map((matrix, index) => (
-                  <div
-                    key={index}
-                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-3 rounded-none"
-                  >
-                    <div className="font-mono text-xs">
-                      <label className="text-[#6E6D68] uppercase">
-                        Category 0{index + 1}
-                      </label>
-                      <input
-                        type="text"
-                        value={matrix.category}
-                        onChange={(e) => {
-                          const updated = [...data.skillMatrix];
-                          updated[index].category = e.target.value;
-                          setData({ ...data, skillMatrix: updated });
-                        }}
-                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-sm font-sans focus:outline-none mt-1 rounded-none"
-                      />
-                    </div>
-                    <div className="font-mono text-xs">
-                      <label className="text-[#6E6D68] uppercase">
-                        Skills (comma-separated)
-                      </label>
-                      <input
-                        type="text"
-                        value={matrix.items.join(", ")}
-                        onChange={(e) => {
-                          const updated = [...data.skillMatrix];
-                          updated[index].items = e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean);
-                          setData({ ...data, skillMatrix: updated });
-                        }}
-                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
-                      />
-                    </div>
+                {data.skillMatrix.length === 0 ? (
+                  <div className="p-8 border border-dashed border-[#E2E0D8] text-center space-y-3 font-mono text-xs text-[#6E6D68]">
+                    <p>No technical capability categories configured.</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setData({
+                          ...data,
+                          skillMatrix: [
+                            {
+                              category: "CORE STACK",
+                              items: ["TypeScript", "Next.js", "Python"],
+                            },
+                          ],
+                        });
+                      }}
+                      className="inline-flex items-center gap-1.5 bg-[#111111] text-[#F4F3EF] px-3 py-1.5 rounded-none hover:bg-[#2563EB] transition-colors"
+                    >
+                      <Plus size={13} /> Add Initial Category
+                    </button>
                   </div>
-                ))}
+                ) : (
+                  data.skillMatrix.map((matrix, index) => (
+                    <div
+                      key={index}
+                      className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-3.5 relative rounded-none"
+                    >
+                      <div className="flex items-center justify-between border-b border-[#E2E0D8]/60 pb-2">
+                        <span className="font-mono text-xs uppercase font-medium text-[#111111]">
+                          Category {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = data.skillMatrix.filter((_, i) => i !== index);
+                            setData({ ...data, skillMatrix: updated });
+                          }}
+                          title="Remove Category"
+                          className="text-[#6E6D68] hover:text-red-600 transition-colors p-1 flex items-center gap-1 text-[11px] font-mono cursor-pointer"
+                        >
+                          <Trash2 size={13} />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+
+                      <div className="font-mono text-xs">
+                        <label className="text-[#6E6D68] uppercase">
+                          Category Name
+                        </label>
+                        <input
+                          type="text"
+                          value={matrix.category}
+                          onChange={(e) => {
+                            const updated = [...data.skillMatrix];
+                            updated[index].category = e.target.value;
+                            setData({ ...data, skillMatrix: updated });
+                          }}
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-sm font-sans focus:outline-none mt-1 rounded-none"
+                        />
+                      </div>
+                      <div className="font-mono text-xs">
+                        <label className="text-[#6E6D68] uppercase">
+                          Skills (comma-separated)
+                        </label>
+                        <input
+                          type="text"
+                          value={matrix.items.join(", ")}
+                          onChange={(e) => {
+                            const updated = [...data.skillMatrix];
+                            updated[index].items = e.target.value
+                              .split(",")
+                              .map((s) => s.trim())
+                              .filter(Boolean);
+                            setData({ ...data, skillMatrix: updated });
+                          }}
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
+                        />
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

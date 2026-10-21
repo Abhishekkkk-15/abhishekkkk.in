@@ -35,12 +35,12 @@ export default function Skills({ skills = defaultSkills }: SkillsProps) {
       <div className="divide-y divide-[#E2E0D8]">
         {skills.map((item, idx) => (
           <div
-            key={item.category}
+            key={`${item.category}-${idx}`}
             className="px-5 sm:px-8 py-5 sm:py-6 flex flex-col md:flex-row md:items-start justify-between gap-3 sm:gap-4 hover:bg-[#EBEAE4] transition-colors"
           >
             <Reveal className="contents">
               <div className="md:w-1/4 font-mono text-xs text-[#6E6D68] flex items-center gap-2">
-                <span>0{idx + 1} //</span>
+                <span>{String(idx + 1).padStart(2, "0")} //</span>
                 <span className="text-[#111111] font-medium">{item.category}</span>
               </div>
 

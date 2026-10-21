@@ -94,9 +94,11 @@ export default function Hero({ profile = defaultProfile }: HeroProps) {
                 >
                   {profile.headline || profile.tagline}
                 </CharFadeText>
-                <p className="font-mono text-xs leading-relaxed text-[#6E6D68]">
-                  {profile.japaneseBio}
-                </p>
+                {profile.showJapaneseBio !== false && profile.japaneseBio && (
+                  <p className="font-mono text-xs leading-relaxed text-[#6E6D68]">
+                    {profile.japaneseBio}
+                  </p>
+                )}
               </div>
 
               {/* Technical Telemetry Bar with Viewport Counter Interpolation */}

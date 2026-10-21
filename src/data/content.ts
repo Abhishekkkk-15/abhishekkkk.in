@@ -29,6 +29,7 @@ export const profile = {
     },
   },
   showCurlBadge: false,
+  showJapaneseBio: true,
 };
 
 export const navLinks = [
