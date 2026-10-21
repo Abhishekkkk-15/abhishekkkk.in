@@ -9,7 +9,7 @@ import ProjectDossier from "../components/sections/ProjectDossier";
 import GithubActivity from "../components/sections/GithubActivity";
 import Skills from "../components/sections/Skills";
 import Contact from "../components/sections/Contact";
-import CommandPalette from "../components/ui/CommandPalette";
+import StickySpotifyPlayer from "../components/ui/StickySpotifyPlayer";
 
 export const dynamic = "force-dynamic";
 
@@ -44,8 +44,8 @@ export default async function HomePage() {
         </main>
       </div>
 
-      {/* Global Interactive Command Palette (⌘K / Ctrl+K) */}
-      <CommandPalette />
+      {/* Sticky Bottom-Right Spotify Live Audio Player */}
+      <StickySpotifyPlayer />
     </div>
   );
 }

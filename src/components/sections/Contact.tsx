@@ -7,7 +7,6 @@ import {
 } from "../../data/content";
 import Reveal from "../ui/Reveal";
 import HairlineDivider from "../ui/HairlineDivider";
-import SpotifyNowPlaying from "../ui/SpotifyNowPlaying";
 
 interface ContactProps {
   contactInfo?: IContactInfo;
@@ -72,30 +71,17 @@ export default function Contact({
           </div>
         </div>
 
-        {/* Live Audio Telemetry Stream */}
-        <div className="pb-8">
-          <SpotifyNowPlaying variant="editorial" />
-        </div>
-
         <HairlineDivider leftLabel="06" rightLabel="COLOPHON" className="my-8" />
 
         {/* Footer Bar */}
         <footer className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs font-mono text-[#6E6D68] uppercase gap-4">
           <div>© {currentYear} {profile.labBrand || profile.name}</div>
-          <div className="flex items-center gap-6">
-            <a
-              className="text-[#6E6D68] hover:text-[#111111] transition-colors text-[11px]"
-              href="/admin/editor"
-            >
-              [CMS / EDITOR]
-            </a>
-            <a
-              className="hover:text-[#111111] transition-colors flex items-center gap-1"
-              href="#hero"
-            >
-              ↑ TOP
-            </a>
-          </div>
+          <a
+            className="hover:text-[#111111] transition-colors flex items-center gap-1"
+            href="#hero"
+          >
+            ↑ TOP
+          </a>
         </footer>
       </Reveal>
     </section>
