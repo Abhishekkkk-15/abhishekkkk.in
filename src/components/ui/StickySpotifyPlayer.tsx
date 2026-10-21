@@ -159,6 +159,31 @@ export default function StickySpotifyPlayer() {
               </div>
             </div>
 
+            {/* Audio Telemetry & Stream Progress */}
+            <div className="space-y-1.5 pt-0.5">
+              <div className="flex items-center justify-between text-[9px] text-[#6E6D68] uppercase tracking-wider">
+                <span>{isPlaying ? "LIVE BITSTREAM" : "CACHED SCROBBLE"}</span>
+                <span>{isPlaying ? "320 KBPS // FLAC" : "LAST PLAYED"}</span>
+              </div>
+              <div className="relative w-full h-[3px] bg-[#E2E0D8] dark:bg-[#242422] overflow-hidden">
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-[#2563EB]"
+                  animate={
+                    isPlaying
+                      ? {
+                          width: ["20%", "45%", "70%", "88%", "98%"],
+                          transition: {
+                            duration: 22,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          },
+                        }
+                      : { width: "100%" }
+                  }
+                />
+              </div>
+            </div>
+
             {/* Footer action badge */}
             <div className="pt-2 border-t border-[#E2E0D8]/60 dark:border-[#242422] flex items-center justify-between text-[9.5px] text-[#6E6D68]">
               <span className="flex items-center gap-1.5">
@@ -196,18 +221,46 @@ export default function StickySpotifyPlayer() {
           <span className="text-[#AAAAAA] max-w-[100px] truncate">{artist}</span>
         </div>
 
-        {/* Vinyl Disc Button */}
-        <button
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="relative block rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
-          aria-label={
-            isPlaying
-              ? `Currently playing: ${title} by ${artist}. Click to view details.`
-              : `Recently played: ${title} by ${artist}. Click to view details.`
-          }
-          title={`${title} - ${artist}`}
-        >
-          {/* Vinyl Record */}
+        {/* Vinyl Disc Button Container */}
+        <div className="relative">
+          {/* Mechanical Tonearm / Stylus */}
+          <motion.div
+            className="absolute -top-3.5 -right-2 w-5 h-10 pointer-events-none z-20"
+            style={{ transformOrigin: "6px 6px" }}
+            animate={{
+              rotate: isPlaying ? 22 : -6,
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 90,
+              damping: 14,
+              mass: 0.8,
+            }}
+          >
+            {/* Tonearm Pivot Base */}
+            <div className="absolute top-0 left-0 w-3 h-3 rounded-full bg-[#2A2A2A] border border-[#555555] shadow-md flex items-center justify-center">
+              <div className="w-1 h-1 rounded-full bg-[#8E8D88]" />
+            </div>
+            {/* Arm Shaft */}
+            <div className="absolute top-2.5 left-1 w-[1.5px] h-7 bg-gradient-to-b from-[#8E8D88] via-[#BBBBBB] to-[#666666] shadow-[0_1px_3px_rgba(0,0,0,0.5)] origin-top" />
+            {/* Stylus Headshell */}
+            <div className="absolute bottom-0 -left-0.5 w-2 h-2.5 bg-[#1A1A1A] border border-[#444444] rounded-[1px] shadow-sm transform -rotate-12" />
+          </motion.div>
+
+          <button
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="relative block rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
+            aria-label={
+              isPlaying
+                ? `Currently playing: ${title} by ${artist}. Click to view details.`
+                : `Recently played: ${title} by ${artist}. Click to view details.`
+            }
+            title={`${title} - ${artist}`}
+          >
+            {/* Subtle sonic ripple ring on hover */}
+            <div className="absolute inset-0 -m-1.5 rounded-full border border-[#2563EB]/40 opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 pointer-events-none" />
+
+            {/* Vinyl Record */}
           <div
             className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full transition-transform duration-300 group-hover:scale-105 active:scale-95 ${
               isPlaying ? "animate-[spin_4s_linear_infinite]" : ""
@@ -250,5 +303,6 @@ export default function StickySpotifyPlayer() {
         </button>
       </div>
     </div>
-  );
+  </div>
+);
 }

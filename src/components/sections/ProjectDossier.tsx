@@ -7,6 +7,7 @@ import Reveal from "../ui/Reveal";
 import TokenDecodingScrub from "../ui/TokenDecodingScrub";
 import TelemetryCounter from "../ui/TelemetryCounter";
 import HairlineDivider from "../ui/HairlineDivider";
+import ArchitecturePipeline from "../ui/ArchitecturePipeline";
 
 interface DossierProps {
   dossier?: IFlagshipDossier;
@@ -92,6 +93,9 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
               </a>
             )}
           </div>
+
+          {/* Interactive Systems Architecture Pipeline */}
+          <ArchitecturePipeline />
         </Reveal>
       </div>
     </section>
