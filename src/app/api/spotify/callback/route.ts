@@ -21,7 +21,13 @@ export async function GET(req: NextRequest) {
 
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  const redirectUri = "http://localhost:3000/api/spotify/callback";
+
+  // Spotify requires explicit 127.0.0.1 loopback literal instead of "localhost"
+  const host = req.headers.get("host") || "127.0.0.1:3000";
+  const isLocal = host.includes("localhost") || host.includes("127.0.0.1");
+  const protocol = isLocal ? "http" : "https";
+  const cleanHost = host.replace("localhost", "127.0.0.1");
+  const redirectUri = `${protocol}://${cleanHost}/api/spotify/callback`;
 
   if (!clientId || !clientSecret) {
     return new NextResponse(
@@ -148,7 +154,7 @@ export async function GET(req: NextRequest) {
 
             <p>Your local dev server will now show your real currently playing song (or most recently played song)!</p>
             
-            <a href="http://localhost:3000" class="btn">Return to Portfolio ↗</a>
+            <a href="http://127.0.0.1:3000" class="btn">Return to Portfolio ↗</a>
           </div>
         </body>
       </html>

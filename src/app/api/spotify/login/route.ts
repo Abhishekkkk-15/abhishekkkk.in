@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
 
   if (!clientId) {
@@ -12,7 +12,13 @@ export async function GET() {
     );
   }
 
-  const redirectUri = "http://localhost:3000/api/spotify/callback";
+  // Spotify requires explicit 127.0.0.1 IP literal instead of "localhost"
+  const host = req.headers.get("host") || "127.0.0.1:3000";
+  const isLocal = host.includes("localhost") || host.includes("127.0.0.1");
+  const protocol = isLocal ? "http" : "https";
+  const cleanHost = host.replace("localhost", "127.0.0.1");
+  const redirectUri = `${protocol}://${cleanHost}/api/spotify/callback`;
+
   const scopes = [
     "user-read-currently-playing",
     "user-read-recently-played",
