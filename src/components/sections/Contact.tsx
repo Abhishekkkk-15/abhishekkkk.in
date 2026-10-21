@@ -7,6 +7,7 @@ import {
 } from "../../data/content";
 import Reveal from "../ui/Reveal";
 import HairlineDivider from "../ui/HairlineDivider";
+import SpotifyNowPlaying from "../ui/SpotifyNowPlaying";
 
 interface ContactProps {
   contactInfo?: IContactInfo;
@@ -69,6 +70,11 @@ export default function Contact({
               </a>
             </p>
           </div>
+        </div>
+
+        {/* Live Audio Telemetry Stream */}
+        <div className="pb-8">
+          <SpotifyNowPlaying variant="editorial" />
         </div>
 
         <HairlineDivider leftLabel="06" rightLabel="COLOPHON" className="my-8" />

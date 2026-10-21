@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 import {
   navLinks as defaultLinks,
   profile as defaultProfile,
 } from "../../data/content";
+import ThemeToggle from "../ui/ThemeToggle";
+import SpotifyNowPlaying from "../ui/SpotifyNowPlaying";
 
 interface NavbarProps {
   labBrand?: string;
@@ -62,10 +64,16 @@ export default function Navbar({
     };
   }, [mobileOpen]);
 
+  const openCommandPalette = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("open-command-palette"));
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#F4F3EF]/95 backdrop-blur-md border-b border-[#E2E0D8] transition-colors">
+    <header className="sticky top-0 z-40 w-full bg-[#F4F3EF]/95 backdrop-blur-md border-b border-[#E2E0D8] transition-colors">
       <div className="w-full px-5 sm:px-8 md:px-10 lg:px-12 xl:px-16 2xl:px-20 py-3.5 sm:py-4 flex items-center justify-between font-mono text-[11px] tracking-widest uppercase">
-        {/* Left Side: Brandmark Heading & Status Telemetry */}
+        {/* Left Side: Brandmark Heading, Status Telemetry & Spotify Stream */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <a
             aria-label="Home"
@@ -85,19 +93,22 @@ export default function Navbar({
             <span className="font-mono">ONLINE // V2.0</span>
           </div>
 
+          {/* Spotify Live Audio Telemetry Pill */}
+          <SpotifyNowPlaying variant="compact" />
+
           {/* Role pill on widescreen displays */}
           {role && (
             <>
-              <div className="hidden xl:block h-3.5 w-px bg-[#E2E0D8]" />
-              <span className="hidden xl:inline text-[10px] text-[#82807A] font-mono tracking-wider">
+              <div className="hidden 2xl:block h-3.5 w-px bg-[#E2E0D8]" />
+              <span className="hidden 2xl:inline text-[10px] text-[#82807A] font-mono tracking-wider">
                 {role}
               </span>
             </>
           )}
         </div>
 
-        {/* Right Side: Desktop Nav Items & Quick Links */}
-        <div className="flex items-center gap-6 lg:gap-8">
+        {/* Right Side: Desktop Nav Items, Theme Toggle, Command Palette & Actions */}
+        <div className="flex items-center gap-4 lg:gap-6 xl:gap-8">
           {/* Desktop Nav Items */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[11px] text-[#6E6D68]">
             {navLinks.map((link) => {
@@ -120,6 +131,26 @@ export default function Navbar({
               );
             })}
           </nav>
+
+          {/* Tools & Utilities: Command Palette + Theme Switcher */}
+          <div className="flex items-center gap-2.5">
+            {/* Command Palette Button */}
+            <button
+              onClick={openCommandPalette}
+              type="button"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 font-mono text-[10px] text-[#6E6D68] hover:text-[#111111] border border-[#E2E0D8] hover:border-[#111111] bg-[#EBEAE4]/40 hover:bg-[#EBEAE4] transition-all select-none"
+              title="Open Command Palette (⌘K)"
+            >
+              <Search size={11} className="text-[#6E6D68]" />
+              <span className="hidden md:inline">CMD</span>
+              <span className="text-[9px] text-[#2563EB] font-mono font-medium">
+                ⌘K
+              </span>
+            </button>
+
+            {/* Sumi Dark Mode Toggle Button */}
+            <ThemeToggle />
+          </div>
 
           {/* External Social / CMS Badges */}
           <div className="hidden sm:flex items-center gap-3.5 text-[#6E6D68] text-[10.5px]">
@@ -177,6 +208,22 @@ export default function Navbar({
             className="lg:hidden overflow-hidden border-t border-[#E2E0D8] bg-[#F4F3EF]/98 backdrop-blur-md shadow-lg"
           >
             <div className="px-6 py-6 space-y-5 font-mono text-xs uppercase tracking-widest">
+              {/* Quick Utility Row: Theme Toggle + Command Palette */}
+              <div className="flex items-center justify-between pb-3 border-b border-[#E2E0D8]/60">
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    openCommandPalette();
+                  }}
+                  className="flex items-center gap-2 text-[11px] text-[#111111] border border-[#E2E0D8] px-3 py-1.5 bg-[#EBEAE4]/40"
+                >
+                  <Search size={12} className="text-[#2563EB]" />
+                  <span>COMMAND PALETTE [⌘K]</span>
+                </button>
+
+                <ThemeToggle />
+              </div>
+
               {/* Section links */}
               <div className="space-y-1">
                 {navLinks.map((link, idx) => {

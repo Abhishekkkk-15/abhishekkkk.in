@@ -24,6 +24,12 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        {/* Anti-flicker theme script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}`,
+          }}
+        />
       </head>
       <body className="bg-[#F4F3EF] text-[#111111] font-sans min-h-screen selection:bg-[#111111] selection:text-[#F4F3EF]">
         {children}
