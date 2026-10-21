@@ -570,6 +570,55 @@ export default function EditorPage() {
                     />
                   </div>
                 </div>
+
+                {/* Public JSON Schema ($ curl badge) Toggle */}
+                <div className="pt-6 border-t border-[#E2E0D8]/60">
+                  <div className="flex items-center justify-between p-4 bg-[#EBEAE4]/60 border border-[#E2E0D8]">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs uppercase font-medium text-[#111111]">
+                          Public JSON Schema ($ curl badge)
+                        </span>
+                        <span
+                          className={`font-mono text-[9.5px] px-1.5 py-0.2 ${
+                            data.profile.showCurlBadge
+                              ? "bg-[#2563EB]/10 text-[#2563EB] font-medium"
+                              : "bg-[#E2E0D8] text-[#6E6D68]"
+                          }`}
+                        >
+                          {data.profile.showCurlBadge ? "VISIBLE" : "HIDDEN (DEFAULT)"}
+                        </span>
+                      </div>
+                      <p className="font-mono text-[11px] text-[#6E6D68]">
+                        Display the copyable <code className="text-[#111111]">$ curl -s https://abhishekkkk.in/api/profile</code> telemetry chip in the Hero section.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setData({
+                          ...data,
+                          profile: {
+                            ...data.profile,
+                            showCurlBadge: !data.profile.showCurlBadge,
+                          },
+                        })
+                      }
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        data.profile.showCurlBadge ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
+                      }`}
+                      role="switch"
+                      aria-checked={Boolean(data.profile.showCurlBadge)}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          data.profile.showCurlBadge ? "translate-x-5" : "translate-x-0"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -1153,6 +1202,57 @@ export default function EditorPage() {
                     />
                   </div>
                 ))}
+              </div>
+
+              {/* System Architecture Pipeline Toggle */}
+              <div className="pt-4 border-t border-[#E2E0D8]">
+                <div className="flex items-center justify-between p-4 bg-[#EBEAE4]/60 border border-[#E2E0D8]">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs uppercase font-medium text-[#111111]">
+                        System Architecture Pipeline
+                      </span>
+                      <span
+                        className={`font-mono text-[9.5px] px-1.5 py-0.2 ${
+                          data.flagshipDossier.showArchitecturePipeline
+                            ? "bg-[#2563EB]/10 text-[#2563EB] font-medium"
+                            : "bg-[#E2E0D8] text-[#6E6D68]"
+                        }`}
+                      >
+                        {data.flagshipDossier.showArchitecturePipeline
+                          ? "VISIBLE"
+                          : "HIDDEN (DEFAULT)"}
+                      </span>
+                    </div>
+                    <p className="font-mono text-[11px] text-[#6E6D68]">
+                      Display the interactive 4-stage systems architecture pipeline in the Flagship Architectural Dossier.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setData({
+                        ...data,
+                        flagshipDossier: {
+                          ...data.flagshipDossier,
+                          showArchitecturePipeline: !data.flagshipDossier.showArchitecturePipeline,
+                        },
+                      })
+                    }
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                      data.flagshipDossier.showArchitecturePipeline ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
+                    }`}
+                    role="switch"
+                    aria-checked={Boolean(data.flagshipDossier.showArchitecturePipeline)}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                        data.flagshipDossier.showArchitecturePipeline ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           )}

@@ -94,8 +94,8 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
             )}
           </div>
 
-          {/* Interactive Systems Architecture Pipeline */}
-          <ArchitecturePipeline />
+          {/* Interactive Systems Architecture Pipeline (Toggleable via Admin) */}
+          {dossier?.showArchitecturePipeline && <ArchitecturePipeline />}
         </Reveal>
       </div>
     </section>

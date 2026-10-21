@@ -135,29 +135,31 @@ export default function Hero({ profile = defaultProfile }: HeroProps) {
                   </div>
                 </div>
 
-                {/* CLI Direct Access Telemetry Chip */}
-                <div className="pt-6 flex flex-wrap items-center gap-3 font-mono text-[11px]">
-                  <div className="flex items-center gap-2 bg-[#EBEAE4]/80 dark:bg-[#171716] border border-[#E2E0D8] dark:border-[#242422] px-3 py-1.5 text-[#6E6D68]">
-                    <span className="text-[#2563EB] font-bold">$</span>
-                    <span className="text-[#111111] dark:text-[#F4F3EF] selection:bg-[#2563EB]">
-                      curl -s https://abhishekkkk.in/api/profile
+                {/* CLI Direct Access Telemetry Chip (Toggleable via Admin) */}
+                {profile?.showCurlBadge && (
+                  <div className="pt-6 flex flex-wrap items-center gap-3 font-mono text-[11px]">
+                    <div className="flex items-center gap-2 bg-[#EBEAE4]/80 dark:bg-[#171716] border border-[#E2E0D8] dark:border-[#242422] px-3 py-1.5 text-[#6E6D68]">
+                      <span className="text-[#2563EB] font-bold">$</span>
+                      <span className="text-[#111111] dark:text-[#F4F3EF] selection:bg-[#2563EB]">
+                        curl -s https://abhishekkkk.in/api/profile
+                      </span>
+                      <button
+                        onClick={handleCopyCurl}
+                        className="ml-2 pl-2 border-l border-[#D8D6CE] dark:border-[#2E2E2C] text-[#111111] dark:text-[#F4F3EF] hover:text-[#2563EB] transition-colors cursor-pointer"
+                        title="Copy curl command"
+                      >
+                        {copied ? (
+                          <span className="text-[#2563EB] font-medium">COPIED ✓</span>
+                        ) : (
+                          "COPY"
+                        )}
+                      </button>
+                    </div>
+                    <span className="text-[10px] text-[#6E6D68] uppercase tracking-wider">
+                      // PUBLIC JSON SCHEMA
                     </span>
-                    <button
-                      onClick={handleCopyCurl}
-                      className="ml-2 pl-2 border-l border-[#D8D6CE] dark:border-[#2E2E2C] text-[#111111] dark:text-[#F4F3EF] hover:text-[#2563EB] transition-colors cursor-pointer"
-                      title="Copy curl command"
-                    >
-                      {copied ? (
-                        <span className="text-[#2563EB] font-medium">COPIED ✓</span>
-                      ) : (
-                        "COPY"
-                      )}
-                    </button>
                   </div>
-                  <span className="text-[10px] text-[#6E6D68] uppercase tracking-wider">
-                    // PUBLIC JSON SCHEMA
-                  </span>
-                </div>
+                )}
               </div>
             </div>
           </div>

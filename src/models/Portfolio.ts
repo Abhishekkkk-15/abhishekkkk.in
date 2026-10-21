@@ -40,6 +40,7 @@ export interface IProfile {
       value: string;
     };
   };
+  showCurlBadge?: boolean;
 }
 
 export interface IArchitecturalFocus {
@@ -83,6 +84,7 @@ export interface IFlagshipDossier {
   metrics: Array<{ label: string; value: string }>;
   github: string;
   live?: string;
+  showArchitecturePipeline?: boolean;
 }
 
 export interface IGithubActivity {
@@ -154,6 +156,7 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
           value: { type: String, required: true },
         },
       },
+      showCurlBadge: { type: Boolean, default: false },
     },
     architecturalFocus: [
       {
@@ -204,6 +207,7 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
       ],
       github: { type: String, required: true },
       live: { type: String, default: "" },
+      showArchitecturePipeline: { type: Boolean, default: false },
     },
     githubActivity: {
       status: { type: String, default: "Active Development" },

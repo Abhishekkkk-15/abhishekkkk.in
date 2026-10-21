@@ -28,6 +28,7 @@ export const profile = {
       value: "Active in Production",
     },
   },
+  showCurlBadge: false,
 };
 
 export const navLinks = [
@@ -219,6 +220,7 @@ export const flagshipDossier = {
   ],
   github: "https://github.com/Abhishekkkk-15/jarvis-assistant",
   live: "https://jarvis.abhishekkkk.in",
+  showArchitecturePipeline: false,
 };
 
 export type SkillMatrix = {
