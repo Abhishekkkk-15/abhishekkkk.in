@@ -30,7 +30,76 @@ function getCredentials() {
     clientId: process.env.SPOTIFY_CLIENT_ID || "",
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
     refreshToken: process.env.SPOTIFY_REFRESH_TOKEN || "",
+    lastfmUser:
+      process.env.LAST_FM_USERNAME ||
+      process.env.LASTFM_USERNAME ||
+      "abhishekkkk-15",
+    lastfmKey:
+      process.env.LAST_FM_API_KEY ||
+      process.env.LASTFM_API_KEY ||
+      process.env.LAST_FM_KEY ||
+      "",
   };
+}
+
+async function getLastFmStatus(): Promise<SpotifyTrackData | null> {
+  const { lastfmUser, lastfmKey } = getCredentials();
+
+  if (!lastfmUser || !lastfmKey) {
+    return null;
+  }
+
+  try {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(
+      lastfmUser
+    )}&api_key=${encodeURIComponent(lastfmKey)}&format=json&limit=1`;
+
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) {
+      console.warn("Last.fm fetch notice:", res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+    const rawTrack = data?.recenttracks?.track;
+    const track = Array.isArray(rawTrack) ? rawTrack[0] : rawTrack;
+
+    if (!track || !track.name) {
+      return null;
+    }
+
+    const isPlaying = track["@attr"]?.nowplaying === "true";
+    const title = track.name || "Unknown Track";
+    const artist =
+      typeof track.artist === "object"
+        ? track.artist?.["#text"] || "Unknown Artist"
+        : track.artist || "Unknown Artist";
+    const album =
+      typeof track.album === "object"
+        ? track.album?.["#text"] || ""
+        : track.album || "";
+
+    const images = track.image || [];
+    const imageObj =
+      images.find((img: any) => img.size === "extralarge") ||
+      images.find((img: any) => img.size === "large") ||
+      images[images.length - 1];
+    const albumImageUrl = imageObj?.["#text"] || FALLBACK_TRACK.albumImageUrl;
+    const songUrl = track.url || FALLBACK_TRACK.songUrl;
+
+    return {
+      isPlaying,
+      title,
+      artist,
+      album,
+      albumImageUrl,
+      songUrl,
+      configured: true,
+    };
+  } catch (err) {
+    console.error("Last.fm get status error:", err);
+    return null;
+  }
 }
 
 async function getAccessToken(): Promise<string | null> {
@@ -75,6 +144,13 @@ async function getAccessToken(): Promise<string | null> {
 }
 
 export async function getSpotifyStatus(): Promise<SpotifyTrackData> {
+  // 1. Try Last.fm first if configured (100% free, works for all Spotify users without Premium)
+  const lastFmTrack = await getLastFmStatus();
+  if (lastFmTrack) {
+    return lastFmTrack;
+  }
+
+  // 2. Otherwise try direct Spotify Web API (works for Spotify Premium accounts)
   const token = await getAccessToken();
 
   if (!token) {
@@ -82,7 +158,7 @@ export async function getSpotifyStatus(): Promise<SpotifyTrackData> {
   }
 
   try {
-    // 1. Check Currently Playing
+    // Check Currently Playing
     const nowPlayingRes = await fetch(NOW_PLAYING_ENDPOINT, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -117,7 +193,7 @@ export async function getSpotifyStatus(): Promise<SpotifyTrackData> {
       }
     }
 
-    // 2. Fall back to Recently Played (when paused or playback stopped)
+    // Fall back to Recently Played
     const recentlyPlayedRes = await fetch(RECENTLY_PLAYED_ENDPOINT, {
       headers: {
         Authorization: `Bearer ${token}`,
