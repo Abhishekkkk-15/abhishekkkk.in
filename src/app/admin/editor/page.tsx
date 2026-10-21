@@ -249,8 +249,8 @@ export default function EditorPage() {
       {/* Editor Body Grid */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row border-x border-[#E2E0D8] min-h-[calc(100vh-60px)]">
         {/* Left Side Tab Navigation */}
-        <nav className="w-full md:w-64 border-b md:border-b-0 md:border-r border-[#E2E0D8] bg-[#EBEAE4]/40 p-4 space-y-1 font-mono text-xs uppercase tracking-wider shrink-0">
-          <div className="text-[10px] text-[#6E6D68] px-3 py-2">SECTIONS</div>
+        <nav className="w-full md:w-64 border-b md:border-b-0 md:border-r border-[#E2E0D8] bg-[#EBEAE4]/40 p-3 sm:p-4 flex md:flex-col overflow-x-auto md:overflow-x-visible gap-1.5 md:gap-1 font-mono text-xs uppercase tracking-wider shrink-0 scrollbar-none">
+          <div className="hidden md:block text-[10px] text-[#6E6D68] px-3 py-2">SECTIONS</div>
 
           {[
             { id: "profile", label: "01 // Profile & Hero", icon: User },
@@ -268,7 +268,7 @@ export default function EditorPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabKey)}
-                className={`w-full text-left px-3.5 py-2.5 rounded-none flex items-center gap-2.5 transition-colors ${
+                className={`shrink-0 md:w-full text-left px-3.5 py-2.5 rounded-none flex items-center gap-2.5 transition-colors whitespace-nowrap ${
                   activeTab === tab.id
                     ? "bg-[#111111] text-[#F4F3EF]"
                     : "text-[#444442] hover:text-[#111111] hover:bg-[#EBEAE4]"

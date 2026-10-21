@@ -14,7 +14,7 @@ export default function Focus({ items = defaultFocus }: FocusProps) {
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="core-competencies" id="focus">
       {/* Section Header */}
-      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
+      <div className="px-5 sm:px-8 py-4 sm:py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">02 //</span>
           <CharFadeText
@@ -36,7 +36,7 @@ export default function Focus({ items = defaultFocus }: FocusProps) {
         {items.map((focus) => (
           <article
             key={focus.index}
-            className="p-8 md:p-12 space-y-4 bg-transparent hover:bg-[#EBEAE4] transition-colors"
+            className="p-6 sm:p-8 md:p-10 lg:p-12 space-y-3 sm:space-y-4 bg-transparent hover:bg-[#EBEAE4] transition-colors"
           >
             <Reveal>
               <span className="font-mono text-xs text-[#6E6D68] block">

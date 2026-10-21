@@ -14,7 +14,7 @@ export default function Skills({ skills = defaultSkills }: SkillsProps) {
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="technical-capabilities" id="skills">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
+      <div className="px-5 sm:px-8 py-4 sm:py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">05 //</span>
           <CharFadeText
@@ -36,7 +36,7 @@ export default function Skills({ skills = defaultSkills }: SkillsProps) {
         {skills.map((item, idx) => (
           <div
             key={item.category}
-            className="px-6 sm:px-8 py-6 flex flex-col md:flex-row md:items-start justify-between gap-4 hover:bg-[#EBEAE4] transition-colors"
+            className="px-5 sm:px-8 py-5 sm:py-6 flex flex-col md:flex-row md:items-start justify-between gap-3 sm:gap-4 hover:bg-[#EBEAE4] transition-colors"
           >
             <Reveal className="contents">
               <div className="md:w-1/4 font-mono text-xs text-[#6E6D68] flex items-center gap-2">

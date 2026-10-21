@@ -16,7 +16,7 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
   return (
     <section className="border-b border-[#E2E0D8] bg-[#F4F3EF]" data-purpose="project-dossier" id="project-spec">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
+      <div className="px-5 sm:px-8 py-4 sm:py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">{dossier.sectionIndex}</span>
           <CharFadeText
@@ -37,7 +37,7 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
       <TokenDecodingScrub />
 
       {/* Dossier Body */}
-      <div className="p-8 md:p-14 lg:p-16">
+      <div className="p-5 sm:p-8 md:p-12 lg:p-16">
         <Reveal className="max-w-3xl space-y-6">
           <div className="font-mono text-xs text-[#6E6D68] uppercase tracking-widest">
             {dossier.subtitle}

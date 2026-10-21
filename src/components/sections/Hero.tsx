@@ -15,7 +15,7 @@ interface HeroProps {
 export default function Hero({ profile = defaultProfile }: HeroProps) {
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="hero-statement" id="hero">
-      <div className="p-8 md:p-14 lg:p-16">
+      <div className="p-5 sm:p-8 md:p-12 lg:p-16">
         <Reveal className="w-full">
           {/* Top metadata strip */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between font-mono text-[10.5px] uppercase tracking-widest text-[#6E6D68] mb-8 pb-4 border-b border-[#E2E0D8] gap-2">
@@ -63,7 +63,7 @@ export default function Hero({ profile = defaultProfile }: HeroProps) {
               {/* Technical Telemetry Bar with Viewport Counter Interpolation */}
               <div className="pt-8">
                 <HairlineDivider leftLabel="TELEMETRY" rightLabel="SYS_CORE" className="mb-6" />
-                <div className="grid grid-cols-2 gap-6 font-mono md:grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 font-mono">
                   <div className="space-y-1">
                     <div className="text-[10px] text-[#6E6D68] uppercase tracking-wider">
                       {profile.stats?.throughput?.label || "THROUGHPUT"}
