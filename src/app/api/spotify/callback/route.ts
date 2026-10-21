@@ -1,15 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { verifySessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
+  // Only authenticated admins can link Spotify via callback
+  const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
+  if (!token) {
+    return new NextResponse(
+      `<div style="font-family: monospace; padding: 30px; background: #0D0D0C; color: #F87171;">
+        <h2>Unauthorized</h2>
+        <p>You must be logged in as an administrator to authorize Spotify.</p>
+        <p><a href="/admin/login" style="color: #38BDF8;">Log in to Admin Portal ↗</a></p>
+      </div>`,
+      { headers: { "Content-Type": "text/html" }, status: 401 }
+    );
+  }
+
+  const session = await verifySessionToken(token);
+  if (!session || !session.userId) {
+    return new NextResponse(
+      `<div style="font-family: monospace; padding: 30px; background: #0D0D0C; color: #F87171;">
+        <h2>Unauthorized</h2>
+        <p>Invalid or expired administrator session.</p>
+        <p><a href="/admin/login" style="color: #38BDF8;">Log in to Admin Portal ↗</a></p>
+      </div>`,
+      { headers: { "Content-Type": "text/html" }, status: 401 }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
-  // If the user visited /api/spotify/callback directly without a code, redirect them to /api/spotify/login
+  // If the admin visited /api/spotify/callback directly without a code, redirect to /api/spotify/login
   if (!code && !error) {
     return NextResponse.redirect(new URL("/api/spotify/login", req.url));
   }
@@ -153,12 +179,12 @@ export async function GET(req: NextRequest) {
         <body>
           <div class="card">
             <h1>✅ SPOTIFY TELEMETRY CONNECTED</h1>
-            <p>Your Spotify authorization was successful! Your actual refresh token has been <strong>automatically written to your <code>.env.local</code> file</strong>.</p>
+            <p>Your Spotify authorization was successful! Your refresh token has been <strong>authenticated and saved to <code>.env.local</code></strong>.</p>
             
             <div class="label">Your Real SPOTIFY_REFRESH_TOKEN (Save this for Vercel/Production deployment):</div>
             <div class="token-box">${refreshToken}</div>
 
-            <p>Your local dev server will now show your real currently playing song (or most recently played song)!</p>
+            <p>Your live playing song and animated equalizer are now active!</p>
             
             <a href="http://127.0.0.1:3000" class="btn">Return to Portfolio ↗</a>
           </div>

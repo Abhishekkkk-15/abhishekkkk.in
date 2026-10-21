@@ -39,6 +39,18 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Protecting Spotify OAuth Admin Setup Routes (Admin Only)
+  if (
+    pathname === "/api/spotify/login" ||
+    pathname === "/api/spotify/callback"
+  ) {
+    if (!isAuthenticated) {
+      const loginUrl = new URL("/admin/login", req.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   // If already logged in, redirect away from /admin/login to /admin/editor
   if (pathname === "/admin/login") {
     if (isAuthenticated) {
@@ -54,5 +66,7 @@ export const config = {
     "/admin/:path*",
     "/api/admin/portfolio/:path*",
     "/api/admin/auth/change-password",
+    "/api/spotify/login",
+    "/api/spotify/callback",
   ],
 };

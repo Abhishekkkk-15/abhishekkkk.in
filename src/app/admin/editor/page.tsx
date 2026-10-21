@@ -20,6 +20,7 @@ import {
   Send,
   ShieldCheck,
   Key,
+  Radio,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
 
@@ -1507,6 +1508,30 @@ export default function EditorPage() {
                     <span className="text-[#6E6D68]">Rate Limiter:</span>
                     <span className="font-medium text-[#2563EB]">5-Attempt / 15m Lockout</span>
                   </div>
+                </div>
+              </div>
+
+              {/* Spotify Live Audio Telemetry Integration Card */}
+              <div className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-3 font-mono text-xs">
+                <div className="text-xs uppercase tracking-wider font-semibold text-[#111111] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Radio size={14} className="text-[#2563EB]" />
+                    <span>Spotify Live Audio Telemetry</span>
+                  </div>
+                  <span className="text-[10px] text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/25 px-1.5 py-0.5">
+                    ADMIN AUTH REQUIRED
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#6E6D68] leading-relaxed">
+                  Authenticate your personal Spotify account to stream currently playing music directly into your portfolio's sticky audio widget.
+                </p>
+                <div className="pt-1">
+                  <a
+                    href="/api/spotify/login"
+                    className="inline-flex items-center gap-2 bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-4 py-2 font-mono text-xs uppercase tracking-wider transition-colors"
+                  >
+                    <span>Authenticate Spotify Account ↗</span>
+                  </a>
                 </div>
               </div>
 

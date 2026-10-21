@@ -1,8 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifySessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
+  // Only authenticated admins can trigger Spotify login
+  const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
+  if (!token) {
+    const loginUrl = new URL("/admin/login", req.url);
+    loginUrl.searchParams.set("redirect", "/api/spotify/login");
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const session = await verifySessionToken(token);
+  if (!session || !session.userId) {
+    const loginUrl = new URL("/admin/login", req.url);
+    loginUrl.searchParams.set("redirect", "/api/spotify/login");
+    return NextResponse.redirect(loginUrl);
+  }
+
   const clientId = process.env.SPOTIFY_CLIENT_ID;
 
   if (!clientId) {
