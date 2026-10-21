@@ -1,7 +1,3 @@
-const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || "";
-const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || "";
-const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN || "";
-
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const NOW_PLAYING_ENDPOINT =
   "https://api.spotify.com/v1/me/player/currently-playing";
@@ -29,12 +25,27 @@ const FALLBACK_TRACK: SpotifyTrackData = {
   configured: false,
 };
 
+function getCredentials() {
+  return {
+    clientId: process.env.SPOTIFY_CLIENT_ID || "",
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
+    refreshToken: process.env.SPOTIFY_REFRESH_TOKEN || "",
+  };
+}
+
 async function getAccessToken(): Promise<string | null> {
-  if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
+  const { clientId, clientSecret, refreshToken } = getCredentials();
+
+  if (
+    !clientId ||
+    !clientSecret ||
+    !refreshToken ||
+    refreshToken === "your_refresh_token"
+  ) {
     return null;
   }
 
-  const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64");
+  const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
   try {
     const res = await fetch(TOKEN_ENDPOINT, {
@@ -45,7 +56,7 @@ async function getAccessToken(): Promise<string | null> {
       },
       body: new URLSearchParams({
         grant_type: "refresh_token",
-        refresh_token: REFRESH_TOKEN,
+        refresh_token: refreshToken,
       }),
       cache: "no-store",
     });
@@ -106,7 +117,7 @@ export async function getSpotifyStatus(): Promise<SpotifyTrackData> {
       }
     }
 
-    // 2. Fall back to Recently Played
+    // 2. Fall back to Recently Played (when paused or playback stopped)
     const recentlyPlayedRes = await fetch(RECENTLY_PLAYED_ENDPOINT, {
       headers: {
         Authorization: `Bearer ${token}`,
