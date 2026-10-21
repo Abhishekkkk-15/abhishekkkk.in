@@ -247,14 +247,6 @@ export default function StickySpotifyPlayer() {
               style={{ backgroundColor: "#F4F3EF" }}
             />
           </div>
-
-          {/* Active Live Sound Indicator Ping */}
-          {isPlaying && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3 pointer-events-none">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2563EB] opacity-75" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-[#2563EB] border-[1.5px] border-[#F4F3EF] dark:border-[#0D0D0C]" />
-            </span>
-          )}
         </button>
       </div>
     </div>
