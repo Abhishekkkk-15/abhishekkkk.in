@@ -9,11 +9,17 @@ export async function GET(req: NextRequest) {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
+  // If the user visited /api/spotify/callback directly without a code, redirect them to /api/spotify/login
+  if (!code && !error) {
+    return NextResponse.redirect(new URL("/api/spotify/login", req.url));
+  }
+
   if (error || !code) {
     return new NextResponse(
       `<div style="font-family: monospace; padding: 30px; background: #0D0D0C; color: #F87171;">
         <h2>Spotify Authorization Error</h2>
         <p>${error || "No authorization code was returned."}</p>
+        <p><a href="/api/spotify/login" style="color: #38BDF8;">Click here to retry Spotify Login ↗</a></p>
       </div>`,
       { headers: { "Content-Type": "text/html" }, status: 400 }
     );
