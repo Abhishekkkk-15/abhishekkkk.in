@@ -214,12 +214,12 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
     githubActivity: {
       status: { type: String, default: "Active Development" },
       customCommits: { type: String, default: "" },
-      customPrs: { type: String, default: "164" },
-      customReviews: { type: String, default: "312" },
-      customStars: { type: String, default: "4.2k" },
+      customPrs: { type: String, default: "" },
+      customReviews: { type: String, default: "" },
+      customStars: { type: String, default: "" },
       customLanguages: {
         type: String,
-        default: "TypeScript (48%)\nGo (20%)\nRust (15%)",
+        default: "",
       },
     },
     skillMatrix: [
@@ -247,10 +247,10 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
 export const defaultGithubActivity: IGithubActivity = {
   status: "Active Development",
   customCommits: "",
-  customPrs: "164",
-  customReviews: "312",
-  customStars: "4.2k",
-  customLanguages: "TypeScript (48%)\nGo (20%)\nRust (15%)",
+  customPrs: "",
+  customReviews: "",
+  customStars: "",
+  customLanguages: "",
 };
 
 export const defaultPortfolioData: IPortfolioData = {

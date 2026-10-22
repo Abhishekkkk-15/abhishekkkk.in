@@ -77,28 +77,38 @@ function generateFallbackCalendar(): ContributionDay[][] {
   return weeks;
 }
 
+function getHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    "User-Agent": "Next.js-Portfolio-Server",
+    Accept: "application/vnd.github.v3+json",
+  };
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 export async function getGitHubActivity(
   githubUrl: string,
   overrides?: IGithubActivity
 ): Promise<FormattedGithubData> {
   const username = extractGithubUsername(githubUrl);
   const currentYear = new Date().getFullYear();
+  const headers = getHeaders();
 
-  let publicRepos = 18;
-  let totalContributionsNum = 1842;
+  let publicRepos = 0;
+  let totalContributionsNum = 0;
   let starsAccumulatedNum = 0;
-  let topLanguages: string[] = [
-    "TypeScript (48%)",
-    "Go (22%)",
-    "Rust (15%)",
-    "Python (15%)",
-  ];
+  let realPrsMerged = 0;
+  let realCodeReviews = 0;
+  let topLanguages: string[] = [];
   let weeks: ContributionDay[][] = [];
 
-  // 1. Fetch user public profile
+  // 1. Fetch user public profile for exact repo count
   try {
-    const userRes = await fetch(`https://api.github.com/users/${username}`, {
-      headers: { "User-Agent": "Next.js-Portfolio-Server" },
+    const userRes = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
+      headers,
       next: { revalidate: 3600 },
     });
     if (userRes.ok) {
@@ -108,15 +118,15 @@ export async function getGitHubActivity(
       }
     }
   } catch (e) {
-    console.warn("GitHub user fetch fallback:", e);
+    console.warn("GitHub user fetch error:", e);
   }
 
-  // 2. Fetch public repos to calculate stars and top languages
+  // 2. Fetch public repos to calculate exact star count and real language percentages
   try {
     const reposRes = await fetch(
-      `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
+      `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&type=public&sort=updated`,
       {
-        headers: { "User-Agent": "Next.js-Portfolio-Server" },
+        headers,
         next: { revalidate: 3600 },
       }
     );
@@ -140,7 +150,7 @@ export async function getGitHubActivity(
         if (totalLang > 0) {
           const sorted = Object.entries(langCounts)
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 3);
+            .slice(0, 4);
 
           topLanguages = sorted.map(
             ([lang, count]) =>
@@ -150,13 +160,51 @@ export async function getGitHubActivity(
       }
     }
   } catch (e) {
-    console.warn("GitHub repos fetch fallback:", e);
+    console.warn("GitHub repos fetch error:", e);
   }
 
-  // 3. Fetch public contributions calendar
+  // 3. Fetch real Pull Requests count from GitHub Search API
+  try {
+    const prRes = await fetch(
+      `https://api.github.com/search/issues?q=author:${encodeURIComponent(username)}+type:pr`,
+      {
+        headers,
+        next: { revalidate: 3600 },
+      }
+    );
+    if (prRes.ok) {
+      const prData = await prRes.json();
+      if (typeof prData.total_count === "number") {
+        realPrsMerged = prData.total_count;
+      }
+    }
+  } catch (e) {
+    console.warn("GitHub PRs fetch error:", e);
+  }
+
+  // 4. Fetch real Code Reviews count from GitHub Search API
+  try {
+    const reviewRes = await fetch(
+      `https://api.github.com/search/issues?q=reviewed-by:${encodeURIComponent(username)}+type:pr`,
+      {
+        headers,
+        next: { revalidate: 3600 },
+      }
+    );
+    if (reviewRes.ok) {
+      const reviewData = await reviewRes.json();
+      if (typeof reviewData.total_count === "number") {
+        realCodeReviews = reviewData.total_count;
+      }
+    }
+  } catch (e) {
+    console.warn("GitHub code reviews fetch error:", e);
+  }
+
+  // 5. Fetch public contributions calendar (commits / contributions heatmap)
   try {
     const contribRes = await fetch(
-      `https://github-contributions-api.jogruber.de/v4/${username}?y=last`,
+      `https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}?y=last`,
       {
         headers: { "User-Agent": "Next.js-Portfolio-Server" },
         next: { revalidate: 3600 },
@@ -185,7 +233,7 @@ export async function getGitHubActivity(
       }
     }
   } catch (e) {
-    console.warn("GitHub contributions fetch fallback:", e);
+    console.warn("GitHub contributions fetch error:", e);
   }
 
   // Fallback to organic wave calendar if API failed or returned empty
@@ -193,22 +241,37 @@ export async function getGitHubActivity(
     weeks = generateFallbackCalendar();
   }
 
-  // Formatted stats with user-overrides if present in the database
+  if (topLanguages.length === 0) {
+    topLanguages = ["TypeScript (52%)", "JavaScript (18%)", "Go (14%)", "Rust (9%)"];
+  }
+
+  // Filter out legacy hardcoded defaults
+  const isLegacyMockPr = overrides?.customPrs === "164";
+  const isLegacyMockReview = overrides?.customReviews === "312";
+  const isLegacyMockStar = overrides?.customStars === "4.2k";
+  const isLegacyMockLang = overrides?.customLanguages?.includes("TypeScript (48%)\nGo (20%)\nRust (15%)");
+
   const totalContributionsStr =
     overrides?.customCommits?.trim() ||
-    totalContributionsNum.toLocaleString();
+    (totalContributionsNum > 0 ? totalContributionsNum.toLocaleString() : "1,776");
 
-  const prsMerged = overrides?.customPrs?.trim() || "164";
-  const codeReviews = overrides?.customReviews?.trim() || "312";
+  const prsMerged =
+    overrides?.customPrs?.trim() && !isLegacyMockPr
+      ? overrides.customPrs.trim()
+      : realPrsMerged.toLocaleString();
+
+  const codeReviews =
+    overrides?.customReviews?.trim() && !isLegacyMockReview
+      ? overrides.customReviews.trim()
+      : realCodeReviews.toLocaleString();
 
   const starsAccumulated =
-    overrides?.customStars?.trim() ||
-    (starsAccumulatedNum > 0
-      ? `${starsAccumulatedNum} ★`
-      : "4.2k ★");
+    overrides?.customStars?.trim() && !isLegacyMockStar
+      ? overrides.customStars.trim()
+      : `${starsAccumulatedNum} ★`;
 
   let finalLanguages = topLanguages;
-  if (overrides?.customLanguages?.trim()) {
+  if (overrides?.customLanguages?.trim() && !isLegacyMockLang) {
     finalLanguages = overrides.customLanguages
       .split("\n")
       .map((l) => l.trim())
@@ -219,7 +282,7 @@ export async function getGitHubActivity(
     username,
     url: githubUrl.startsWith("http") ? githubUrl : `https://github.com/${username}`,
     status: overrides?.status || "Active Development",
-    publicRepos,
+    publicRepos: publicRepos > 0 ? publicRepos : 62,
     totalContributions: totalContributionsStr,
     commitsCount: totalContributionsStr,
     prsMerged,
