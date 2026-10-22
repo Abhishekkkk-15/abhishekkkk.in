@@ -1,4 +1,9 @@
+"use client";
+
+import { useRef } from "react";
+import { motion } from "framer-motion";
 import type { IProfile, ISkillMatrix } from "@/models/Portfolio";
+import InteractiveSquareGrid from "@/components/ui/InteractiveSquareGrid";
 
 export default function PlayerZeroHero({
   profile,
@@ -7,6 +12,8 @@ export default function PlayerZeroHero({
   profile: IProfile;
   skills?: ISkillMatrix[];
 }) {
+  const heroRef = useRef<HTMLElement | null>(null);
+
   // Extract dynamic skill keywords if available, else high-tech defaults
   const topSkill1 = skills?.[0]?.items?.[0] || "Synthetic Corpus";
   const topSkill2 = skills?.[0]?.items?.[1] || "Speculative Decoding";
@@ -14,19 +21,35 @@ export default function PlayerZeroHero({
   const topSkill4 = skills?.[1]?.items?.[1] || "LoRA Merging";
   const topSkill5 = skills?.[2]?.items?.[0] || "Agent State Machine";
 
+  const topHeadline = profile.matrixTopHeadline?.trim() || "BUILD. TRAIN.";
+  const bottomHeadline = profile.matrixBottomHeadline?.trim() || "DEPLOY. SCALE.";
+
   return (
     <section
-      className="relative pt-12 pb-16 md:pt-20 md:pb-28 overflow-hidden bg-dot-pattern"
+      ref={heroRef}
+      id="heroSection"
+      className="relative pt-12 pb-16 md:pt-20 md:pb-28 overflow-hidden"
       data-purpose="hero-pipeline-diagram"
     >
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        {/* Top Matrix Headline */}
-        <h1 className="dot-matrix-title text-3xl sm:text-5xl md:text-6xl text-neutral-900 mb-8 select-none tracking-widest">
-          BUILD. TRAIN.
-        </h1>
+      {/* Interactive Square Box Grid Animation Canvas from Stitch reference */}
+      <InteractiveSquareGrid containerRef={heroRef} />
 
-        {/* Diagram Area (Convergence Flowchart mimicking PlayerZero reference) */}
-        <div
+      <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
+        {/* Top Matrix Headline with entrance scroll animation */}
+        <motion.h1
+          initial={{ opacity: 0, y: -25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="dot-matrix-title text-3xl sm:text-5xl md:text-6xl text-neutral-900 mb-8 select-none tracking-widest"
+        >
+          {topHeadline}
+        </motion.h1>
+
+        {/* Diagram Area with scale & fade entrance */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="relative w-full max-w-4xl mx-auto my-4 py-8 px-4"
           data-purpose="agent-pipeline-flowchart"
         >
@@ -67,25 +90,41 @@ export default function PlayerZeroHero({
             {/* Left Branch Nodes */}
             <div className="flex flex-col justify-between h-44 items-start pl-2 sm:pl-6 text-left">
               {/* Top Left Node */}
-              <div className="node-float-1">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="node-float-1"
+              >
                 <div className="diagram-chip inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-stone-300 rounded-full text-[11px] font-mono font-medium text-stone-700 shadow-sm transition-all duration-200">
                   <span>{topSkill1}</span>
                 </div>
-              </div>
+              </motion.div>
+
               {/* Bottom Left Node */}
-              <div className="node-float-2 flex flex-wrap items-center gap-2">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="node-float-2 flex flex-wrap items-center gap-2"
+              >
                 <span className="diagram-chip inline-flex items-center px-2.5 py-0.5 bg-white border border-stone-300 rounded-full text-[10px] font-mono text-stone-600 shadow-xs">
                   {topSkill2}
                 </span>
                 <span className="diagram-chip inline-flex items-center px-2.5 py-0.5 bg-white border border-stone-300 rounded-full text-[10px] font-mono text-stone-600 shadow-xs">
                   Evals-v4
                 </span>
-              </div>
+              </motion.div>
             </div>
 
             {/* Center Core Emblem Module */}
             <div className="flex flex-col items-center justify-center">
-              <div className="core-floating-emblem relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-neutral-200/60 p-2.5 flex items-center justify-center border border-neutral-300 shadow-inner group">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, delay: 0.35, type: "spring", stiffness: 200 }}
+                className="core-floating-emblem relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-neutral-200/60 p-2.5 flex items-center justify-center border border-neutral-300 shadow-inner group"
+              >
                 <div className="w-full h-full rounded-2xl bg-white border border-neutral-300 flex items-center justify-center shadow-subtle-card transition-all duration-300 group-hover:scale-105">
                   {/* Central AI Engine Monogram */}
                   <div className="w-12 h-12 bg-neutral-900 rounded-xl flex items-center justify-center p-2.5 text-white shadow-md transition-transform duration-300 group-hover:rotate-3">
@@ -107,43 +146,69 @@ export default function PlayerZeroHero({
                   className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white ping-slow"
                   title="Pipeline Active"
                 />
-              </div>
+              </motion.div>
             </div>
 
             {/* Right Branch Nodes */}
             <div className="flex flex-col justify-between h-44 items-end pr-2 sm:pr-6 text-right">
               {/* Top Right Node */}
-              <div className="node-float-3">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="node-float-3"
+              >
                 <div className="diagram-chip inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-stone-300 rounded-full text-[11px] font-mono font-medium text-stone-700 shadow-sm transition-all duration-200">
                   <span>{topSkill3}</span>
                 </div>
-              </div>
+              </motion.div>
+
               {/* Bottom Right Node */}
-              <div className="node-float-4 flex flex-wrap items-center justify-end gap-2">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.55 }}
+                className="node-float-4 flex flex-wrap items-center justify-end gap-2"
+              >
                 <span className="diagram-chip inline-flex items-center px-2 py-0.5 bg-white border border-stone-300 rounded-full text-[10px] font-mono text-stone-600 shadow-xs">
                   {topSkill4}
                 </span>
                 <span className="diagram-chip inline-flex items-center px-2.5 py-0.5 bg-white border border-stone-300 rounded-full text-[10px] font-mono text-stone-600 shadow-xs">
                   {topSkill5}
                 </span>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Lower Dot-Matrix Word */}
-        <h2 className="dot-matrix-title text-3xl sm:text-5xl md:text-6xl text-neutral-900 mt-4 mb-6 select-none tracking-widest">
-          DEPLOY. SCALE.
-        </h2>
+        <motion.h2
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="dot-matrix-title text-3xl sm:text-5xl md:text-6xl text-neutral-900 mt-4 mb-6 select-none tracking-widest"
+        >
+          {bottomHeadline}
+        </motion.h2>
 
         {/* Subtitle Pitch */}
-        <p className="max-w-2xl mx-auto text-stone-600 text-sm sm:text-base font-normal leading-relaxed mb-8">
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="max-w-2xl mx-auto text-stone-600 text-sm sm:text-base font-normal leading-relaxed mb-8"
+        >
           {profile.headline ||
             `${profile.name} builds enterprise-grade agentic systems, sub-second multimodal inference, and self-healing LLM pipelines beyond standard API wrappers.`}
-        </p>
+        </motion.p>
 
         {/* Primary Action Pill with Dot-Matrix Icon */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.75 }}
+          className="flex flex-wrap items-center justify-center gap-4"
+        >
           <a
             className="inline-flex items-center gap-3 bg-[#121213] hover:bg-neutral-800 text-white text-xs sm:text-sm font-medium px-5 py-3 rounded-full transition-all duration-200 shadow-md active:scale-95 group"
             href="#projects"
@@ -186,7 +251,7 @@ export default function PlayerZeroHero({
               </svg>
             </a>
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -42,6 +42,9 @@ export interface IProfile {
   };
   showCurlBadge?: boolean;
   showJapaneseBio?: boolean;
+  showSpotifyPlayer?: boolean;
+  matrixTopHeadline?: string;
+  matrixBottomHeadline?: string;
 }
 
 export interface IArchitecturalFocus {
@@ -165,6 +168,9 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
       },
       showCurlBadge: { type: Boolean, default: false },
       showJapaneseBio: { type: Boolean, default: true },
+      showSpotifyPlayer: { type: Boolean, default: true },
+      matrixTopHeadline: { type: String, default: "BUILD. TRAIN." },
+      matrixBottomHeadline: { type: String, default: "DEPLOY. SCALE." },
     },
     architecturalFocus: [
       {

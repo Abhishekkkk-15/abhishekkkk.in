@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import type { IProjectItem } from "@/models/Portfolio";
-import { ArrowUpRight, Github, ExternalLink } from "lucide-react";
+import { ArrowUpRight, Github } from "lucide-react";
 
 export default function PlayerZeroProjects({
   projects,
@@ -25,8 +26,14 @@ export default function PlayerZeroProjects({
       data-purpose="featured-ai-systems"
       id="projects"
     >
-      {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-[#e5e5e8]">
+      {/* Section Header with scroll reveal */}
+      <motion.div
+        initial={{ opacity: 0, y: 25 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-[#e5e5e8]"
+      >
         <div>
           <span className="text-xs font-mono font-medium tracking-widest text-stone-400 uppercase">
             FEATURED AI SYSTEMS // PRODUCTION DEPLOYMENTS
@@ -38,16 +45,22 @@ export default function PlayerZeroProjects({
         <p className="text-xs text-stone-500 max-w-sm mt-3 md:mt-0 font-normal">
           Bespoke model fine-tunes, recursive agent state machines, and high-performance inference stacks running in production.
         </p>
-      </div>
+      </motion.div>
 
       {/* Filter Pills */}
       {categories.length > 2 && (
-        <div className="flex flex-wrap items-center gap-2 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex flex-wrap items-center gap-2 mb-8"
+        >
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`text-xs font-mono px-3 py-1 rounded-full transition-all ${
+              className={`text-xs font-mono px-3 py-1 rounded-full transition-all cursor-pointer ${
                 activeCategory === cat
                   ? "bg-[#121213] text-white shadow-sm"
                   : "bg-white border border-[#e5e5e8] text-stone-600 hover:border-stone-400"
@@ -56,16 +69,25 @@ export default function PlayerZeroProjects({
               {cat}
             </button>
           ))}
-        </div>
+        </motion.div>
       )}
 
-      {/* Projects Grid */}
+      {/* Projects Grid with staggered cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredProjects.map((project, index) => {
           const indexFormatted = String(index + 1).padStart(2, "0");
           return (
-            <article
+            <motion.article
               key={project.codeIndex || index}
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{
+                duration: 0.6,
+                delay: (index % 4) * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              whileHover={{ y: -6, transition: { duration: 0.25 } }}
               className="bg-[#f2f2f4]/60 rounded-2xl p-6 sm:p-7 border border-[#e5e5e8] hover:border-stone-400 transition-all duration-200 flex flex-col justify-between group shadow-sm hover:shadow-md"
             >
               <div>
@@ -128,7 +150,7 @@ export default function PlayerZeroProjects({
                   ).map((tech, i) => (
                     <span
                       key={i}
-                      className="text-[10px] font-mono bg-white px-2 py-0.5 rounded border border-stone-200 text-stone-600"
+                      className="text-[10px] font-mono bg-white px-2 py-0.5 rounded border border-stone-200 text-stone-600 shadow-xs"
                     >
                       {tech}
                     </span>
@@ -177,7 +199,7 @@ export default function PlayerZeroProjects({
                   )}
                 </div>
               </div>
-            </article>
+            </motion.article>
           );
         })}
       </div>

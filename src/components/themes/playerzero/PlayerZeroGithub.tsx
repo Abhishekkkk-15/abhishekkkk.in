@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import type { FormattedGithubData } from "@/lib/github";
 import { GitCommit, ArrowUpRight } from "lucide-react";
 
@@ -30,7 +31,13 @@ export default function PlayerZeroGithub({
       id="commits"
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[#e5e5e8]">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+        className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[#e5e5e8]"
+      >
         <div>
           <span className="text-xs font-mono font-medium tracking-widest text-stone-400 uppercase">
             OPEN SOURCE &amp; CODE COMMITS
@@ -48,10 +55,16 @@ export default function PlayerZeroGithub({
           <span>@{data.username} on GitHub</span>
           <ArrowUpRight size={13} />
         </a>
-      </div>
+      </motion.div>
 
-      {/* Contribution Heatmap Card */}
-      <div className="bg-[#f2f2f4]/60 border border-[#e5e5e8] rounded-2xl p-6 sm:p-8 mb-8 shadow-sm">
+      {/* Contribution Heatmap Card with smooth slide-up */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-[#f2f2f4]/60 border border-[#e5e5e8] rounded-2xl p-6 sm:p-8 mb-8 shadow-sm"
+      >
         {/* Metric Badges Row */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-stone-200/70">
           <div className="flex items-center gap-6">
@@ -86,7 +99,7 @@ export default function PlayerZeroGithub({
             {data.topLanguages.slice(0, 3).map((lang, idx) => (
               <span
                 key={idx}
-                className="px-2.5 py-1 bg-white border border-stone-200 text-stone-700 rounded-full"
+                className="px-2.5 py-1 bg-white border border-stone-200 text-stone-700 rounded-full shadow-xs"
               >
                 {lang}
               </span>
@@ -151,10 +164,16 @@ export default function PlayerZeroGithub({
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Live Commit Stream Log */}
-      <div className="bg-[#f2f2f4]/50 border border-[#e5e5e8] rounded-2xl p-6 sm:p-7 shadow-sm">
+      {/* Live Commit Stream Log with staggered list entrance */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-[#f2f2f4]/50 border border-[#e5e5e8] rounded-2xl p-6 sm:p-7 shadow-sm"
+      >
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-stone-200/70">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -171,11 +190,15 @@ export default function PlayerZeroGithub({
         <div className="divide-y divide-stone-200/70 text-xs font-mono">
           {data.recentCommits && data.recentCommits.length > 0 ? (
             data.recentCommits.map((commit, idx) => (
-              <a
+              <motion.a
                 key={idx}
                 href={commit.url}
                 target="_blank"
                 rel="noreferrer"
+                initial={{ opacity: 0, x: -16 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: idx * 0.08 }}
                 className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-white/70 px-2 rounded-lg transition-colors group"
               >
                 <div className="flex items-start sm:items-center gap-3">
@@ -194,7 +217,7 @@ export default function PlayerZeroGithub({
                 <div className="text-stone-400 text-[11px] whitespace-nowrap pl-9 sm:pl-0">
                   {commit.timeAgo}
                 </div>
-              </a>
+              </motion.a>
             ))
           ) : (
             <div className="py-4 text-center text-stone-500 font-mono text-xs">
@@ -202,7 +225,7 @@ export default function PlayerZeroGithub({
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

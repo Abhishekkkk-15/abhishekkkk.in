@@ -54,7 +54,7 @@ export default function PlayerZeroTheme({
       <PlayerZeroFooter profile={portfolio.profile} />
 
       {/* Sticky Spotify Player */}
-      <StickySpotifyPlayer />
+      {portfolio.profile?.showSpotifyPlayer !== false && <StickySpotifyPlayer />}
     </div>
   );
 }

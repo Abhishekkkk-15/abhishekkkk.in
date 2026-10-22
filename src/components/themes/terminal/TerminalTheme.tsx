@@ -42,7 +42,7 @@ export default function TerminalTheme({
       </div>
 
       {/* Sticky Bottom-Right Spotify Live Audio Player */}
-      <StickySpotifyPlayer />
+      {portfolio.profile?.showSpotifyPlayer !== false && <StickySpotifyPlayer />}
     </div>
   );
 }

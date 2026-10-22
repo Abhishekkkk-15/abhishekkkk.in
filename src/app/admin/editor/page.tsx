@@ -462,6 +462,65 @@ export default function EditorPage() {
                   </button>
                 </div>
               </div>
+
+              {/* PlayerZero Theme Headlines Configuration Card */}
+              <div className="p-5 border border-[#E2E0D8] bg-[#f8f8f9] space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-mono text-xs uppercase tracking-widest text-[#111111] font-semibold">
+                      PlayerZero Hero Headlines
+                    </h3>
+                    <p className="font-mono text-[11px] text-[#6E6D68] mt-0.5">
+                      Configure the upper and lower dot-matrix titles displayed in the PlayerZero Hero section.
+                    </p>
+                  </div>
+                  <span className="font-mono text-[9.5px] px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
+                    DOT-MATRIX TITLES
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
+                  <div className="space-y-1.5">
+                    <label className="text-[#6E6D68] uppercase font-semibold">Upper Headline</label>
+                    <input
+                      type="text"
+                      value={data.profile.matrixTopHeadline || ""}
+                      placeholder="BUILD. TRAIN."
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          profile: {
+                            ...data.profile,
+                            matrixTopHeadline: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    />
+                    <span className="text-[10px] text-[#6E6D68] block">Default: BUILD. TRAIN.</span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[#6E6D68] uppercase font-semibold">Lower Headline</label>
+                    <input
+                      type="text"
+                      value={data.profile.matrixBottomHeadline || ""}
+                      placeholder="DEPLOY. SCALE."
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          profile: {
+                            ...data.profile,
+                            matrixBottomHeadline: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    />
+                    <span className="text-[10px] text-[#6E6D68] block">Default: DEPLOY. SCALE.</span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -620,6 +679,67 @@ export default function EditorPage() {
                   <p className="font-mono text-[10.5px] text-[#6E6D68]">
                     Toggle ON/OFF to control whether the Japanese text is displayed under the headline in the Hero section.
                   </p>
+                </div>
+              </div>
+
+              {/* PlayerZero Theme Matrix Headlines */}
+              <div className="pt-6 border-t border-[#E2E0D8]">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-mono text-xs uppercase tracking-widest text-[#111111]">
+                    Applied AI Matrix Headlines (PlayerZero Theme)
+                  </h3>
+                  <span className="font-mono text-[9.5px] px-1.5 py-0.5 bg-[#E2E0D8] text-[#6E6D68]">
+                    HERO DOT-MATRIX
+                  </span>
+                </div>
+                <p className="font-mono text-[11px] text-[#6E6D68] mb-4">
+                  Customize the dot-matrix titles displayed above and below the pipeline diagram in the PlayerZero theme hero section.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 font-mono text-xs">
+                  <div className="space-y-1.5">
+                    <label className="text-[#6E6D68] uppercase">Upper Headline</label>
+                    <input
+                      type="text"
+                      value={data.profile.matrixTopHeadline || ""}
+                      placeholder="BUILD. TRAIN."
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          profile: {
+                            ...data.profile,
+                            matrixTopHeadline: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    />
+                    <span className="font-mono text-[10px] text-[#6E6D68] block">
+                      Default: BUILD. TRAIN.
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[#6E6D68] uppercase">Lower Headline</label>
+                    <input
+                      type="text"
+                      value={data.profile.matrixBottomHeadline || ""}
+                      placeholder="DEPLOY. SCALE."
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          profile: {
+                            ...data.profile,
+                            matrixBottomHeadline: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    />
+                    <span className="font-mono text-[10px] text-[#6E6D68] block">
+                      Default: DEPLOY. SCALE.
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -830,6 +950,61 @@ export default function EditorPage() {
                         aria-hidden="true"
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
                           data.profile.showCurlBadge ? "translate-x-5" : "translate-x-0"
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {/* Sticky Spotify Live Music Player Toggle */}
+                  <div className="p-4 border border-[#E2E0D8] bg-[#EBEAE4]/40 flex items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs uppercase font-medium text-[#111111]">
+                          Sticky Spotify Vinyl Player
+                        </span>
+                        <span
+                          className={`font-mono text-[9.5px] px-1.5 py-0.5 ${
+                            data.profile.showSpotifyPlayer !== false
+                              ? "bg-[#2563EB]/10 text-[#2563EB] font-medium"
+                              : "bg-[#E2E0D8] text-[#6E6D68]"
+                          }`}
+                        >
+                          {data.profile.showSpotifyPlayer !== false
+                            ? "VISIBLE (DEFAULT)"
+                            : "HIDDEN"}
+                        </span>
+                      </div>
+                      <p className="font-mono text-[11px] text-[#6E6D68]">
+                        Show or hide the floating interactive vinyl record player with live audio telemetry across your site.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setData({
+                          ...data,
+                          profile: {
+                            ...data.profile,
+                            showSpotifyPlayer:
+                              data.profile.showSpotifyPlayer === false ? true : false,
+                          },
+                        })
+                      }
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        data.profile.showSpotifyPlayer !== false
+                          ? "bg-[#2563EB]"
+                          : "bg-[#D8D6CE]"
+                      }`}
+                      role="switch"
+                      aria-checked={data.profile.showSpotifyPlayer !== false}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          data.profile.showSpotifyPlayer !== false
+                            ? "translate-x-5"
+                            : "translate-x-0"
                         }`}
                       />
                     </button>
@@ -1902,13 +2077,45 @@ export default function EditorPage() {
                 <p className="text-[11px] text-[#6E6D68] leading-relaxed">
                   Authenticate your personal Spotify account to stream currently playing music directly into your portfolio's sticky audio widget.
                 </p>
-                <div className="pt-1">
+                <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-[#E2E0D8]/60">
                   <a
                     href="/api/spotify/login"
                     className="inline-flex items-center gap-2 bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-4 py-2 font-mono text-xs uppercase tracking-wider transition-colors"
                   >
                     <span>Authenticate Spotify Account ↗</span>
                   </a>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-[#6E6D68]">Widget Status:</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setData({
+                          ...data,
+                          profile: {
+                            ...data.profile,
+                            showSpotifyPlayer:
+                              data.profile.showSpotifyPlayer === false ? true : false,
+                          },
+                        })
+                      }
+                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        data.profile.showSpotifyPlayer !== false ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
+                      }`}
+                      role="switch"
+                      aria-checked={data.profile.showSpotifyPlayer !== false}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          data.profile.showSpotifyPlayer !== false ? "translate-x-4" : "translate-x-0"
+                        }`}
+                      />
+                    </button>
+                    <span className="text-[10px] font-bold text-[#111111]">
+                      {data.profile.showSpotifyPlayer !== false ? "ON" : "OFF"}
+                    </span>
+                  </div>
                 </div>
               </div>
 

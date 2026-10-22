@@ -30,6 +30,9 @@ export const profile = {
   },
   showCurlBadge: false,
   showJapaneseBio: true,
+  showSpotifyPlayer: true,
+  matrixTopHeadline: "BUILD. TRAIN.",
+  matrixBottomHeadline: "DEPLOY. SCALE.",
 };
 
 export const navLinks = [

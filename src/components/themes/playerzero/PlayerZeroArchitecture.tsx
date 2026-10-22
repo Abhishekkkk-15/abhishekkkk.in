@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import type { IFlagshipDossier } from "@/models/Portfolio";
 import { ArrowUpRight, Cpu } from "lucide-react";
 
@@ -106,8 +107,14 @@ export default function PlayerZeroArchitecture({
       id="architecture"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        {/* Left Content Column */}
-        <div className="lg:col-span-6 flex flex-col justify-center">
+        {/* Left Content Column with smooth reveal animation */}
+        <motion.div
+          initial={{ opacity: 0, x: -35 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-6 flex flex-col justify-center"
+        >
           <span className="text-xs font-mono font-medium tracking-widest text-stone-400 uppercase mb-3 flex items-center gap-2">
             <Cpu size={14} />
             {dossier.category || "FLAGSHIP SYSTEM"}
@@ -130,7 +137,7 @@ export default function PlayerZeroArchitecture({
               {dossier.metrics.map((m, idx) => (
                 <div
                   key={idx}
-                  className="bg-white border border-[#e5e5e8] rounded-xl p-3 font-mono"
+                  className="bg-white border border-[#e5e5e8] rounded-xl p-3 font-mono shadow-xs"
                 >
                   <div className="text-base font-semibold text-neutral-900">
                     {m.value}
@@ -146,7 +153,7 @@ export default function PlayerZeroArchitecture({
           <div className="flex flex-wrap items-center gap-4">
             {dossier.github && (
               <a
-                className="inline-flex items-center gap-2.5 bg-[#121213] hover:bg-neutral-800 text-white text-xs font-medium px-5 py-2.5 rounded-full transition-all duration-200"
+                className="inline-flex items-center gap-2.5 bg-[#121213] hover:bg-neutral-800 text-white text-xs font-medium px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm active:scale-95"
                 href={dossier.github}
                 target="_blank"
                 rel="noreferrer"
@@ -175,10 +182,16 @@ export default function PlayerZeroArchitecture({
               </span>
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Right Point-Cloud Graphic Column */}
-        <div className="lg:col-span-6 relative flex items-center justify-center min-h-[380px] lg:min-h-[460px] bg-stone-100/60 rounded-3xl border border-stone-200/70 p-4 overflow-hidden">
+        {/* Right Point-Cloud Graphic Column with scale & fade entrance */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, x: 25 }}
+          whileInView={{ opacity: 1, scale: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.85, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-6 relative flex items-center justify-center min-h-[380px] lg:min-h-[460px] bg-stone-100/60 rounded-3xl border border-stone-200/70 p-4 overflow-hidden shadow-sm"
+        >
           {/* Halftone canvas simulating latent space & weights */}
           <canvas
             ref={canvasRef}
@@ -196,7 +209,7 @@ export default function PlayerZeroArchitecture({
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>Organic Attractor Topology</span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -5,6 +5,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Music, ExternalLink, X } from "lucide-react";
 import type { SpotifyTrackData } from "@/lib/spotify";
 
+const DEFAULT_FALLBACK: SpotifyTrackData = {
+  isPlaying: false,
+  title: "Ambient 1: Music for Airports",
+  artist: "Brian Eno",
+  album: "Ambient 1",
+  albumImageUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=160&auto=format&fit=crop&q=80",
+  songUrl: "https://open.spotify.com",
+  configured: false,
+};
+
 export default function StickySpotifyPlayer() {
   const [data, setData] = useState<SpotifyTrackData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -17,9 +27,12 @@ export default function StickySpotifyPlayer() {
       if (res.ok) {
         const json = await res.json();
         setData(json);
+      } else {
+        setData(DEFAULT_FALLBACK);
       }
     } catch (err) {
       console.warn("Could not fetch Spotify status:", err);
+      setData(DEFAULT_FALLBACK);
     } finally {
       setLoading(false);
     }

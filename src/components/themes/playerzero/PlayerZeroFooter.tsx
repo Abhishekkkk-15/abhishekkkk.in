@@ -1,10 +1,17 @@
+"use client";
+
+import { motion } from "framer-motion";
 import type { IProfile } from "@/models/Portfolio";
 
 export default function PlayerZeroFooter({ profile }: { profile: IProfile }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer
+    <motion.footer
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
       className="w-full border-t border-[#e5e5e8] py-8 bg-[#f8f8f9] text-stone-500 text-xs"
       data-purpose="site-footer"
     >
@@ -51,6 +58,6 @@ export default function PlayerZeroFooter({ profile }: { profile: IProfile }) {
           </span>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }
