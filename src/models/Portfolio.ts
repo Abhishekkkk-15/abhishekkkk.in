@@ -109,6 +109,7 @@ export interface IContactInfo {
 }
 
 export interface IPortfolioData {
+  activeTheme?: "terminal" | "playerzero";
   profile: IProfile;
   architecturalFocus: IArchitecturalFocus[];
   experience: IExperienceItem[];
@@ -126,6 +127,11 @@ export interface IPortfolioDocument extends IPortfolioData, Document {
 
 const PortfolioSchema = new Schema<IPortfolioDocument>(
   {
+    activeTheme: {
+      type: String,
+      enum: ["terminal", "playerzero"],
+      default: "terminal",
+    },
     profile: {
       name: { type: String, required: true },
       shortName: { type: String, required: true },
@@ -254,6 +260,7 @@ export const defaultGithubActivity: IGithubActivity = {
 };
 
 export const defaultPortfolioData: IPortfolioData = {
+  activeTheme: "terminal",
   profile: defaultProfile,
   architecturalFocus: defaultFocus,
   experience: defaultExperience,

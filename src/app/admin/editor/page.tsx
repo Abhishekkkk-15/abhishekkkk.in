@@ -21,10 +21,14 @@ import {
   ShieldCheck,
   Key,
   Radio,
+  Layout,
+  Palette,
+  Sparkles,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
 
 type TabKey =
+  | "themes"
   | "profile"
   | "focus"
   | "experience"
@@ -201,6 +205,18 @@ export default function EditorPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setActiveTab("themes")}
+            className="hidden sm:flex items-center gap-1.5 font-mono text-xs border border-[#E2E0D8] bg-[#EBEAE4]/60 hover:bg-[#EBEAE4] px-2.5 py-1.5 transition-colors cursor-pointer"
+            title="Configure Active Site Theme"
+          >
+            <Palette size={13} className="text-[#2563EB]" />
+            <span className="text-[#6E6D68] uppercase text-[10.5px]">Theme:</span>
+            <span className="font-semibold text-[#111111]">
+              {data.activeTheme === "playerzero" ? "PlayerZero Matrix" : "Terminal Swiss"}
+            </span>
+          </button>
+
           <a
             href="/"
             target="_blank"
@@ -254,6 +270,7 @@ export default function EditorPage() {
           <div className="hidden md:block text-[10px] text-[#6E6D68] px-3 py-2">SECTIONS</div>
 
           {[
+            { id: "themes", label: "00 // Themes & Layouts", icon: Layout },
             { id: "profile", label: "01 // Profile & Hero", icon: User },
             { id: "focus", label: "02 // Arch Focus", icon: Layers },
             { id: "experience", label: "03 // Experience", icon: Briefcase },
@@ -284,6 +301,170 @@ export default function EditorPage() {
 
         {/* Right Side Tab Form Content */}
         <main className="flex-1 p-6 sm:p-10 bg-[#F4F3EF]">
+          {/* TAB 0: THEMES & LAYOUTS */}
+          {activeTab === "themes" && (
+            <div className="space-y-8 max-w-4xl">
+              <div className="border-b border-[#E2E0D8] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-display font-medium text-[#111111] flex items-center gap-2.5">
+                    <Palette className="text-[#2563EB]" size={22} />
+                    Themes &amp; Site Layouts
+                  </h2>
+                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
+                    Select which theme layout is rendered on your public portfolio. Themes are strictly controlled here in Admin.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 font-mono text-xs">
+                  <span className="text-[#6E6D68]">Active:</span>
+                  <span className="font-bold text-[#111111] uppercase">
+                    {data.activeTheme === "playerzero" ? "PlayerZero Matrix" : "Terminal Swiss"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Admin-only notice callout */}
+              <div className="p-4 bg-blue-50/60 border border-blue-200/80 rounded-none flex items-start gap-3 text-xs font-mono text-blue-900">
+                <Sparkles className="text-blue-600 shrink-0 mt-0.5" size={16} />
+                <div>
+                  <span className="font-semibold uppercase tracking-wider block mb-0.5">
+                    Admin-Controlled Exclusivity
+                  </span>
+                  Public visitors cannot switch or override the active theme. The active theme is stored in your database and rendered via SSR. Choose a theme below and click <strong>&quot;Save Changes&quot;</strong> in the top bar to apply it instantly to your live website.
+                </div>
+              </div>
+
+              {/* Themes Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* THEME 1: Terminal Swiss Technical */}
+                <div
+                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#F4F3EF] relative ${
+                    (data.activeTheme || "terminal") === "terminal"
+                      ? "border-[#111111] shadow-md ring-1 ring-[#111111]"
+                      : "border-[#E2E0D8] opacity-85 hover:opacity-100 hover:border-stone-400"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#111111]">
+                        01 // Swiss Monospace
+                      </span>
+                      {(data.activeTheme || "terminal") === "terminal" ? (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
+                          ● Live on Site
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
+                          Available
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-lg font-display font-medium text-[#111111] mb-2">
+                      Classic Terminal / Swiss Technical
+                    </h3>
+                    <p className="text-xs text-[#444442] font-mono leading-relaxed mb-5">
+                      The signature brutalist monospace aesthetic inspired by high-frequency trading terminals and minimalist Swiss typography.
+                    </p>
+
+                    {/* Feature Highlights */}
+                    <div className="space-y-2 font-mono text-[11px] text-[#6E6D68] mb-6 border-y border-[#E2E0D8] py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> JetBrains Mono &amp; Hanken Grotesk
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Character fade scroll dynamics
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Live telemetry counter &amp; sumi dark mode
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Full JSON Schema / Pipeline toggles
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setData({ ...data, activeTheme: "terminal" })}
+                    disabled={(data.activeTheme || "terminal") === "terminal"}
+                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
+                      (data.activeTheme || "terminal") === "terminal"
+                        ? "bg-[#111111] text-[#F4F3EF] cursor-default font-bold"
+                        : "bg-[#EBEAE4] text-[#111111] hover:bg-[#111111] hover:text-[#F4F3EF] border border-[#E2E0D8] cursor-pointer"
+                    }`}
+                  >
+                    {(data.activeTheme || "terminal") === "terminal"
+                      ? "Currently Active"
+                      : "Activate Terminal Theme"}
+                  </button>
+                </div>
+
+                {/* THEME 2: PlayerZero / Applied AI Matrix */}
+                <div
+                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#f8f8f9] relative ${
+                    data.activeTheme === "playerzero"
+                      ? "border-[#111111] shadow-md ring-1 ring-[#111111]"
+                      : "border-[#E2E0D8] opacity-85 hover:opacity-100 hover:border-stone-400"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#111111]">
+                        02 // Applied AI Matrix
+                      </span>
+                      {data.activeTheme === "playerzero" ? (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
+                          ● Live on Site
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
+                          Available
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-lg font-display font-medium text-[#111111] mb-2">
+                      PlayerZero / Applied AI Matrix
+                    </h3>
+                    <p className="text-xs text-stone-600 font-mono leading-relaxed mb-5">
+                      The ultra-clean PlayerZero engineering aesthetic featuring an animated DAG pipeline hero, Silkscreen dot-matrix titles, and latent point cloud visualizer.
+                    </p>
+
+                    {/* Feature Highlights */}
+                    <div className="space-y-2 font-mono text-[11px] text-[#6E6D68] mb-6 border-y border-[#e5e5e8] py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Silkscreen &amp; Space Mono typography
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Animated SVG flowing connector wires
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Generative latent point-cloud canvas visualizer
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> 52-week dot-matrix heatmap &amp; live commit stream
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setData({ ...data, activeTheme: "playerzero" })}
+                    disabled={data.activeTheme === "playerzero"}
+                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
+                      data.activeTheme === "playerzero"
+                        ? "bg-[#111111] text-[#F4F3EF] cursor-default font-bold"
+                        : "bg-[#EBEAE4] text-[#111111] hover:bg-[#111111] hover:text-[#F4F3EF] border border-[#E2E0D8] cursor-pointer"
+                    }`}
+                  >
+                    {data.activeTheme === "playerzero"
+                      ? "Currently Active"
+                      : "Activate PlayerZero Theme"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* TAB 1: PROFILE & HERO */}
           {activeTab === "profile" && (
             <div className="space-y-8 max-w-3xl">

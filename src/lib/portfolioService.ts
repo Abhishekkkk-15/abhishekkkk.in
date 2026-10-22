@@ -37,6 +37,7 @@ export async function updatePortfolioData(
     });
   } else {
     // Merge fields
+    if (newData.activeTheme) doc.activeTheme = newData.activeTheme as any;
     if (newData.profile) doc.profile = newData.profile as any;
     if (newData.architecturalFocus) doc.architecturalFocus = newData.architecturalFocus as any;
     if (newData.experience) doc.experience = newData.experience as any;

@@ -172,3 +172,131 @@ html.dark .bg-\[\#2563EB\]\/5 {
 html.dark .decoration-\[\#D8D6CE\] {
   text-decoration-color: #383835 !important;
 }
+
+/* =========================================================================
+   PlayerZero / Applied AI Matrix Theme Aesthetics
+   ========================================================================= */
+
+.dot-matrix-title {
+  font-family: 'Silkscreen', monospace;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.technical-mono {
+  font-family: 'Space Mono', monospace;
+  letter-spacing: -0.01em;
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(#d1d1d6 0.85px, transparent 0.85px);
+  background-size: 24px 24px;
+}
+
+.connector-wire {
+  stroke: #d0d0d5;
+  stroke-width: 1.2;
+  stroke-dasharray: 6 3;
+  fill: none;
+  animation: wire-flow-left 3.5s linear infinite;
+}
+
+.connector-wire-right {
+  stroke: #d0d0d5;
+  stroke-width: 1.2;
+  stroke-dasharray: 6 3;
+  fill: none;
+  animation: wire-flow-right 3.5s linear infinite;
+}
+
+.connector-wire-solid {
+  stroke: #bcbcc4;
+  stroke-width: 1.2;
+  fill: none;
+}
+
+@keyframes wire-flow-left {
+  0% { stroke-dashoffset: 27; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes wire-flow-right {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 27; }
+}
+
+@keyframes float-1 {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(5px); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translateY(0px) rotate(0.1deg); }
+  50% { transform: translateY(-4px) rotate(-0.2deg); }
+}
+
+@keyframes float-center {
+  0%, 100% { transform: translateY(0px); box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
+  50% { transform: translateY(-4px); box-shadow: 0 14px 28px -4px rgba(0, 0, 0, 0.09); }
+}
+
+.node-float-1 {
+  animation: float-1 4.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+.node-float-2 {
+  animation: float-2 5.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite 0.6s;
+}
+.node-float-3 {
+  animation: float-3 4.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite 1.2s;
+}
+.node-float-4 {
+  animation: float-1 5.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite 1.8s;
+}
+.core-floating-emblem {
+  animation: float-center 6s ease-in-out infinite;
+}
+
+.diagram-chip {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+  cursor: default;
+}
+.diagram-chip:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #171718;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+}
+.ping-slow {
+  animation: glow-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .connector-wire,
+  .connector-wire-right,
+  .node-float-1,
+  .node-float-2,
+  .node-float-3,
+  .node-float-4,
+  .core-floating-emblem,
+  .ping-slow {
+    animation: none !important;
+  }
+}
