@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import TerminalLoading from "@/components/loading/TerminalLoading";
 import PlayerZeroLoading from "@/components/loading/PlayerZeroLoading";
+import IndustrialLoading from "@/components/loading/IndustrialLoading";
 
 export default function Loading() {
   const [theme, setTheme] = useState<string>(() => {
@@ -53,6 +54,10 @@ export default function Loading() {
 
   if (theme === "terminal") {
     return <TerminalLoading />;
+  }
+
+  if (theme === "industrial") {
+    return <IndustrialLoading />;
   }
 
   return (

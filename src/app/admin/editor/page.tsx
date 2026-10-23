@@ -318,7 +318,11 @@ export default function EditorPage() {
                 <div className="flex items-center gap-2 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 font-mono text-xs">
                   <span className="text-[#6E6D68]">Active:</span>
                   <span className="font-bold text-[#111111] uppercase">
-                    {data.activeTheme === "playerzero" ? "PlayerZero Matrix" : "Terminal Swiss"}
+                    {data.activeTheme === "playerzero"
+                      ? "PlayerZero Matrix"
+                      : data.activeTheme === "industrial"
+                      ? "Teenage Hardware"
+                      : "Terminal Swiss"}
                   </span>
                 </div>
               </div>
@@ -335,7 +339,7 @@ export default function EditorPage() {
               </div>
 
               {/* Themes Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* THEME 1: Terminal Swiss Technical */}
                 <div
                   className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#F4F3EF] relative ${
@@ -459,6 +463,69 @@ export default function EditorPage() {
                     {data.activeTheme === "playerzero"
                       ? "Currently Active"
                       : "Activate PlayerZero Theme"}
+                  </button>
+                </div>
+
+                {/* THEME 3: Teenage Engineering / Industrial Hardware */}
+                <div
+                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#E6E5DE] relative ${
+                    data.activeTheme === "industrial"
+                      ? "border-[#1C1B1A] shadow-md ring-1 ring-[#1C1B1A]"
+                      : "border-[#CAC8BD] opacity-85 hover:opacity-100 hover:border-stone-400"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#1C1B1A]">
+                        03 // Teenage Hardware
+                      </span>
+                      {data.activeTheme === "industrial" ? (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
+                          ● Live on Site
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#D7D5CB] text-[#6E6C60] border border-[#BCBAAD]">
+                          Available
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-lg font-display font-medium text-[#1C1B1A] mb-2">
+                      Teenage Engineering / Hardware
+                    </h3>
+                    <p className="text-xs text-[#55534A] font-mono leading-relaxed mb-5">
+                      Tactile industrial hardware aesthetic inspired by OP-1 &amp; EP-133: anodized aluminum chassis, interactive rotary dials, backlit phosphor matrix, and mechanical click sound effects.
+                    </p>
+
+                    {/* Feature Highlights */}
+                    <div className="space-y-2 font-mono text-[11px] text-[#55534A] mb-6 border-y border-[#CCCABF] py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#FF4F00] font-bold">✓</span> Stamped anodized aluminum chassis
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#FF4F00] font-bold">✓</span> Interactive 4-knob rotary encoders
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#FF4F00] font-bold">✓</span> Web Audio mechanical tactile clicks
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#FF4F00] font-bold">✓</span> 52-week backlit phosphor LED sequencer
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setData({ ...data, activeTheme: "industrial" })}
+                    disabled={data.activeTheme === "industrial"}
+                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
+                      data.activeTheme === "industrial"
+                        ? "bg-[#1C1B1A] text-[#F4F3EF] cursor-default font-bold"
+                        : "bg-[#FF4F00] text-white hover:bg-[#E54500] border border-[#B83700] cursor-pointer font-bold shadow-[0_2px_4px_rgba(0,0,0,0.15)]"
+                    }`}
+                  >
+                    {data.activeTheme === "industrial"
+                      ? "Currently Active"
+                      : "Activate Hardware Theme"}
                   </button>
                 </div>
               </div>

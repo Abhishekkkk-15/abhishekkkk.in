@@ -2,6 +2,7 @@ import { getPortfolioData, ensureInitialAdminUser } from "../lib/portfolioServic
 import { getGitHubActivity } from "../lib/github";
 import TerminalTheme from "../components/themes/terminal/TerminalTheme";
 import PlayerZeroTheme from "../components/themes/playerzero/PlayerZeroTheme";
+import IndustrialTheme from "../components/themes/industrial/IndustrialTheme";
 import ThemeSync from "../components/ui/ThemeSync";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,8 @@ export default async function HomePage() {
       />
       {activeTheme === "playerzero" ? (
         <PlayerZeroTheme portfolio={portfolio} githubData={githubData} />
+      ) : activeTheme === "industrial" ? (
+        <IndustrialTheme portfolio={portfolio} githubData={githubData} />
       ) : (
         <TerminalTheme portfolio={portfolio} githubData={githubData} />
       )}
