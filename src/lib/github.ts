@@ -134,6 +134,7 @@ export async function getGitHubActivity(
   let topLanguages: string[] = [];
   let weeks: ContributionDay[][] = [];
   let recentCommits: FormattedGithubCommit[] = [];
+  let publicReposList: any[] = [];
 
   // 1. Fetch user public profile for exact repo count
   try {
@@ -163,6 +164,7 @@ export async function getGitHubActivity(
     if (reposRes.ok) {
       const repos = await reposRes.json();
       if (Array.isArray(repos)) {
+        publicReposList = repos;
         starsAccumulatedNum = repos.reduce(
           (acc, r) => acc + (r.stargazers_count || 0),
           0
@@ -231,84 +233,141 @@ export async function getGitHubActivity(
     console.warn("GitHub code reviews fetch error:", e);
   }
 
-  // 4b. Fetch recent public push events/commits for live stream log
+  // 4b. Fetch real recent commits across user's active repositories
   try {
-    const eventsRes = await fetch(
-      `https://api.github.com/users/${encodeURIComponent(username)}/events/public?per_page=15`,
-      {
-        headers,
-        next: { revalidate: 1800 },
-      }
-    );
-    if (eventsRes.ok) {
-      const events = await eventsRes.json();
-      if (Array.isArray(events)) {
-        const parsedCommits: FormattedGithubCommit[] = [];
-        for (const ev of events) {
-          if (ev.type === "PushEvent") {
-            const repoName = ev.repo?.name || "repository";
-            const timeAgo = formatTimeAgo(ev.created_at);
-            if (Array.isArray(ev.payload?.commits) && ev.payload.commits.length > 0) {
-              for (const c of ev.payload.commits.slice(0, 2)) {
-                parsedCommits.push({
-                  sha: (c.sha || "HEAD").slice(0, 7),
-                  message: c.message || `Push to ${ev.payload?.ref || "main"}`,
-                  repo: repoName,
-                  url: `https://github.com/${repoName}/commit/${c.sha}`,
-                  timeAgo,
-                });
-              }
-            } else if (ev.payload?.head) {
-              parsedCommits.push({
-                sha: ev.payload.head.slice(0, 7),
-                message: `Push update to ${ev.payload?.ref ? ev.payload.ref.replace("refs/heads/", "") : "main"}`,
-                repo: repoName,
-                url: `https://github.com/${repoName}/commit/${ev.payload.head}`,
-                timeAgo,
-              });
+    const candidateRepos = publicReposList.filter((r) => !r.fork && !r.archived).slice(0, 3);
+    if (candidateRepos.length > 0) {
+      const commitPromises = candidateRepos.map(async (repo: any) => {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${encodeURIComponent(username)}/${encodeURIComponent(repo.name)}/commits?per_page=3`,
+            {
+              headers,
+              next: { revalidate: 1800 },
+            }
+          );
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              return data.map((c: any) => ({
+                sha: (c.sha || "HEAD").slice(0, 7),
+                message: (c.commit?.message || "Commit update").split("\n")[0],
+                repo: `${username}/${repo.name}`,
+                url: c.html_url || `https://github.com/${username}/${repo.name}/commit/${c.sha}`,
+                timeAgo: formatTimeAgo(c.commit?.author?.date || c.commit?.committer?.date || new Date().toISOString()),
+                rawDate: new Date(c.commit?.author?.date || c.commit?.committer?.date || 0).getTime(),
+              }));
             }
           }
-          if (parsedCommits.length >= 5) break;
+        } catch (e) {
+          console.warn("GitHub repo commits fetch error for", repo.name, e);
         }
-        if (parsedCommits.length > 0) {
-          recentCommits = parsedCommits;
+        return [];
+      });
+
+      const commitResults = await Promise.allSettled(commitPromises);
+      const allRepoCommits: any[] = [];
+      for (const r of commitResults) {
+        if (r.status === "fulfilled" && Array.isArray(r.value)) {
+          allRepoCommits.push(...r.value);
         }
+      }
+      if (allRepoCommits.length > 0) {
+        allRepoCommits.sort((a, b) => b.rawDate - a.rawDate);
+        recentCommits = allRepoCommits.slice(0, 5).map(({ rawDate, ...rest }) => rest);
       }
     }
   } catch (e) {
-    console.warn("GitHub events fetch error:", e);
+    console.warn("GitHub direct repo commits fetch error:", e);
   }
 
-  // Fallback recent commits if no events returned or rate-limited
+  // 4c. Secondary check: public events if direct repo fetch returned 0
+  if (recentCommits.length === 0) {
+    try {
+      const eventsRes = await fetch(
+        `https://api.github.com/users/${encodeURIComponent(username)}/events/public?per_page=15`,
+        {
+          headers,
+          next: { revalidate: 1800 },
+        }
+      );
+      if (eventsRes.ok) {
+        const events = await eventsRes.json();
+        if (Array.isArray(events)) {
+          const parsedCommits: FormattedGithubCommit[] = [];
+          for (const ev of events) {
+            if (ev.type === "PushEvent") {
+              const repoName = ev.repo?.name || "repository";
+              const timeAgo = formatTimeAgo(ev.created_at);
+              if (Array.isArray(ev.payload?.commits) && ev.payload.commits.length > 0) {
+                for (const c of ev.payload.commits.slice(0, 2)) {
+                  parsedCommits.push({
+                    sha: (c.sha || "HEAD").slice(0, 7),
+                    message: (c.message || `Push to ${ev.payload?.ref || "main"}`).split("\n")[0],
+                    repo: repoName,
+                    url: `https://github.com/${repoName}/commit/${c.sha}`,
+                    timeAgo,
+                  });
+                }
+              } else if (ev.payload?.head) {
+                parsedCommits.push({
+                  sha: ev.payload.head.slice(0, 7),
+                  message: `Push update to ${ev.payload?.ref ? ev.payload.ref.replace("refs/heads/", "") : "main"}`,
+                  repo: repoName,
+                  url: `https://github.com/${repoName}/commit/${ev.payload.head}`,
+                  timeAgo,
+                });
+              }
+            }
+            if (parsedCommits.length >= 5) break;
+          }
+          if (parsedCommits.length > 0) {
+            recentCommits = parsedCommits;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("GitHub events fetch error:", e);
+    }
+  }
+
+  // 4d. Fallback recent commits with real work if API is rate-limited or offline
   if (recentCommits.length === 0) {
     recentCommits = [
       {
-        sha: "8f2c01d",
-        message: "perf(kernel): fused fp8 flash-decoding kernel for Hopper architecture",
-        repo: `${username}/novakernel`,
-        url: `https://github.com/${username}`,
-        timeAgo: "2 hours ago",
+        sha: "2831b0a",
+        message: "feat: implement WebRTC DataChannel P2P with pure TypeScript werift and gateway signaling",
+        repo: `${username}/cloud-agent`,
+        url: `https://github.com/${username}/cloud-agent/commit/2831b0a1802134e68bc65181d43aed587c8c8f52`,
+        timeAgo: "just now",
       },
       {
-        sha: "3a19b7e",
-        message: "feat(swarm): add recursive reflection backtracking to agent state machine",
-        repo: `${username}/auto-data-swarm`,
-        url: `https://github.com/${username}`,
-        timeAgo: "yesterday",
+        sha: "a9f076e",
+        message: "feat: restore full projects list without select badges and integrate manta ray matrix into dossiers",
+        repo: `${username}/abhishekkkk.in`,
+        url: `https://github.com/${username}/abhishekkkk.in/commit/a9f076e04478d8d210f4c8e1a23c499e24f9edd4`,
+        timeAgo: "15m ago",
       },
       {
-        sha: "c940fa2",
-        message: "eval(jailbreak): add multi-turn latent entropy boundary probe test suite",
-        repo: `${username}/aegis-guard`,
-        url: `https://github.com/${username}`,
-        timeAgo: "3 days ago",
+        sha: "0962b8d",
+        message: "feat: implement dedicated Node.js gateway with MongoDB pairing and multi-tenant security",
+        repo: `${username}/cloud-agent`,
+        url: `https://github.com/${username}/cloud-agent/commit/0962b8dc028aa194fff95854c6691f24ea0ac0e3`,
+        timeAgo: "30m ago",
       },
       {
-        sha: "71b9e0f",
-        message: "refactor(kv-cache): compress token attention weights via quantized FP8 tensors",
-        repo: `${username}/omni-context`,
-        url: `https://github.com/${username}`,
-        timeAgo: "5 days ago",
+        sha: "9fb56af",
+        message: "feat: implement VPS daemon, pluggable CLI interface, and Antigravity adapter with zero-DB pagination",
+        repo: `${username}/cloud-agent`,
+        url: `https://github.com/${username}/cloud-agent/commit/9fb56afa2908822bf3abb518ff8b658a5aba5b52`,
+        timeAgo: "45m ago",
+      },
+      {
+        sha: "d31a9f2",
+        message: "feat: add global roaming shark with hydrodynamics and manta ray project matrix",
+        repo: `${username}/abhishekkkk.in`,
+        url: `https://github.com/${username}/abhishekkkk.in/commit/d31a9f29083ad7272485d29c29486a6f5bfbc183`,
+        timeAgo: "1h ago",
       },
     ];
   }
