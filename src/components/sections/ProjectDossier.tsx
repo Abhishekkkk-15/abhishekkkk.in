@@ -7,6 +7,7 @@ import Reveal from "../ui/Reveal";
 import TokenDecodingScrub from "../ui/TokenDecodingScrub";
 import TelemetryCounter from "../ui/TelemetryCounter";
 import HairlineDivider from "../ui/HairlineDivider";
+import AsciiDensityField from "../ui/AsciiDensityField";
 
 interface DossierProps {
   dossier?: IFlagshipDossier;
@@ -14,7 +15,7 @@ interface DossierProps {
 
 export default function ProjectDossier({ dossier = defaultDossier }: DossierProps) {
   return (
-    <section className="border-b border-[#E2E0D8] bg-[#F4F3EF]" data-purpose="project-dossier" id="project-spec">
+    <section className="border-b border-[#E2E0D8] bg-[#F4F3EF] relative" data-purpose="project-dossier" id="project-spec">
       {/* Header bar */}
       <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
@@ -36,9 +37,12 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
       {/* Live Token Stream & Decoding Timeline (Speculative Decoding Scrub) */}
       <TokenDecodingScrub />
 
-      {/* Dossier Body */}
-      <div className="p-8 md:p-14 lg:p-16">
-        <Reveal className="max-w-3xl space-y-6">
+      {/* Dossier Body with Generative ASCII Density Cloud Background */}
+      <div className="relative p-8 md:p-14 lg:p-16 overflow-hidden min-h-[440px] flex items-center">
+        {/* Generative ASCII Topographic Density Matrix (Mirroring Uploaded Blueprint Spec) */}
+        <AsciiDensityField />
+
+        <Reveal className="max-w-2xl sm:max-w-3xl space-y-6 relative z-10">
           <div className="font-mono text-xs text-[#6E6D68] uppercase tracking-widest">
             {dossier.subtitle}
           </div>
@@ -52,7 +56,7 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
 
           <CharFadeText
             as="p"
-            className="text-base text-[#111111] leading-relaxed block"
+            className="text-base text-[#111111] leading-relaxed block max-w-2xl"
           >
             {dossier.description}
           </CharFadeText>
@@ -60,7 +64,7 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
           {/* Metric Specifications with TelemetryCounter Interpolation */}
           <div className="flex flex-wrap items-center gap-8 pt-4 font-mono text-sm">
             {dossier.metrics.map((spec) => (
-              <div key={spec.label} className="space-y-0.5">
+              <div key={spec.label} className="space-y-0.5 bg-[#F4F3EF]/60 sm:bg-transparent backdrop-blur-[2px] sm:backdrop-blur-none p-1 sm:p-0">
                 <div className="text-[10px] text-[#6E6D68] uppercase">{spec.label}</div>
                 <div className="font-medium text-[#111111]">
                   <TelemetryCounter value={spec.value} />
