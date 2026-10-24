@@ -1,105 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import type { IFlagshipDossier } from "@/models/Portfolio";
 import { ArrowUpRight, Cpu } from "lucide-react";
+import AsciiShark from "@/components/ui/AsciiShark";
 
 export default function PlayerZeroArchitecture({
   dossier,
 }: {
   dossier: IFlagshipDossier;
 }) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let tick = 0;
-
-    function resize() {
-      if (!canvas) return;
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx!.scale(dpr, dpr);
-      drawCluster(rect.width, rect.height);
-    }
-
-    function drawCluster(width: number, height: number) {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, width, height);
-
-      const cols = 48;
-      const rows = 36;
-      const stepX = width / cols;
-      const stepY = height / rows;
-
-      // Animate organic attractor coordinates slightly over time
-      const t = tick * 0.015;
-      const a1x = width * (0.72 + Math.sin(t) * 0.04);
-      const a1y = height * (0.45 + Math.cos(t * 0.8) * 0.04);
-      const a2x = width * (0.38 + Math.cos(t * 0.7) * 0.03);
-      const a2y = height * (0.75 + Math.sin(t * 0.6) * 0.03);
-      const a3x = width * 0.85;
-      const a3y = height * 0.85;
-
-      for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-          const x = i * stepX + stepX / 2;
-          const y = j * stepY + stepY / 2;
-
-          const d1 = Math.hypot(x - a1x, y - a1y);
-          const d2 = Math.hypot(x - a2x, y - a2y);
-          const d3 = Math.hypot(x - a3x, y - a3y);
-
-          let influence =
-            Math.exp(-Math.pow(d1 / (width * 0.28), 2)) * 1.3 +
-            Math.exp(-Math.pow(d2 / (width * 0.22), 2)) * 0.9 +
-            Math.exp(-Math.pow(d3 / (width * 0.18), 2)) * 0.7;
-
-          const noise =
-            (Math.sin(i * 1.5 + t) * Math.cos(j * 1.5 - t) + 1) * 0.15;
-          influence += noise;
-
-          if (influence > 0.25) {
-            const radius = Math.min(Math.max((influence - 0.2) * 3.8, 0.4), 3.2);
-            const opacity = Math.min(Math.max(influence * 0.75, 0.12), 0.85);
-
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(20, 20, 24, ${opacity})`;
-            ctx.fill();
-          }
-        }
-      }
-    }
-
-    function animate() {
-      tick++;
-      if (canvas) {
-        const rect = canvas.getBoundingClientRect();
-        drawCluster(rect.width, rect.height);
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    }
-
-    resize();
-    window.addEventListener("resize", resize);
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
   return (
     <section
       className="max-w-6xl mx-auto px-6 py-16 sm:py-24"
@@ -184,30 +94,31 @@ export default function PlayerZeroArchitecture({
           </div>
         </motion.div>
 
-        {/* Right Point-Cloud Graphic Column with scale & fade entrance */}
+        {/* Right Animated ASCII Shark Graphic Column with scale & fade entrance */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92, x: 25 }}
           whileInView={{ opacity: 1, scale: 1, x: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.85, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-6 relative flex items-center justify-center min-h-[380px] lg:min-h-[460px] bg-stone-100/60 rounded-3xl border border-stone-200/70 p-4 overflow-hidden shadow-sm"
+          className="lg:col-span-6 relative flex items-center justify-center min-h-[400px] lg:min-h-[480px] bg-white rounded-3xl border border-stone-200/80 p-4 overflow-hidden shadow-xs select-none"
         >
-          {/* Halftone canvas simulating latent space & weights */}
-          <canvas
-            ref={canvasRef}
-            aria-label="Latent Space Vector Embedding Point Cloud Visualizer"
-            className="w-full h-full opacity-85 mix-blend-multiply"
+          {/* Animated Bioluminescent Matrix Shark Canvas */}
+          <AsciiShark
+            centerXRatio={0.50}
+            centerYRatio={0.50}
+            scaleRatio={0.72}
+            showLeftFade={false}
           />
 
           {/* Minimalist floating info pills over canvas */}
           <div className="absolute bottom-5 right-5 bg-white/90 backdrop-blur-sm border border-stone-200/80 rounded-xl px-3 py-2 text-[10px] font-mono text-stone-600 shadow-sm pointer-events-none">
-            <span className="font-semibold text-neutral-900">Latent Dim:</span> 4,096
+            <span className="font-semibold text-neutral-900">Locomotion:</span> Undulating Spine
             &nbsp;•&nbsp;
-            <span className="font-semibold text-neutral-900">Cosine Sim:</span> 0.994
+            <span className="font-semibold text-neutral-900">Latency:</span> 0.8ms
           </div>
           <div className="absolute top-5 left-5 bg-white/90 backdrop-blur-sm border border-stone-200/80 rounded-xl px-3 py-2 text-[10px] font-mono text-stone-600 shadow-sm pointer-events-none flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Organic Attractor Topology</span>
+            <span>Bioluminescent Square Matrix Shark</span>
           </div>
         </motion.div>
       </div>

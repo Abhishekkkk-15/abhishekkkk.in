@@ -5,6 +5,10 @@ import { useEffect, useRef } from "react";
 interface AsciiSharkProps {
   className?: string;
   interactive?: boolean;
+  centerXRatio?: number; // Normalized center X (0..1), default: mobile 0.65, desktop 0.70
+  centerYRatio?: number; // Normalized center Y (0..1), default: 0.50
+  scaleRatio?: number; // Custom scale ratio relative to container min(w, h)
+  showLeftFade?: boolean; // Whether to render the left gradient mask for text legibility (default: true)
 }
 
 // Authentic square matrix glyphs
@@ -22,6 +26,10 @@ interface SampledPixel {
 export default function AsciiShark({
   className = "",
   interactive = true,
+  centerXRatio,
+  centerYRatio = 0.50,
+  scaleRatio,
+  showLeftFade = true,
 }: AsciiSharkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mousePosRef = useRef({ x: -1000, y: -1000, active: false });
@@ -176,8 +184,9 @@ export default function AsciiShark({
       const isMobile = width < 640;
 
       // Positioned on the right side of the dossier with generous padding so the tail never clips
-      const baseCenterX = isMobile ? width * 0.65 : width * 0.70;
-      const baseCenterY = height * 0.50;
+      const defaultCenterX = isMobile ? width * 0.65 : width * 0.70;
+      const baseCenterX = centerXRatio !== undefined ? width * centerXRatio : defaultCenterX;
+      const baseCenterY = height * centerYRatio;
 
       // Gentle swimming locomotion: gliding drift + forward acceleration pulses
       const swimCycle = time * 2.2;
@@ -185,9 +194,12 @@ export default function AsciiShark({
       const driftY = Math.cos(time * 0.8) * (isMobile ? 8 : 10);
 
       // Responsive shark scale with safe bounds preserving right margin
-      const sharkScale = isMobile
+      const defaultScale = isMobile
         ? Math.min(width * 0.65, height * 0.70)
         : Math.min(width * 0.38, height * 0.86);
+      const sharkScale = scaleRatio !== undefined
+        ? Math.min(width * scaleRatio, height * Math.min(1.0, scaleRatio * 1.15))
+        : defaultScale;
 
       // Render ambient bioluminescent background glow field
       const glowGrad = ctx.createRadialGradient(
@@ -342,8 +354,10 @@ export default function AsciiShark({
         ref={canvasRef}
         className="w-full h-full block"
       />
-      {/* Soft paper canvas gradient overlay on the left to preserve text legibility */}
-      <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-[#F4F3EF] via-[#F4F3EF]/80 to-transparent pointer-events-none" />
+      {/* Soft paper canvas gradient overlay on the left to preserve text legibility (if enabled) */}
+      {showLeftFade && (
+        <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-[#F4F3EF] via-[#F4F3EF]/80 to-transparent pointer-events-none" />
+      )}
     </div>
   );
 }
