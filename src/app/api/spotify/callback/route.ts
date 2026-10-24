@@ -5,6 +5,15 @@ import { verifySessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 export async function GET(req: NextRequest) {
   // Only authenticated admins can link Spotify via callback
   const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -44,7 +53,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(
       `<div style="font-family: monospace; padding: 30px; background: #0D0D0C; color: #F87171;">
         <h2>Spotify Authorization Error</h2>
-        <p>${error || "No authorization code was returned."}</p>
+        <p>No authorization code was returned.</p>
         <p><a href="/api/spotify/login" style="color: #38BDF8;">Click here to retry Spotify Login ↗</a></p>
       </div>`,
       { headers: { "Content-Type": "text/html" }, status: 400 }
@@ -91,16 +100,18 @@ export async function GET(req: NextRequest) {
     const data = await res.json();
 
     if (!res.ok || !data.refresh_token) {
+      const safePayload = escapeHtml(JSON.stringify(data, null, 2));
       return new NextResponse(
         `<div style="font-family: monospace; padding: 30px; background: #0D0D0C; color: #F87171;">
           <h2>Token Exchange Failed (${res.status})</h2>
-          <pre>${JSON.stringify(data, null, 2)}</pre>
+          <pre>${safePayload}</pre>
         </div>`,
         { headers: { "Content-Type": "text/html" }, status: 400 }
       );
     }
 
     const refreshToken = data.refresh_token;
+    const safeRefreshToken = escapeHtml(refreshToken);
 
     // Automatically update .env.local file with the real refresh token
     const envPath = path.resolve(process.cwd(), ".env.local");
@@ -182,7 +193,7 @@ export async function GET(req: NextRequest) {
             <p>Your Spotify authorization was successful! Your refresh token has been <strong>authenticated and saved to <code>.env.local</code></strong>.</p>
             
             <div class="label">Your Real SPOTIFY_REFRESH_TOKEN (Save this for Vercel/Production deployment):</div>
-            <div class="token-box">${refreshToken}</div>
+            <div class="token-box">${safeRefreshToken}</div>
 
             <p>Your live playing song and animated equalizer are now active!</p>
             
@@ -196,9 +207,10 @@ export async function GET(req: NextRequest) {
       headers: { "Content-Type": "text/html" },
     });
   } catch (err: any) {
+    const safeErrorMessage = escapeHtml(err?.message || "Unknown error");
     return new NextResponse(
       `<div style="font-family: monospace; padding: 30px; background: #0D0D0C; color: #F87171;">
-        <h2>Error: ${err?.message || "Unknown error"}</h2>
+        <h2>Error: ${safeErrorMessage}</h2>
       </div>`,
       { headers: { "Content-Type": "text/html" }, status: 500 }
     );
