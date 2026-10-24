@@ -236,11 +236,25 @@ export default function AsciiShark({
         const relX = (pt.x - sharkMidX) * sharkScale;
         const relY = (pt.y - sharkMidY) * sharkScale;
 
-        // REAL-TIME SHARK LOCOMOTION WAVE:
-        // Spine traveling wave with organic tail whip undulation
-        const spineProgress = Math.max(0, Math.min(1, (pt.y - 0.24) / 0.50)); // 0 at snout, 1 at tail
-        const waveAmp = (isMobile ? 2 : 3) + Math.pow(spineProgress, 2.0) * (isMobile ? 14 : 20);
-        const wavePhase = swimCycle - spineProgress * 5.2;
+        // REAL-TIME BIOMECHANICAL SHARK KINEMATICS:
+        // Orthogonal projection onto anatomical spine axis (snout to caudal tip)
+        const snoutX = 0.167;
+        const snoutY = 0.241;
+        const spineDx = 0.861 - 0.167;
+        const spineDy = 0.741 - 0.241;
+        const spineLenSq = spineDx * spineDx + spineDy * spineDy;
+        const spineProgress = Math.max(0, Math.min(1, ((pt.x - snoutX) * spineDx + (pt.y - snoutY) * spineDy) / spineLenSq));
+
+        // Anterior rigidity (stable head/gills) vs cubic caudal whip
+        let waveAmp: number;
+        if (spineProgress < 0.32) {
+          waveAmp = spineProgress * 1.5; // rock-solid predatory snout
+        } else {
+          const tailProgress = (spineProgress - 0.32) / 0.68;
+          waveAmp = 0.5 + Math.pow(tailProgress, 2.4) * (isMobile ? 14 : 22);
+        }
+
+        const wavePhase = swimCycle - spineProgress * 4.8;
         const waveOffset = Math.sin(wavePhase) * waveAmp;
 
         // Whole-body swimming yaw angle

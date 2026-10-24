@@ -7,8 +7,6 @@ import Reveal from "../ui/Reveal";
 import TokenDecodingScrub from "../ui/TokenDecodingScrub";
 import TelemetryCounter from "../ui/TelemetryCounter";
 import HairlineDivider from "../ui/HairlineDivider";
-import AsciiShark from "../ui/AsciiShark";
-import ArchitecturePipeline from "../ui/ArchitecturePipeline";
 
 interface DossierProps {
   dossier?: IFlagshipDossier;
@@ -18,7 +16,7 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
   return (
     <section className="border-b border-[#E2E0D8] bg-[#F4F3EF] relative" data-purpose="project-dossier" id="project-spec">
       {/* Header bar */}
-      <div className="px-5 sm:px-8 py-4 sm:py-5 flex items-baseline justify-between">
+      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">{dossier.sectionIndex}</span>
           <CharFadeText
@@ -38,11 +36,8 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
       {/* Live Token Stream & Decoding Timeline (Speculative Decoding Scrub) */}
       <TokenDecodingScrub />
 
-      {/* Dossier Body with Animated ASCII Shark Matrix Background */}
+      {/* Dossier Body */}
       <div className="relative p-8 md:p-14 lg:p-16 overflow-hidden min-h-[460px] flex items-center">
-        {/* Animated Bioluminescent ASCII Shark Matrix */}
-        <AsciiShark />
-
         <Reveal className="max-w-2xl sm:max-w-3xl space-y-6 relative z-10">
           <div className="font-mono text-xs text-[#6E6D68] uppercase tracking-widest">
             {dossier.subtitle}
@@ -97,9 +92,6 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
               </a>
             )}
           </div>
-
-          {/* Interactive Systems Architecture Pipeline (Toggleable via Admin) */}
-          {dossier?.showArchitecturePipeline && <ArchitecturePipeline />}
         </Reveal>
       </div>
     </section>

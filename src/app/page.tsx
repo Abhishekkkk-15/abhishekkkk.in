@@ -4,6 +4,7 @@ import TerminalTheme from "../components/themes/terminal/TerminalTheme";
 import PlayerZeroTheme from "../components/themes/playerzero/PlayerZeroTheme";
 import IndustrialTheme from "../components/themes/industrial/IndustrialTheme";
 import ThemeSync from "../components/ui/ThemeSync";
+import GlobalRoamingShark from "../components/ui/GlobalRoamingShark";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,9 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* Global Ambient Roaming ASCII Shark across all themes */}
+      <GlobalRoamingShark />
+
       <ThemeSync
         theme={activeTheme}
         topHeadline={portfolio.profile?.matrixTopHeadline}
