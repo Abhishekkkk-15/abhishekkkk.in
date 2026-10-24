@@ -40,7 +40,15 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const updated = await updatePortfolioData(body);
     revalidatePath("/");
-    return NextResponse.json({ success: true, data: updated });
+    const res = NextResponse.json({ success: true, data: updated });
+    if (updated.activeTheme) {
+      res.cookies.set("active_theme", updated.activeTheme, {
+        path: "/",
+        maxAge: 31536000,
+        sameSite: "lax",
+      });
+    }
+    return res;
   } catch (err: any) {
     console.error("Update portfolio error:", err);
     return NextResponse.json(

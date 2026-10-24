@@ -20,9 +20,9 @@ export default function Contact({
   const currentYear = new Date().getFullYear();
 
   return (
-    <section className="p-8 md:p-14 bg-[#F4F3EF]" data-purpose="contact-colophon" id="contact">
+    <section className="p-5 sm:p-8 md:p-12 lg:p-14 bg-[#F4F3EF]" data-purpose="contact-colophon" id="contact">
       <Reveal>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-14">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 pb-10 sm:pb-14">
           {/* Location */}
           <div className="md:col-span-4 space-y-3 font-mono text-xs">
             <span className="text-[#6E6D68] uppercase tracking-widest block">LOCATION</span>
@@ -76,20 +76,12 @@ export default function Contact({
         {/* Footer Bar */}
         <footer className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs font-mono text-[#6E6D68] uppercase gap-4">
           <div>© {currentYear} {profile.labBrand || profile.name}</div>
-          <div className="flex items-center gap-6">
-            <a
-              className="text-[#6E6D68] hover:text-[#111111] transition-colors text-[11px]"
-              href="/admin/editor"
-            >
-              [CMS / EDITOR]
-            </a>
-            <a
-              className="hover:text-[#111111] transition-colors flex items-center gap-1"
-              href="#hero"
-            >
-              ↑ TOP
-            </a>
-          </div>
+          <a
+            className="hover:text-[#111111] transition-colors flex items-center gap-1"
+            href="#hero"
+          >
+            ↑ TOP
+          </a>
         </footer>
       </Reveal>
     </section>

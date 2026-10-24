@@ -27,7 +27,7 @@ export default function GithubActivity({ data }: GithubActivityProps) {
       id="activity"
     >
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
+      <div className="px-5 sm:px-8 py-4 sm:py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">04.2 //</span>
           <CharFadeText
@@ -44,7 +44,7 @@ export default function GithubActivity({ data }: GithubActivityProps) {
 
       <HairlineDivider leftLabel="04.2" rightLabel="GITHUB_OS" />
 
-      <div className="p-8 md:p-14 lg:p-16 space-y-12">
+      <div className="p-5 sm:p-8 md:p-12 lg:p-16 space-y-10 sm:space-y-12">
         <Reveal>
           {/* Organization & Repositories Header */}
           <div className="space-y-2">
@@ -84,8 +84,11 @@ export default function GithubActivity({ data }: GithubActivityProps) {
 
           {/* 52-Week Commit Density Bar Header */}
           <div className="pt-8">
-            <div className="flex items-center justify-between font-mono text-xs text-[#6E6D68] mb-3 uppercase tracking-wider">
-              <span>52-WEEK COMMIT DENSITY // JAN — DEC {data.currentYear}</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between font-mono text-xs text-[#6E6D68] mb-3 uppercase tracking-wider gap-2">
+              <div className="flex items-center gap-2">
+                <span>52-WEEK COMMIT DENSITY // JAN — DEC {data.currentYear}</span>
+                <span className="sm:hidden text-[9.5px] text-[#2563EB] font-mono">← SWIPE →</span>
+              </div>
               <div className="flex items-center gap-1.5 text-[10px]">
                 <span>LESS</span>
                 <span className="w-2.5 h-2.5 bg-[#EBEAE4] inline-block border border-[#E2E0D8]"></span>
@@ -97,7 +100,7 @@ export default function GithubActivity({ data }: GithubActivityProps) {
             </div>
 
             {/* 52-Week Grid Heatmap with Chronological Waterfall Cascade */}
-            <div className="overflow-x-auto pb-2 pt-1 border border-[#E2E0D8] bg-[#F4F3EF] p-4">
+            <div className="overflow-x-auto pb-3 pt-2 border border-[#E2E0D8] bg-[#F4F3EF] p-3 sm:p-4 touch-pan-x">
               <div className="flex gap-[3px] min-w-[720px] justify-between">
                 {data.weeks.map((week, wIdx) => (
                   <motion.div

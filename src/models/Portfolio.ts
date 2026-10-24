@@ -40,6 +40,11 @@ export interface IProfile {
       value: string;
     };
   };
+  showCurlBadge?: boolean;
+  showJapaneseBio?: boolean;
+  showSpotifyPlayer?: boolean;
+  matrixTopHeadline?: string;
+  matrixBottomHeadline?: string;
 }
 
 export interface IArchitecturalFocus {
@@ -83,6 +88,7 @@ export interface IFlagshipDossier {
   metrics: Array<{ label: string; value: string }>;
   github: string;
   live?: string;
+  showArchitecturePipeline?: boolean;
 }
 
 export interface IGithubActivity {
@@ -106,6 +112,7 @@ export interface IContactInfo {
 }
 
 export interface IPortfolioData {
+  activeTheme?: "terminal" | "playerzero" | "industrial";
   profile: IProfile;
   architecturalFocus: IArchitecturalFocus[];
   experience: IExperienceItem[];
@@ -123,6 +130,11 @@ export interface IPortfolioDocument extends IPortfolioData, Document {
 
 const PortfolioSchema = new Schema<IPortfolioDocument>(
   {
+    activeTheme: {
+      type: String,
+      enum: ["terminal", "playerzero", "industrial"],
+      default: "terminal",
+    },
     profile: {
       name: { type: String, required: true },
       shortName: { type: String, required: true },
@@ -154,6 +166,11 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
           value: { type: String, required: true },
         },
       },
+      showCurlBadge: { type: Boolean, default: false },
+      showJapaneseBio: { type: Boolean, default: true },
+      showSpotifyPlayer: { type: Boolean, default: true },
+      matrixTopHeadline: { type: String, default: "BUILD. TRAIN." },
+      matrixBottomHeadline: { type: String, default: "DEPLOY. SCALE." },
     },
     architecturalFocus: [
       {
@@ -204,16 +221,17 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
       ],
       github: { type: String, required: true },
       live: { type: String, default: "" },
+      showArchitecturePipeline: { type: Boolean, default: false },
     },
     githubActivity: {
       status: { type: String, default: "Active Development" },
       customCommits: { type: String, default: "" },
-      customPrs: { type: String, default: "164" },
-      customReviews: { type: String, default: "312" },
-      customStars: { type: String, default: "4.2k" },
+      customPrs: { type: String, default: "" },
+      customReviews: { type: String, default: "" },
+      customStars: { type: String, default: "" },
       customLanguages: {
         type: String,
-        default: "TypeScript (48%)\nGo (20%)\nRust (15%)",
+        default: "",
       },
     },
     skillMatrix: [
@@ -241,13 +259,14 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
 export const defaultGithubActivity: IGithubActivity = {
   status: "Active Development",
   customCommits: "",
-  customPrs: "164",
-  customReviews: "312",
-  customStars: "4.2k",
-  customLanguages: "TypeScript (48%)\nGo (20%)\nRust (15%)",
+  customPrs: "",
+  customReviews: "",
+  customStars: "",
+  customLanguages: "",
 };
 
 export const defaultPortfolioData: IPortfolioData = {
+  activeTheme: "terminal",
   profile: defaultProfile,
   architecturalFocus: defaultFocus,
   experience: defaultExperience,

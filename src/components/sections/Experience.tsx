@@ -15,7 +15,7 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
   return (
     <section className="border-b border-[#E2E0D8]" data-purpose="experience-timeline" id="experience">
       {/* Header bar */}
-      <div className="px-6 sm:px-8 py-5 flex items-baseline justify-between">
+      <div className="px-5 sm:px-8 py-4 sm:py-5 flex items-baseline justify-between">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-[#6E6D68]">03 //</span>
           <CharFadeText
@@ -37,7 +37,7 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
         {items.map((item, index) => (
           <article
             key={`${item.company}-${index}`}
-            className="px-6 sm:px-8 py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#EBEAE4] transition-colors"
+            className="px-5 sm:px-8 py-6 sm:py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-baseline hover:bg-[#EBEAE4] transition-colors"
           >
             <Reveal className="contents">
               {/* Left Column: Period & Location */}
@@ -74,7 +74,7 @@ export default function Experience({ items = defaultExperience }: ExperienceProp
               </div>
 
               {/* Right Column: Key Technical Metric with Telemetry Counter */}
-              <div className="md:col-span-3 md:text-right font-mono text-xs text-[#111111] pt-2 md:pt-0">
+              <div className="md:col-span-3 md:text-right font-mono text-xs text-[#111111] pt-3 md:pt-0 border-t md:border-t-0 border-[#E2E0D8]/50 mt-3 md:mt-0">
                 <TelemetryCounter value={item.metric} />
                 <div className="text-[#6E6D68] text-[10.5px] pt-0.5">{item.metricSub}</div>
               </div>
