@@ -7,7 +7,7 @@ import Reveal from "../ui/Reveal";
 import TokenDecodingScrub from "../ui/TokenDecodingScrub";
 import TelemetryCounter from "../ui/TelemetryCounter";
 import HairlineDivider from "../ui/HairlineDivider";
-import AsciiDensityField from "../ui/AsciiDensityField";
+import AsciiShark from "../ui/AsciiShark";
 
 interface DossierProps {
   dossier?: IFlagshipDossier;
@@ -37,10 +37,10 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
       {/* Live Token Stream & Decoding Timeline (Speculative Decoding Scrub) */}
       <TokenDecodingScrub />
 
-      {/* Dossier Body with Generative ASCII Density Cloud Background */}
-      <div className="relative p-8 md:p-14 lg:p-16 overflow-hidden min-h-[440px] flex items-center">
-        {/* Generative ASCII Topographic Density Matrix (Mirroring Uploaded Blueprint Spec) */}
-        <AsciiDensityField />
+      {/* Dossier Body with Animated ASCII Shark Matrix Background */}
+      <div className="relative p-8 md:p-14 lg:p-16 overflow-hidden min-h-[460px] flex items-center">
+        {/* Animated Bioluminescent ASCII Shark Matrix */}
+        <AsciiShark />
 
         <Reveal className="max-w-2xl sm:max-w-3xl space-y-6 relative z-10">
           <div className="font-mono text-xs text-[#6E6D68] uppercase tracking-widest">
@@ -64,7 +64,7 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
           {/* Metric Specifications with TelemetryCounter Interpolation */}
           <div className="flex flex-wrap items-center gap-8 pt-4 font-mono text-sm">
             {dossier.metrics.map((spec) => (
-              <div key={spec.label} className="space-y-0.5 bg-[#F4F3EF]/60 sm:bg-transparent backdrop-blur-[2px] sm:backdrop-blur-none p-1 sm:p-0">
+              <div key={spec.label} className="space-y-0.5 bg-[#F4F3EF]/70 sm:bg-transparent backdrop-blur-[2px] sm:backdrop-blur-none p-1 sm:p-0">
                 <div className="text-[10px] text-[#6E6D68] uppercase">{spec.label}</div>
                 <div className="font-medium text-[#111111]">
                   <TelemetryCounter value={spec.value} />
