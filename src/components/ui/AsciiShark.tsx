@@ -7,10 +7,8 @@ interface AsciiSharkProps {
   interactive?: boolean;
 }
 
-// Authentic ASCII characters extracted from the Shark.jfif matrix
-const SHARK_CHARS = [
-  "0", "S", "X", "8", "9", "B", "6", "1", "4", "3", "d", "7", "%", "&", "@", "S8", "08"
-];
+// Authentic square matrix glyphs
+const SQUARE_CHARS = ["▪", "■", "█", "▫", "◽", "◾", "◻", "◼"];
 
 interface SampledPixel {
   x: number; // normalized 0..1 in source image
@@ -19,7 +17,6 @@ interface SampledPixel {
   r: number;
   g: number;
   b: number;
-  char: string;
 }
 
 export default function AsciiShark({
@@ -84,7 +81,6 @@ export default function AsciiShark({
 
           // Strict threshold so only the actual glowing shark body & fins are captured
           if (luminance > 0.20) {
-            const charIdx = Math.floor(luminance * (SHARK_CHARS.length - 1));
             pixels.push({
               x: nx,
               y: ny,
@@ -92,7 +88,6 @@ export default function AsciiShark({
               r: red,
               g: green,
               b: blue,
-              char: SHARK_CHARS[charIdx] || "8",
             });
           }
         }
@@ -127,7 +122,6 @@ export default function AsciiShark({
               r: Math.floor(180 + b * 75),
               g: Math.floor(220 + b * 35),
               b: 255,
-              char: SHARK_CHARS[Math.floor(b * (SHARK_CHARS.length - 1))] || "8",
             });
           }
         }
@@ -214,12 +208,8 @@ export default function AsciiShark({
       // Select active shark pixel source (filtered contiguous shark silhouette)
       const activePixels = sampledShark.length > 0 ? sampledShark : fallbackShark;
 
-      // Cell size for rendering ASCII tiles
+      // Cell size for rendering square box matrix
       const cellSize = isMobile ? 8.5 : 10.5;
-      ctx.font = `700 ${cellSize - 0.5}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
       const mouse = mousePosRef.current;
 
       // True geometric centroid of the clean contiguous shark body
@@ -264,49 +254,68 @@ export default function AsciiShark({
           }
         }
 
-        // Color computation matching Shark.jfif:
+        // Color & geometry computation for square box matrix
         const b = pt.brightness;
-        let charColor: string;
-        let tileBg: string | null = null;
 
-        if (b > 0.8) {
-          // Intense bioluminescent white core
-          charColor = "#FFFFFF";
-          tileBg = "rgba(224, 242, 254, 0.45)";
-        } else if (b > 0.55) {
-          // Electric cyan / sky blue
-          charColor = `rgb(${Math.floor(pt.r * 1.1)}, ${Math.floor(pt.g * 1.15)}, 255)`;
-          tileBg = "rgba(56, 189, 248, 0.22)";
-        } else if (b > 0.35) {
-          // Signal cobalt / oceanic deep blue
-          charColor = "#2563EB";
-          tileBg = "rgba(37, 99, 235, 0.12)";
+        // Dynamic square box sizing based on luminance
+        const boxScale = 0.32 + Math.pow(b, 1.25) * 0.68;
+        const boxSize = (cellSize - 1.2) * boxScale;
+        const halfSize = boxSize / 2;
+
+        let boxColor: string;
+        let borderColor: string | null = null;
+        let showInnerCore = false;
+
+        if (b > 0.78) {
+          // Intense bioluminescent core: signal cobalt with white center core
+          boxColor = "#2563EB";
+          borderColor = "#1D4ED8";
+          showInnerCore = true;
+        } else if (b > 0.54) {
+          // Mid-body: electric cyan / sky azure
+          boxColor = "#0284C7";
+          borderColor = "#0369A1";
+        } else if (b > 0.36) {
+          // Torso perimeter: oceanic cobalt
+          boxColor = "#3B82F6";
         } else {
-          // Fading tail / perimeter graphite blue
-          charColor = "#4B6B94";
+          // Fading fins / tail: muted slate cobalt
+          boxColor = "#60A5FA";
         }
 
-        // Subtle matrix glitch / character scramble over time
-        let displayChar = pt.char;
-        if (Math.sin(time * 3 + i * 17) > 0.94) {
-          const scrambleIdx = (i + Math.floor(time * 8)) % SHARK_CHARS.length;
-          displayChar = SHARK_CHARS[scrambleIdx];
+        // Interactive cursor proximity reaction
+        if (mouse.active) {
+          const mdx = finalX - mouse.x;
+          const mdy = finalY - mouse.y;
+          const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (mDist < 120) {
+            boxColor = "#1D4ED8";
+          }
         }
 
-        // Draw individual ASCII block background tile for dense glowing cells
-        if (tileBg) {
-          ctx.fillStyle = tileBg;
-          ctx.fillRect(
-            finalX - cellSize / 2 + 0.5,
-            finalY - cellSize / 2 + 0.5,
-            cellSize - 1,
-            cellSize - 1
-          );
+        const renderX = Math.round(finalX - halfSize);
+        const renderY = Math.round(finalY - halfSize);
+        const renderSize = Math.max(2, Math.round(boxSize));
+
+        // 1. Draw solid square box
+        ctx.fillStyle = boxColor;
+        ctx.fillRect(renderX, renderY, renderSize, renderSize);
+
+        // 2. Draw fine architectural hairline border on prominent square boxes
+        if (borderColor && renderSize > 5) {
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 0.75;
+          ctx.strokeRect(renderX + 0.5, renderY + 0.5, renderSize - 1, renderSize - 1);
         }
 
-        // Draw the ASCII character glyph
-        ctx.fillStyle = charColor;
-        ctx.fillText(displayChar, finalX, finalY);
+        // 3. For dense core boxes, draw a luminous inner square box (nested square box)
+        if (showInnerCore && renderSize > 6) {
+          const innerSize = Math.max(2, Math.round(renderSize * 0.40));
+          const innerX = Math.round(finalX - innerSize / 2);
+          const innerY = Math.round(finalY - innerSize / 2);
+          ctx.fillStyle = "#FFFFFF";
+          ctx.fillRect(innerX, innerY, innerSize, innerSize);
+        }
       }
 
       animationFrameId = requestAnimationFrame(render);
