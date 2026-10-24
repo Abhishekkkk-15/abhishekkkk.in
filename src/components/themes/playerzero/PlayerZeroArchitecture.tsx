@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import type { IFlagshipDossier } from "@/models/Portfolio";
 import { ArrowUpRight, Cpu } from "lucide-react";
-import AsciiShark from "@/components/ui/AsciiShark";
+import AsciiMantaRay from "@/components/ui/AsciiMantaRay";
 
 export default function PlayerZeroArchitecture({
   dossier,
@@ -94,7 +94,7 @@ export default function PlayerZeroArchitecture({
           </div>
         </motion.div>
 
-        {/* Right Animated ASCII Shark Graphic Column with scale & fade entrance */}
+        {/* Right Animated ASCII Manta Ray Graphic Column with scale & fade entrance */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92, x: 25 }}
           whileInView={{ opacity: 1, scale: 1, x: 0 }}
@@ -102,8 +102,8 @@ export default function PlayerZeroArchitecture({
           transition={{ duration: 0.85, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="lg:col-span-6 relative flex items-center justify-center min-h-[400px] lg:min-h-[480px] bg-white rounded-3xl border border-stone-200/80 p-4 overflow-hidden shadow-xs select-none"
         >
-          {/* Animated Bioluminescent Matrix Shark Canvas */}
-          <AsciiShark
+          {/* Animated Bioluminescent Matrix Manta Ray Canvas */}
+          <AsciiMantaRay
             centerXRatio={0.50}
             centerYRatio={0.50}
             scaleRatio={0.72}
@@ -112,13 +112,13 @@ export default function PlayerZeroArchitecture({
 
           {/* Minimalist floating info pills over canvas */}
           <div className="absolute bottom-5 right-5 bg-white/90 backdrop-blur-sm border border-stone-200/80 rounded-xl px-3 py-2 text-[10px] font-mono text-stone-600 shadow-sm pointer-events-none">
-            <span className="font-semibold text-neutral-900">Locomotion:</span> Undulating Spine
+            <span className="font-semibold text-neutral-900">Locomotion:</span> Undulating Wings
             &nbsp;•&nbsp;
             <span className="font-semibold text-neutral-900">Latency:</span> 0.8ms
           </div>
           <div className="absolute top-5 left-5 bg-white/90 backdrop-blur-sm border border-stone-200/80 rounded-xl px-3 py-2 text-[10px] font-mono text-stone-600 shadow-sm pointer-events-none flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Bioluminescent Square Matrix Shark</span>
+            <span>Bioluminescent Square Matrix Manta Ray</span>
           </div>
         </motion.div>
       </div>

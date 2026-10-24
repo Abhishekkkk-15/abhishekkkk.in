@@ -7,6 +7,7 @@ import Reveal from "../ui/Reveal";
 import TokenDecodingScrub from "../ui/TokenDecodingScrub";
 import TelemetryCounter from "../ui/TelemetryCounter";
 import HairlineDivider from "../ui/HairlineDivider";
+import AsciiMantaRay from "../ui/AsciiMantaRay";
 
 interface DossierProps {
   dossier?: IFlagshipDossier;
@@ -36,8 +37,11 @@ export default function ProjectDossier({ dossier = defaultDossier }: DossierProp
       {/* Live Token Stream & Decoding Timeline (Speculative Decoding Scrub) */}
       <TokenDecodingScrub />
 
-      {/* Dossier Body */}
+      {/* Dossier Body with Animated ASCII Manta Ray Matrix Background */}
       <div className="relative p-8 md:p-14 lg:p-16 overflow-hidden min-h-[460px] flex items-center">
+        {/* Animated Bioluminescent ASCII Manta Ray Matrix */}
+        <AsciiMantaRay centerXRatio={0.72} scaleRatio={0.52} showLeftFade={true} />
+
         <Reveal className="max-w-2xl sm:max-w-3xl space-y-6 relative z-10">
           <div className="font-mono text-xs text-[#6E6D68] uppercase tracking-widest">
             {dossier.subtitle}

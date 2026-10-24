@@ -14,11 +14,19 @@ interface SampledPixel {
 interface AsciiMantaRayProps {
   className?: string;
   interactive?: boolean;
+  centerXRatio?: number; // Normalized center X (0..1), default: 0.50
+  centerYRatio?: number; // Normalized center Y (0..1), default: 0.50
+  scaleRatio?: number; // Custom scale ratio relative to container
+  showLeftFade?: boolean; // Whether to render the left gradient mask for text legibility
 }
 
 export default function AsciiMantaRay({
   className = "",
   interactive = true,
+  centerXRatio = 0.50,
+  centerYRatio = 0.50,
+  scaleRatio,
+  showLeftFade = false,
 }: AsciiMantaRayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mousePosRef = useRef({ x: -1000, y: -1000, active: false });
@@ -167,15 +175,21 @@ export default function AsciiMantaRay({
       ctx.clearRect(0, 0, width, height);
 
       const isMobile = width < 640;
-      const baseCenterX = width * 0.50;
-      const baseCenterY = height * 0.50;
+      const defaultCenterX = isMobile ? width * 0.50 : width * centerXRatio;
+      const baseCenterX = defaultCenterX;
+      const baseCenterY = height * centerYRatio;
 
       // Gentle floating heave & drift
       const swimCycle = time * 2.2;
       const driftY = Math.sin(time * 0.8) * 8;
       const driftX = Math.cos(time * 0.6) * 6;
 
-      const mantaScale = Math.min(width * 0.85, height * 0.90);
+      const defaultScale = isMobile
+        ? Math.min(width * 0.85, height * 0.90)
+        : Math.min(width * (scaleRatio || 0.45), height * 0.88);
+      const mantaScale = scaleRatio !== undefined
+        ? Math.min(width * scaleRatio, height * Math.min(1.0, scaleRatio * 1.15))
+        : defaultScale;
 
       // Ambient bioluminescent background glow field
       const glowGrad = ctx.createRadialGradient(
@@ -298,7 +312,7 @@ export default function AsciiMantaRay({
         canvas.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
-  }, [interactive]);
+  }, [interactive, centerXRatio, centerYRatio, scaleRatio, showLeftFade]);
 
   return (
     <div
@@ -306,6 +320,10 @@ export default function AsciiMantaRay({
       className={`pointer-events-none absolute inset-0 select-none overflow-hidden ${className}`}
     >
       <canvas ref={canvasRef} className="w-full h-full block" />
+      {/* Soft paper canvas gradient overlay on the left to preserve text legibility (if enabled) */}
+      {showLeftFade && (
+        <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-[#F4F3EF] via-[#F4F3EF]/80 to-transparent pointer-events-none" />
+      )}
     </div>
   );
 }
