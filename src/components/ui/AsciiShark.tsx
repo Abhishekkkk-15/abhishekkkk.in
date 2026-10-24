@@ -66,11 +66,14 @@ export default function AsciiShark({
         for (let c = 0; c < cols; c++) {
           const nx = c / cols;
 
-          // 1. ISOLATE SHARK ONLY: Filter out top-right lens flare and outer background artifacts
-          if (ny < 0.22) continue; // above shark snout
+          // 1. ISOLATE SHARK SILHOUETTE: Filter top-right flare and outer margins
+          if (ny < 0.22 || ny > 0.78) continue; // head and tail bounds
           if (ny < 0.35 && nx > 0.65) continue; // top-right flare artifact
-          if (ny > 0.82) continue; // below tail
           if (nx < 0.14 || nx > 0.92) continue; // outer side margins
+
+          // 2. REMOVE DETACHED OBJECT / FIN BESIDE THE FISH:
+          // Strictly eliminates the disconnected artifact at ny > 0.50, nx < 0.32
+          if (ny > 0.50 && nx < 0.32) continue;
 
           const idx = (r * cols + c) * 4;
           const red = imgData[idx];
@@ -105,17 +108,12 @@ export default function AsciiShark({
       const rows = 48;
 
       for (let r = 0; r < rows; r++) {
-        const ny = 0.22 + (r / rows) * 0.58;
-        // Shark spine center curving diagonally
-        const spineX = 0.30 + (r / rows) * 0.45;
-        // Body width tapering from head/torso to tail
-        let bodyW = 0.14 * Math.sin((r / rows) * Math.PI);
-        if (r / rows > 0.6) bodyW = 0.07 * (1 - (r / rows - 0.6) / 0.4);
-
-        // Pectoral fin extensions
-        if (r / rows > 0.22 && r / rows < 0.44) {
-          bodyW += 0.12 * Math.sin(((r / rows - 0.22) / 0.22) * Math.PI);
-        }
+        const ny = 0.24 + (r / rows) * 0.50;
+        // Shark spine center curving diagonally from snout to tail
+        const spineX = 0.22 + (r / rows) * 0.60;
+        // Body width tapering smoothly from head/torso to tail
+        let bodyW = 0.12 * Math.sin((r / rows) * Math.PI);
+        if (r / rows > 0.6) bodyW = 0.06 * (1 - (r / rows - 0.6) / 0.4);
 
         for (let c = 0; c < cols; c++) {
           const nx = c / cols;
@@ -183,17 +181,19 @@ export default function AsciiShark({
 
       const isMobile = width < 640;
 
-      // Positioned to the right of the dossier content (matching requested placement)
-      const baseCenterX = isMobile ? width * 0.70 : width * 0.77;
-      const baseCenterY = height * 0.48;
+      // Positioned on the right side of the dossier with generous padding so the tail never clips
+      const baseCenterX = isMobile ? width * 0.65 : width * 0.70;
+      const baseCenterY = height * 0.50;
 
       // Gentle swimming locomotion: gliding drift + forward acceleration pulses
       const swimCycle = time * 2.2;
-      const driftX = Math.sin(time * 0.6) * 14;
-      const driftY = Math.cos(time * 0.8) * 12;
+      const driftX = Math.sin(time * 0.6) * (isMobile ? 6 : 10);
+      const driftY = Math.cos(time * 0.8) * (isMobile ? 8 : 10);
 
-      // Responsive shark scale with safe margin from right edge
-      const sharkScale = Math.min(width * 0.42, height * 0.96);
+      // Responsive shark scale with safe bounds preserving right margin
+      const sharkScale = isMobile
+        ? Math.min(width * 0.65, height * 0.70)
+        : Math.min(width * 0.38, height * 0.86);
 
       // Render ambient bioluminescent background glow field
       const glowGrad = ctx.createRadialGradient(
@@ -202,16 +202,16 @@ export default function AsciiShark({
         25,
         baseCenterX + driftX,
         baseCenterY + driftY,
-        sharkScale * 0.72
+        sharkScale * 0.68
       );
-      glowGrad.addColorStop(0, "rgba(56, 189, 248, 0.18)"); // soft cyan core glow
-      glowGrad.addColorStop(0.4, "rgba(37, 99, 235, 0.09)"); // cobalt ring
+      glowGrad.addColorStop(0, "rgba(56, 189, 248, 0.16)"); // soft cyan core glow
+      glowGrad.addColorStop(0.4, "rgba(37, 99, 235, 0.08)"); // cobalt ring
       glowGrad.addColorStop(1, "rgba(244, 243, 239, 0)"); // fade cleanly into paper canvas
 
       ctx.fillStyle = glowGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // Select active shark pixel source (filtered without any extraneous objects)
+      // Select active shark pixel source (filtered contiguous shark silhouette)
       const activePixels = sampledShark.length > 0 ? sampledShark : fallbackShark;
 
       // Cell size for rendering ASCII tiles
@@ -222,9 +222,9 @@ export default function AsciiShark({
 
       const mouse = mousePosRef.current;
 
-      // Center bounding offset of the shark body
-      const sharkMidX = 0.50;
-      const sharkMidY = 0.50;
+      // True geometric centroid of the clean contiguous shark body
+      const sharkMidX = 0.514;
+      const sharkMidY = 0.491;
 
       // Loop through each pixel of the shark matrix ONLY
       for (let i = 0; i < activePixels.length; i++) {
@@ -235,14 +235,14 @@ export default function AsciiShark({
         const relY = (pt.y - sharkMidY) * sharkScale;
 
         // REAL-TIME SHARK LOCOMOTION WAVE:
-        // Spine traveling wave with exponential tail whip amplitude
-        const spineProgress = Math.max(0, Math.min(1, (pt.y - 0.22) / 0.58)); // 0 at snout, 1 at tail
-        const waveAmp = 5 + Math.pow(spineProgress, 2.2) * 38;
+        // Spine traveling wave with organic tail whip undulation
+        const spineProgress = Math.max(0, Math.min(1, (pt.y - 0.24) / 0.50)); // 0 at snout, 1 at tail
+        const waveAmp = (isMobile ? 2 : 3) + Math.pow(spineProgress, 2.0) * (isMobile ? 14 : 20);
         const wavePhase = swimCycle - spineProgress * 5.2;
         const waveOffset = Math.sin(wavePhase) * waveAmp;
 
         // Whole-body swimming yaw angle
-        const bodyYaw = Math.cos(swimCycle) * 0.07;
+        const bodyYaw = Math.cos(swimCycle) * 0.045;
         const cosYaw = Math.cos(bodyYaw);
         const sinYaw = Math.sin(bodyYaw);
 
@@ -334,7 +334,7 @@ export default function AsciiShark({
         className="w-full h-full block"
       />
       {/* Soft paper canvas gradient overlay on the left to preserve text legibility */}
-      <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#F4F3EF] via-[#F4F3EF]/75 to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-[#F4F3EF] via-[#F4F3EF]/80 to-transparent pointer-events-none" />
     </div>
   );
 }
