@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface AsciiSharkProps {
   className?: string;
@@ -11,8 +11,6 @@ interface AsciiSharkProps {
 const SHARK_CHARS = [
   "0", "S", "X", "8", "9", "B", "6", "1", "4", "3", "d", "7", "%", "&", "@", "S8", "08"
 ];
-
-const AMBIENT_CHARS = ["·", ".", ":", "+", "x"];
 
 interface SampledPixel {
   x: number; // normalized 0..1 in source image
@@ -30,7 +28,6 @@ export default function AsciiShark({
 }: AsciiSharkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mousePosRef = useRef({ x: -1000, y: -1000, active: false });
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,9 +48,9 @@ export default function AsciiShark({
     img.onload = () => {
       // Offscreen downsampling canvas
       const offCanvas = document.createElement("canvas");
-      // Downsample grid: roughly 32 columns x 48 rows matching the ASCII cell resolution in Shark.jfif
-      const cols = 34;
-      const rows = 52;
+      // Downsample grid matching ASCII cell resolution
+      const cols = 36;
+      const rows = 54;
       offCanvas.width = cols;
       offCanvas.height = rows;
       const offCtx = offCanvas.getContext("2d");
@@ -63,8 +60,18 @@ export default function AsciiShark({
       const imgData = offCtx.getImageData(0, 0, cols, rows).data;
 
       const pixels: SampledPixel[] = [];
+
       for (let r = 0; r < rows; r++) {
+        const ny = r / rows;
         for (let c = 0; c < cols; c++) {
+          const nx = c / cols;
+
+          // 1. ISOLATE SHARK ONLY: Filter out top-right lens flare and outer background artifacts
+          if (ny < 0.22) continue; // above shark snout
+          if (ny < 0.35 && nx > 0.65) continue; // top-right flare artifact
+          if (ny > 0.82) continue; // below tail
+          if (nx < 0.14 || nx > 0.92) continue; // outer side margins
+
           const idx = (r * cols + c) * 4;
           const red = imgData[idx];
           const green = imgData[idx + 1];
@@ -72,12 +79,12 @@ export default function AsciiShark({
           // Perceived luminance
           const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
 
-          // Threshold to isolate the glowing shark from the dark ocean background
-          if (luminance > 0.14) {
+          // Strict threshold so only the actual glowing shark body & fins are captured
+          if (luminance > 0.20) {
             const charIdx = Math.floor(luminance * (SHARK_CHARS.length - 1));
             pixels.push({
-              x: c / cols,
-              y: r / rows,
+              x: nx,
+              y: ny,
               brightness: luminance,
               r: red,
               g: green,
@@ -89,26 +96,25 @@ export default function AsciiShark({
       }
 
       sampledShark = pixels;
-      setImageLoaded(true);
     };
 
-    // If image fails or before it loads, generate parametric shark points so it never stays blank
+    // Parametric fallback points ensuring shark is always visible immediately
     const generateFallbackShark = (): SampledPixel[] => {
       const fallback: SampledPixel[] = [];
-      const cols = 30;
-      const rows = 46;
+      const cols = 32;
+      const rows = 48;
 
       for (let r = 0; r < rows; r++) {
-        const ny = r / rows;
+        const ny = 0.22 + (r / rows) * 0.58;
         // Shark spine center curving diagonally
-        const spineX = 0.35 + ny * 0.45;
+        const spineX = 0.30 + (r / rows) * 0.45;
         // Body width tapering from head/torso to tail
-        let bodyW = 0.16 * Math.sin(ny * Math.PI);
-        if (ny > 0.6) bodyW = 0.08 * (1 - (ny - 0.6) / 0.4); // tapering tail
+        let bodyW = 0.14 * Math.sin((r / rows) * Math.PI);
+        if (r / rows > 0.6) bodyW = 0.07 * (1 - (r / rows - 0.6) / 0.4);
 
         // Pectoral fin extensions
-        if (ny > 0.22 && ny < 0.42) {
-          bodyW += 0.14 * Math.sin(((ny - 0.22) / 0.2) * Math.PI);
+        if (r / rows > 0.22 && r / rows < 0.44) {
+          bodyW += 0.12 * Math.sin(((r / rows - 0.22) / 0.22) * Math.PI);
         }
 
         for (let c = 0; c < cols; c++) {
@@ -131,7 +137,7 @@ export default function AsciiShark({
       return fallback;
     };
 
-    let fallbackShark = generateFallbackShark();
+    const fallbackShark = generateFallbackShark();
 
     // High-DPI handling
     const handleResize = () => {
@@ -169,15 +175,6 @@ export default function AsciiShark({
       canvas.addEventListener("mouseleave", handleMouseLeave);
     }
 
-    // Floating ambient plankton/data particles
-    const particles = Array.from({ length: 32 }, () => ({
-      x: Math.random(),
-      y: Math.random(),
-      speed: 0.05 + Math.random() * 0.1,
-      char: AMBIENT_CHARS[Math.floor(Math.random() * AMBIENT_CHARS.length)],
-      opacity: 0.15 + Math.random() * 0.35,
-    }));
-
     const startTime = performance.now();
 
     const render = (now: number) => {
@@ -186,81 +183,68 @@ export default function AsciiShark({
 
       const isMobile = width < 640;
 
-      // Positioning the shark on the right portion of the featured dossier
-      // On desktop: center around x = 68%..75%, y = 50%
-      // On mobile: scaled down, center around x = 65%, y = 60%
-      const baseCenterX = isMobile ? width * 0.65 : width * 0.72;
-      const baseCenterY = height * 0.48;
+      // CENTERED FISH POSITION:
+      // Desktop: centered at 55% width (centered visual focus, balanced beside text)
+      // Mobile: centered at 50% width
+      const baseCenterX = isMobile ? width * 0.50 : width * 0.56;
+      const baseCenterY = height * 0.50;
 
       // Gentle swimming locomotion: gliding drift + forward acceleration pulses
       const swimCycle = time * 2.2;
-      const driftX = Math.sin(time * 0.6) * 18;
-      const driftY = Math.cos(time * 0.8) * 14;
+      const driftX = Math.sin(time * 0.6) * 16;
+      const driftY = Math.cos(time * 0.8) * 12;
 
       // Responsive shark scale
-      const sharkScale = Math.min(width * 0.44, height * 0.95);
+      const sharkScale = Math.min(width * 0.48, height * 1.05);
 
       // Render ambient bioluminescent background glow field
       const glowGrad = ctx.createRadialGradient(
         baseCenterX + driftX,
         baseCenterY + driftY,
-        20,
+        25,
         baseCenterX + driftX,
         baseCenterY + driftY,
-        sharkScale * 0.75
+        sharkScale * 0.72
       );
-      glowGrad.addColorStop(0, "rgba(56, 189, 248, 0.16)"); // soft cyan core glow
-      glowGrad.addColorStop(0.4, "rgba(37, 99, 235, 0.08)"); // cobalt ring
-      glowGrad.addColorStop(1, "rgba(244, 243, 239, 0)"); // fade into paper canvas
+      glowGrad.addColorStop(0, "rgba(56, 189, 248, 0.18)"); // soft cyan core glow
+      glowGrad.addColorStop(0.4, "rgba(37, 99, 235, 0.09)"); // cobalt ring
+      glowGrad.addColorStop(1, "rgba(244, 243, 239, 0)"); // fade cleanly into paper canvas
 
       ctx.fillStyle = glowGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // Render floating ambient matrix particles
-      ctx.font = `600 9px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.x -= p.speed * 0.003;
-        if (p.x < 0) p.x = 1;
-
-        const px = p.x * width;
-        const py = p.y * height + Math.sin(time + i) * 6;
-        ctx.fillStyle = `rgba(110, 109, 104, ${p.opacity * 0.5})`;
-        ctx.fillText(p.char, px, py);
-      }
-
-      // Select active shark pixel source
+      // Select active shark pixel source (filtered without any extraneous objects)
       const activePixels = sampledShark.length > 0 ? sampledShark : fallbackShark;
 
       // Cell size for rendering ASCII tiles
       const cellSize = isMobile ? 8.5 : 10.5;
       ctx.font = `700 ${cellSize - 0.5}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
 
       const mouse = mousePosRef.current;
 
-      // Loop through each pixel of the shark matrix
+      // Center bounding offset of the shark body
+      const sharkMidX = 0.50;
+      const sharkMidY = 0.50;
+
+      // Loop through each pixel of the shark matrix ONLY
       for (let i = 0; i < activePixels.length; i++) {
         const pt = activePixels[i];
 
         // Normalized relative coordinates centered on shark midpoint
-        const relX = (pt.x - 0.45) * sharkScale;
-        const relY = (pt.y - 0.5) * sharkScale;
+        const relX = (pt.x - sharkMidX) * sharkScale;
+        const relY = (pt.y - sharkMidY) * sharkScale;
 
         // REAL-TIME SHARK LOCOMOTION WAVE:
-        // As the wave travels down the spine (from pt.y = 0 head to pt.y = 1 tail),
-        // amplitude increases dramatically toward the caudal fin / tail tip.
-        const spineProgress = Math.max(0, Math.min(1, pt.y)); // 0 at snout, 1 at tail
-        // Exponential tail whip amplitude
-        const waveAmp = (6 + Math.pow(spineProgress, 2.2) * 42);
-        // Sinusoidal traveling wave moving backwards through the body
+        // Spine traveling wave with exponential tail whip amplitude
+        const spineProgress = Math.max(0, Math.min(1, (pt.y - 0.22) / 0.58)); // 0 at snout, 1 at tail
+        const waveAmp = 5 + Math.pow(spineProgress, 2.2) * 38;
         const wavePhase = swimCycle - spineProgress * 5.2;
         const waveOffset = Math.sin(wavePhase) * waveAmp;
 
-        // Slight whole-body swimming yaw angle
-        const bodyYaw = Math.cos(swimCycle) * 0.08;
+        // Whole-body swimming yaw angle
+        const bodyYaw = Math.cos(swimCycle) * 0.07;
         const cosYaw = Math.cos(bodyYaw);
         const sinYaw = Math.sin(bodyYaw);
 
@@ -270,7 +254,7 @@ export default function AsciiShark({
         let finalX = baseCenterX + driftX + rotatedX;
         let finalY = baseCenterY + driftY + rotatedY;
 
-        // Interactive cursor proximity reaction: shark body ripples subtly
+        // Interactive cursor proximity reaction
         if (mouse.active) {
           const mdx = finalX - mouse.x;
           const mdy = finalY - mouse.y;
@@ -283,7 +267,6 @@ export default function AsciiShark({
         }
 
         // Color computation matching Shark.jfif:
-        // Core has brilliant white/cyan glow; edges have rich cobalt/cyan matrix tones
         const b = pt.brightness;
         let charColor: string;
         let tileBg: string | null = null;
@@ -291,7 +274,7 @@ export default function AsciiShark({
         if (b > 0.8) {
           // Intense bioluminescent white core
           charColor = "#FFFFFF";
-          tileBg = "rgba(224, 242, 254, 0.45)"; // cyan glow backing
+          tileBg = "rgba(224, 242, 254, 0.45)";
         } else if (b > 0.55) {
           // Electric cyan / sky blue
           charColor = `rgb(${Math.floor(pt.r * 1.1)}, ${Math.floor(pt.g * 1.15)}, 255)`;
@@ -353,7 +336,7 @@ export default function AsciiShark({
         className="w-full h-full block"
       />
       {/* Soft paper canvas gradient overlay on the left to preserve text legibility */}
-      <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-[#F4F3EF] via-[#F4F3EF]/85 to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#F4F3EF] via-[#F4F3EF]/75 to-transparent pointer-events-none" />
     </div>
   );
 }
