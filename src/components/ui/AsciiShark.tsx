@@ -183,19 +183,17 @@ export default function AsciiShark({
 
       const isMobile = width < 640;
 
-      // CENTERED FISH POSITION:
-      // Desktop: centered at 55% width (centered visual focus, balanced beside text)
-      // Mobile: centered at 50% width
-      const baseCenterX = isMobile ? width * 0.50 : width * 0.56;
-      const baseCenterY = height * 0.50;
+      // Positioned to the right of the dossier content (matching requested placement)
+      const baseCenterX = isMobile ? width * 0.70 : width * 0.77;
+      const baseCenterY = height * 0.48;
 
       // Gentle swimming locomotion: gliding drift + forward acceleration pulses
       const swimCycle = time * 2.2;
-      const driftX = Math.sin(time * 0.6) * 16;
+      const driftX = Math.sin(time * 0.6) * 14;
       const driftY = Math.cos(time * 0.8) * 12;
 
-      // Responsive shark scale
-      const sharkScale = Math.min(width * 0.48, height * 1.05);
+      // Responsive shark scale with safe margin from right edge
+      const sharkScale = Math.min(width * 0.42, height * 0.96);
 
       // Render ambient bioluminescent background glow field
       const glowGrad = ctx.createRadialGradient(
