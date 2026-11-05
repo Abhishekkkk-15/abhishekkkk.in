@@ -17,6 +17,12 @@ export interface IProfile {
   location: string;
   tagline: string;
   headline: string;
+  bioParagraph1?: string;
+  bioParagraph2?: string;
+  resumeUrl?: string;
+  agentStatus?: string;
+  agentRuntime?: string;
+  agentContext?: string;
   japaneseBio: string;
   avatar: string;
   email: string;
@@ -143,6 +149,12 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
       location: { type: String, required: true },
       tagline: { type: String, required: true },
       headline: { type: String, required: true },
+      bioParagraph1: { type: String, default: "" },
+      bioParagraph2: { type: String, default: "" },
+      resumeUrl: { type: String, default: "/resume.pdf" },
+      agentStatus: { type: String, default: "SYS_AGENT // ACTIVE_PIPELINE" },
+      agentRuntime: { type: String, default: "runtime: node v24.x · llm router: tensorrt-llm · fp8 quantized" },
+      agentContext: { type: String, default: "calibrated for 680px mono readouts" },
       japaneseBio: { type: String, required: true },
       avatar: { type: String, required: true },
       email: { type: String, required: true },

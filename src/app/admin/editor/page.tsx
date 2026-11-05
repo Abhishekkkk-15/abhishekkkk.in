@@ -11,33 +11,15 @@ import {
   CheckCircle,
   AlertCircle,
   User,
-  Layers,
   Briefcase,
   FolderGit2,
-  FileCode,
   GitCommit,
-  Terminal,
-  Send,
   ShieldCheck,
   Key,
-  Radio,
-  Layout,
-  Palette,
-  Sparkles,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
 
-type TabKey =
-  | "themes"
-  | "profile"
-  | "focus"
-  | "experience"
-  | "projects"
-  | "dossier"
-  | "activity"
-  | "skills"
-  | "contact"
-  | "security";
+type TabKey = "profile" | "experience" | "projects" | "activity" | "security";
 
 export default function EditorPage() {
   const router = useRouter();
@@ -99,17 +81,15 @@ export default function EditorPage() {
         throw new Error(errJson.error || "Save failed");
       }
 
-      const resJson = await res.json();
-      setData(resJson.data);
       setStatusMessage({
         type: "success",
-        text: "Portfolio updated successfully. Public SSR page revalidated.",
+        text: "Portfolio data successfully saved and published.",
       });
       setTimeout(() => setStatusMessage(null), 4000);
     } catch (err: any) {
       setStatusMessage({
         type: "error",
-        text: err?.message || "Error saving changes.",
+        text: err.message || "An unexpected error occurred while saving.",
       });
     } finally {
       setSaving(false);
@@ -117,27 +97,26 @@ export default function EditorPage() {
   };
 
   const handleLogout = async () => {
-    await fetch("/api/admin/auth/logout", { method: "POST" });
-    router.push("/admin/login");
-    router.refresh();
+    try {
+      await fetch("/api/admin/auth/logout", { method: "POST" });
+      router.push("/admin/login");
+    } catch {
+      router.push("/admin/login");
+    }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordStatus({
-        type: "error",
-        text: "Please fill in all password fields.",
-      });
-      return;
-    }
+    setPasswordStatus(null);
+
     if (newPassword !== confirmPassword) {
       setPasswordStatus({
         type: "error",
-        text: "New password and confirmation do not match.",
+        text: "New passwords do not match.",
       });
       return;
     }
+
     if (newPassword.length < 8) {
       setPasswordStatus({
         type: "error",
@@ -147,28 +126,30 @@ export default function EditorPage() {
     }
 
     setPasswordSaving(true);
-    setPasswordStatus(null);
     try {
       const res = await fetch("/api/admin/auth/change-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+        body: JSON.stringify({ currentPassword, newPassword }),
       });
+
       const json = await res.json();
       if (!res.ok) {
-        throw new Error(json.error || "Failed to update password.");
+        throw new Error(json.error || "Password change failed");
       }
+
       setPasswordStatus({
         type: "success",
-        text: "Password updated successfully! Your admin credentials are now secured.",
+        text: "Admin password successfully updated.",
       });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      setTimeout(() => setPasswordStatus(null), 4000);
     } catch (err: any) {
       setPasswordStatus({
         type: "error",
-        text: err?.message || "Failed to update password.",
+        text: err.message || "Failed to update password.",
       });
     } finally {
       setPasswordSaving(false);
@@ -177,75 +158,61 @@ export default function EditorPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F4F3EF] flex items-center justify-center font-mono text-xs text-[#6E6D68]">
-        INITIALIZING CMS DATA STORE...
+      <div className="min-h-screen bg-[#F4F3EF] flex flex-col items-center justify-center font-mono text-xs text-[#6E6D68]">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+          <span>AUTHENTICATING CMS SESSION...</span>
+        </div>
       </div>
     );
   }
 
-  if (!data) {
-    return (
-      <div className="min-h-screen bg-[#F4F3EF] flex items-center justify-center font-mono text-xs text-red-600">
-        Failed to initialize portfolio document.
-      </div>
-    );
-  }
+  if (!data) return null;
 
   return (
-    <div className="min-h-screen bg-[#F4F3EF] text-[#111111] font-sans selection:bg-[#111111] selection:text-[#F4F3EF]">
-      {/* Top Admin Sticky Navigation Bar */}
-      <header className="sticky top-0 z-50 bg-[#F4F3EF]/95 backdrop-blur-sm border-b border-[#E2E0D8] px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <span className="font-display font-medium text-base tracking-tight text-[#111111]">
-            {data.profile.labBrand || "PORTFOLIO"} // CMS
+    <div className="min-h-screen bg-[#F4F3EF] text-[#111111] antialiased">
+      {/* Top Fixed Admin Header */}
+      <header className="sticky top-0 z-40 bg-[#F4F3EF]/95 backdrop-blur border-b border-[#E2E0D8] px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-xs uppercase tracking-widest font-bold text-[#111111]">
+            CMS // MINIMAL PORTFOLIO
           </span>
-          <span className="font-mono text-[10.5px] uppercase tracking-wider bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/25 px-2 py-0.5 rounded-none">
-            SSR Mongo Connected
+          <span className="hidden sm:inline-block font-mono text-[10px] bg-black text-white px-2 py-0.5 uppercase tracking-wider">
+            680px Mono
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setActiveTab("themes")}
-            className="hidden sm:flex items-center gap-1.5 font-mono text-xs border border-[#E2E0D8] bg-[#EBEAE4]/60 hover:bg-[#EBEAE4] px-2.5 py-1.5 transition-colors cursor-pointer"
-            title="Configure Active Site Theme"
-          >
-            <Palette size={13} className="text-[#2563EB]" />
-            <span className="text-[#6E6D68] uppercase text-[10.5px]">Theme:</span>
-            <span className="font-semibold text-[#111111]">
-              {data.activeTheme === "playerzero" ? "PlayerZero Matrix" : "Terminal Swiss"}
-            </span>
-          </button>
-
           <a
             href="/"
             target="_blank"
             rel="noreferrer"
-            className="font-mono text-xs text-[#444442] hover:text-[#111111] flex items-center gap-1 transition-colors px-3 py-1.5 border border-[#E2E0D8] rounded-none hover:border-[#111111]"
+            className="font-mono text-xs text-[#6E6D68] hover:text-[#111111] flex items-center gap-1.5 transition-colors"
           >
-            Live Site <ExternalLink size={13} />
+            <ExternalLink size={13} />
+            <span className="hidden sm:inline">View Site</span>
           </a>
 
           <button
             onClick={handleSave}
             disabled={saving}
-            className="font-mono text-xs uppercase tracking-wider bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-4 py-1.5 flex items-center gap-2 transition-colors disabled:opacity-50 rounded-none"
+            className="font-mono text-xs uppercase tracking-wider bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] disabled:opacity-50 px-4 py-2 flex items-center gap-2 transition-colors cursor-pointer"
           >
-            <Save size={14} />
-            {saving ? "Saving..." : "Save Changes"}
+            <Save size={13} />
+            <span>{saving ? "Saving..." : "Save Changes"}</span>
           </button>
 
           <button
             onClick={handleLogout}
-            title="Log Out"
-            className="text-[#6E6D68] hover:text-[#111111] p-1.5 transition-colors border border-transparent hover:border-[#E2E0D8] rounded-none"
+            title="Log out of CMS"
+            className="font-mono text-xs text-[#6E6D68] hover:text-red-600 p-2 transition-colors cursor-pointer"
           >
-            <LogOut size={16} />
+            <LogOut size={15} />
           </button>
         </div>
       </header>
 
-      {/* Alert Notification Toast */}
+      {/* Status Alert Banner */}
       {statusMessage && (
         <div
           className={`px-6 py-3 border-b text-xs font-mono flex items-center gap-2 ${
@@ -270,23 +237,18 @@ export default function EditorPage() {
           <div className="hidden md:block text-[10px] text-[#6E6D68] px-3 py-2">SECTIONS</div>
 
           {[
-            { id: "themes", label: "00 // Themes & Layouts", icon: Layout },
-            { id: "profile", label: "01 // Profile & Hero", icon: User },
-            { id: "focus", label: "02 // Arch Focus", icon: Layers },
-            { id: "experience", label: "03 // Experience", icon: Briefcase },
-            { id: "projects", label: "04 // Projects", icon: FolderGit2 },
-            { id: "dossier", label: "04.1 // Deep Dive", icon: FileCode },
-            { id: "activity", label: "04.2 // GitHub Activity", icon: GitCommit },
-            { id: "skills", label: "05 // Skills & Stack", icon: Terminal },
-            { id: "contact", label: "06 // Contact & Colophon", icon: Send },
-            { id: "security", label: "07 // Security & Access", icon: ShieldCheck },
+            { id: "profile", label: "01 // Profile & Bio", icon: User },
+            { id: "experience", label: "02 // Trajectory", icon: Briefcase },
+            { id: "projects", label: "03 // Projects & Engines", icon: FolderGit2 },
+            { id: "activity", label: "04 // Upstream Commits", icon: GitCommit },
+            { id: "security", label: "05 // Security & Access", icon: ShieldCheck },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabKey)}
-                className={`shrink-0 md:w-full text-left px-3.5 py-2.5 rounded-none flex items-center gap-2.5 transition-colors whitespace-nowrap ${
+                className={`shrink-0 md:w-full text-left px-3.5 py-2.5 rounded-none flex items-center gap-2.5 transition-colors whitespace-nowrap cursor-pointer ${
                   activeTab === tab.id
                     ? "bg-[#111111] text-[#F4F3EF]"
                     : "text-[#444442] hover:text-[#111111] hover:bg-[#EBEAE4]"
@@ -301,370 +263,15 @@ export default function EditorPage() {
 
         {/* Right Side Tab Form Content */}
         <main className="flex-1 p-6 sm:p-10 bg-[#F4F3EF]">
-          {/* TAB 0: THEMES & LAYOUTS */}
-          {activeTab === "themes" && (
-            <div className="space-y-8 max-w-4xl">
-              <div className="border-b border-[#E2E0D8] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-display font-medium text-[#111111] flex items-center gap-2.5">
-                    <Palette className="text-[#2563EB]" size={22} />
-                    Themes &amp; Site Layouts
-                  </h2>
-                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                    Select which theme layout is rendered on your public portfolio. Themes are strictly controlled here in Admin.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 font-mono text-xs">
-                  <span className="text-[#6E6D68]">Active:</span>
-                  <span className="font-bold text-[#111111] uppercase">
-                    {data.activeTheme === "playerzero"
-                      ? "PlayerZero Matrix"
-                      : data.activeTheme === "industrial"
-                      ? "Teenage Hardware"
-                      : data.activeTheme === "minimal"
-                      ? "Minimal Editorial"
-                      : "Terminal Swiss"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Admin-only notice callout */}
-              <div className="p-4 bg-blue-50/60 border border-blue-200/80 rounded-none flex items-start gap-3 text-xs font-mono text-blue-900">
-                <Sparkles className="text-blue-600 shrink-0 mt-0.5" size={16} />
-                <div>
-                  <span className="font-semibold uppercase tracking-wider block mb-0.5">
-                    Admin-Controlled Exclusivity
-                  </span>
-                  Public visitors cannot switch or override the active theme. The active theme is stored in your database and rendered via SSR. Choose a theme below and click <strong>&quot;Save Changes&quot;</strong> in the top bar to apply it instantly to your live website.
-                </div>
-              </div>
-
-              {/* Themes Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                {/* THEME 1: Terminal Swiss Technical */}
-                <div
-                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#F4F3EF] relative ${
-                    (data.activeTheme || "terminal") === "terminal"
-                      ? "border-[#111111] shadow-md ring-1 ring-[#111111]"
-                      : "border-[#E2E0D8] opacity-85 hover:opacity-100 hover:border-stone-400"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#111111]">
-                        01 // Swiss Monospace
-                      </span>
-                      {(data.activeTheme || "terminal") === "terminal" ? (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
-                          ● Live on Site
-                        </span>
-                      ) : (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
-                          Available
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-lg font-display font-medium text-[#111111] mb-2">
-                      Classic Terminal / Swiss Technical
-                    </h3>
-                    <p className="text-xs text-[#444442] font-mono leading-relaxed mb-5">
-                      The signature brutalist monospace aesthetic inspired by high-frequency trading terminals and minimalist Swiss typography.
-                    </p>
-
-                    {/* Feature Highlights */}
-                    <div className="space-y-2 font-mono text-[11px] text-[#6E6D68] mb-6 border-y border-[#E2E0D8] py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> JetBrains Mono &amp; Hanken Grotesk
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Character fade scroll dynamics
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Live telemetry counter &amp; sumi dark mode
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Full JSON Schema / Pipeline toggles
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setData({ ...data, activeTheme: "terminal" })}
-                    disabled={(data.activeTheme || "terminal") === "terminal"}
-                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
-                      (data.activeTheme || "terminal") === "terminal"
-                        ? "bg-[#111111] text-[#F4F3EF] cursor-default font-bold"
-                        : "bg-[#EBEAE4] text-[#111111] hover:bg-[#111111] hover:text-[#F4F3EF] border border-[#E2E0D8] cursor-pointer"
-                    }`}
-                  >
-                    {(data.activeTheme || "terminal") === "terminal"
-                      ? "Currently Active"
-                      : "Activate Terminal Theme"}
-                  </button>
-                </div>
-
-                {/* THEME 2: PlayerZero / Applied AI Matrix */}
-                <div
-                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#f8f8f9] relative ${
-                    data.activeTheme === "playerzero"
-                      ? "border-[#111111] shadow-md ring-1 ring-[#111111]"
-                      : "border-[#E2E0D8] opacity-85 hover:opacity-100 hover:border-stone-400"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#111111]">
-                        02 // Applied AI Matrix
-                      </span>
-                      {data.activeTheme === "playerzero" ? (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
-                          ● Live on Site
-                        </span>
-                      ) : (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
-                          Available
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-lg font-display font-medium text-[#111111] mb-2">
-                      PlayerZero / Applied AI Matrix
-                    </h3>
-                    <p className="text-xs text-stone-600 font-mono leading-relaxed mb-5">
-                      The ultra-clean PlayerZero engineering aesthetic featuring an animated DAG pipeline hero, Silkscreen dot-matrix titles, and latent point cloud visualizer.
-                    </p>
-
-                    {/* Feature Highlights */}
-                    <div className="space-y-2 font-mono text-[11px] text-[#6E6D68] mb-6 border-y border-[#e5e5e8] py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Silkscreen &amp; Space Mono typography
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Animated SVG flowing connector wires
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Generative latent point-cloud canvas visualizer
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> 52-week dot-matrix heatmap &amp; live commit stream
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setData({ ...data, activeTheme: "playerzero" })}
-                    disabled={data.activeTheme === "playerzero"}
-                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
-                      data.activeTheme === "playerzero"
-                        ? "bg-[#111111] text-[#F4F3EF] cursor-default font-bold"
-                        : "bg-[#EBEAE4] text-[#111111] hover:bg-[#111111] hover:text-[#F4F3EF] border border-[#E2E0D8] cursor-pointer"
-                    }`}
-                  >
-                    {data.activeTheme === "playerzero"
-                      ? "Currently Active"
-                      : "Activate PlayerZero Theme"}
-                  </button>
-                </div>
-
-                {/* THEME 3: Teenage Engineering / Industrial Hardware */}
-                <div
-                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#E6E5DE] relative ${
-                    data.activeTheme === "industrial"
-                      ? "border-[#1C1B1A] shadow-md ring-1 ring-[#1C1B1A]"
-                      : "border-[#CAC8BD] opacity-85 hover:opacity-100 hover:border-stone-400"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#1C1B1A]">
-                        03 // Teenage Hardware
-                      </span>
-                      {data.activeTheme === "industrial" ? (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
-                          ● Live on Site
-                        </span>
-                      ) : (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#D7D5CB] text-[#6E6C60] border border-[#BCBAAD]">
-                          Available
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-lg font-display font-medium text-[#1C1B1A] mb-2">
-                      Teenage Engineering / Hardware
-                    </h3>
-                    <p className="text-xs text-[#55534A] font-mono leading-relaxed mb-5">
-                      Tactile industrial hardware aesthetic inspired by OP-1 &amp; EP-133: anodized aluminum chassis, interactive rotary dials, backlit phosphor matrix, and mechanical click sound effects.
-                    </p>
-
-                    {/* Feature Highlights */}
-                    <div className="space-y-2 font-mono text-[11px] text-[#55534A] mb-6 border-y border-[#CCCABF] py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#FF4F00] font-bold">✓</span> Stamped anodized aluminum chassis
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#FF4F00] font-bold">✓</span> Interactive 4-knob rotary encoders
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#FF4F00] font-bold">✓</span> Web Audio mechanical tactile clicks
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#FF4F00] font-bold">✓</span> 52-week backlit phosphor LED sequencer
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setData({ ...data, activeTheme: "industrial" })}
-                    disabled={data.activeTheme === "industrial"}
-                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
-                      data.activeTheme === "industrial"
-                        ? "bg-[#1C1B1A] text-[#F4F3EF] cursor-default font-bold"
-                        : "bg-[#FF4F00] text-white hover:bg-[#E54500] border border-[#B83700] cursor-pointer font-bold shadow-[0_2px_4px_rgba(0,0,0,0.15)]"
-                    }`}
-                  >
-                    {data.activeTheme === "industrial"
-                      ? "Currently Active"
-                      : "Activate Hardware Theme"}
-                  </button>
-                </div>
-
-                {/* THEME 4: Minimal / Editorial Research */}
-                <div
-                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#f9f9f9] relative ${
-                    data.activeTheme === "minimal"
-                      ? "border-[#111111] shadow-md ring-1 ring-[#111111]"
-                      : "border-[#E2E0D8] opacity-85 hover:opacity-100 hover:border-stone-400"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#111111]">
-                        04 // Minimal Editorial
-                      </span>
-                      {data.activeTheme === "minimal" ? (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-black text-white font-bold">
-                          ● Live on Site
-                        </span>
-                      ) : (
-                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
-                          Available
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-lg font-serif font-medium text-[#111111] mb-2 lowercase">
-                      editorial research &amp; runtimes
-                    </h3>
-                    <p className="font-sans text-xs text-[#6E6D68] leading-relaxed mb-6">
-                      Ultra-minimalist typographic editorial portfolio calibrated for a narrow 680px mono readout. Source Serif 4 headlines, Geist body text, continuous timeline nodes, and clean dark mode.
-                    </p>
-
-                    {/* Feature Highlights */}
-                    <div className="space-y-2 font-mono text-[11px] text-[#6E6D68] mb-6 border-y border-[#E2E0D8] py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Calibrated 680px mono column
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Source Serif 4 + Geist typography
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Continuous vertical trajectory timeline
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#111111]">✓</span> Integrated Human / Agent persona mode
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setData({ ...data, activeTheme: "minimal" })}
-                    disabled={data.activeTheme === "minimal"}
-                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
-                      data.activeTheme === "minimal"
-                        ? "bg-[#111111] text-[#F4F3EF] cursor-default font-bold"
-                        : "bg-[#EBEAE4] text-[#111111] hover:bg-[#111111] hover:text-[#F4F3EF] border border-[#E2E0D8] cursor-pointer"
-                    }`}
-                  >
-                    {data.activeTheme === "minimal"
-                      ? "Currently Active"
-                      : "Activate Minimal Theme"}
-                  </button>
-                </div>
-              </div>
-
-              {/* PlayerZero Theme Headlines Configuration Card */}
-              <div className="p-5 border border-[#E2E0D8] bg-[#f8f8f9] space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-mono text-xs uppercase tracking-widest text-[#111111] font-semibold">
-                      PlayerZero Hero Headlines
-                    </h3>
-                    <p className="font-mono text-[11px] text-[#6E6D68] mt-0.5">
-                      Configure the upper and lower dot-matrix titles displayed in the PlayerZero Hero section.
-                    </p>
-                  </div>
-                  <span className="font-mono text-[9.5px] px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
-                    DOT-MATRIX TITLES
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
-                  <div className="space-y-1.5">
-                    <label className="text-[#6E6D68] uppercase font-semibold">Upper Headline</label>
-                    <input
-                      type="text"
-                      value={data.profile.matrixTopHeadline || ""}
-                      placeholder="BUILD. TRAIN."
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            matrixTopHeadline: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
-                    />
-                    <span className="text-[10px] text-[#6E6D68] block">Default: BUILD. TRAIN.</span>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[#6E6D68] uppercase font-semibold">Lower Headline</label>
-                    <input
-                      type="text"
-                      value={data.profile.matrixBottomHeadline || ""}
-                      placeholder="DEPLOY. SCALE."
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            matrixBottomHeadline: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
-                    />
-                    <span className="text-[10px] text-[#6E6D68] block">Default: DEPLOY. SCALE.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 1: PROFILE & HERO */}
+          {/* TAB 1: PROFILE & BIO */}
           {activeTab === "profile" && (
             <div className="space-y-8 max-w-3xl">
               <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-display font-medium text-[#111111]">
-                  Profile &amp; Hero Section
+                <h2 className="text-2xl font-serif font-medium text-[#111111]">
+                  Profile &amp; Editorial Bio
                 </h2>
                 <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Manage primary identity, avatars, headline statements, and live telemetry badges.
+                  Manage primary identity, bio statements, contact details, and social links.
                 </p>
               </div>
 
@@ -685,14 +292,46 @@ export default function EditorPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Short Brand / Logo</label>
+                  <label className="text-[#6E6D68] uppercase">Short Name / Brandmark</label>
                   <input
                     type="text"
-                    value={data.profile.labBrand}
+                    value={data.profile.shortName || "abhishek"}
                     onChange={(e) =>
                       setData({
                         ...data,
-                        profile: { ...data.profile, labBrand: e.target.value },
+                        profile: { ...data.profile, shortName: e.target.value },
+                      })
+                    }
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-2 space-y-1.5">
+                  <label className="text-[#6E6D68] uppercase">
+                    Headline Bio Statement
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={data.profile.headline}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        profile: { ...data.profile, headline: e.target.value },
+                      })
+                    }
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-serif focus:outline-none focus:border-[#111111] rounded-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-2 space-y-1.5">
+                  <label className="text-[#6E6D68] uppercase">Tagline / Ethos</label>
+                  <input
+                    type="text"
+                    value={data.profile.tagline || ""}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        profile: { ...data.profile, tagline: e.target.value },
                       })
                     }
                     className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
@@ -700,14 +339,14 @@ export default function EditorPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Professional Role</label>
+                  <label className="text-[#6E6D68] uppercase">Contact Email</label>
                   <input
-                    type="text"
-                    value={data.profile.role}
+                    type="email"
+                    value={data.profile.email}
                     onChange={(e) =>
                       setData({
                         ...data,
-                        profile: { ...data.profile, role: e.target.value },
+                        profile: { ...data.profile, email: e.target.value },
                       })
                     }
                     className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
@@ -729,15 +368,101 @@ export default function EditorPage() {
                   />
                 </div>
 
-                <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Avatar Image URL</label>
+                <div className="space-y-1.5">
+                  <label className="text-[#6E6D68] uppercase">GitHub Profile URL</label>
                   <input
                     type="text"
-                    value={data.profile.avatar}
+                    value={data.profile.socials?.github || ""}
                     onChange={(e) =>
                       setData({
                         ...data,
-                        profile: { ...data.profile, avatar: e.target.value },
+                        profile: {
+                          ...data.profile,
+                          socials: {
+                            ...(data.profile.socials || {}),
+                            github: e.target.value,
+                            linkedin: data.profile.socials?.linkedin || "",
+                          },
+                        },
+                      })
+                    }
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[#6E6D68] uppercase">LinkedIn URL</label>
+                  <input
+                    type="text"
+                    value={data.profile.socials?.linkedin || ""}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        profile: {
+                          ...data.profile,
+                          socials: {
+                            ...(data.profile.socials || {}),
+                            linkedin: e.target.value,
+                            github: data.profile.socials?.github || "",
+                          },
+                        },
+                      })
+                    }
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[#6E6D68] uppercase">Twitter / X URL</label>
+                  <input
+                    type="text"
+                    value={data.profile.socials?.twitter || ""}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        profile: {
+                          ...data.profile,
+                          socials: {
+                            ...(data.profile.socials || {}),
+                            twitter: e.target.value,
+                            github: data.profile.socials?.github || "",
+                            linkedin: data.profile.socials?.linkedin || "",
+                          },
+                        },
+                      })
+                    }
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[#6E6D68] uppercase">Resume Document URL</label>
+                  <input
+                    type="text"
+                    value={data.profile.resumeUrl || "/resume.pdf"}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        profile: { ...data.profile, resumeUrl: e.target.value },
+                      })
+                    }
+                    placeholder="/resume.pdf"
+                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-2 space-y-1.5 pt-3 border-t border-[#E2E0D8]">
+                  <label className="text-[#6E6D68] uppercase">
+                    Ethos Bio Paragraph 1 (Work Cycle / Dossiers)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={data.profile.bioParagraph1 || ""}
+                    placeholder="i like working when the world is sleeping. my work cycle is generally 12pm to 4am..."
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        profile: { ...data.profile, bioParagraph1: e.target.value },
                       })
                     }
                     className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
@@ -746,484 +471,39 @@ export default function EditorPage() {
 
                 <div className="sm:col-span-2 space-y-1.5">
                   <label className="text-[#6E6D68] uppercase">
-                    Lead Headline Statement (Character Fade)
+                    Ethos Bio Paragraph 2 (Launch / Thrills)
                   </label>
                   <textarea
-                    rows={3}
-                    value={data.profile.headline}
+                    rows={2}
+                    value={data.profile.bioParagraph2 || ""}
+                    placeholder="i live the part after the launch day. when the reasoning breaks..."
                     onChange={(e) =>
                       setData({
                         ...data,
-                        profile: { ...data.profile, headline: e.target.value },
+                        profile: { ...data.profile, bioParagraph2: e.target.value },
                       })
                     }
                     className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
                   />
                 </div>
-
-                <div className="sm:col-span-2 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label className="text-[#6E6D68] uppercase">
-                      Japanese Subtitle Translation
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[9.5px] px-1.5 py-0.2 bg-[#E2E0D8] text-[#6E6D68]">
-                        {data.profile.showJapaneseBio !== false ? "VISIBLE (DEFAULT)" : "HIDDEN"}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setData({
-                            ...data,
-                            profile: {
-                              ...data.profile,
-                              showJapaneseBio: data.profile.showJapaneseBio === false ? true : false,
-                            },
-                          })
-                        }
-                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          data.profile.showJapaneseBio !== false ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
-                        }`}
-                        role="switch"
-                        aria-checked={data.profile.showJapaneseBio !== false}
-                        title="Toggle Japanese Bio visibility"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                            data.profile.showJapaneseBio !== false ? "translate-x-4" : "translate-x-0"
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                  <input
-                    type="text"
-                    value={data.profile.japaneseBio}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        profile: { ...data.profile, japaneseBio: e.target.value },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
-                  />
-                  <p className="font-mono text-[10.5px] text-[#6E6D68]">
-                    Toggle ON/OFF to control whether the Japanese text is displayed under the headline in the Hero section.
-                  </p>
-                </div>
-              </div>
-
-              {/* PlayerZero Theme Matrix Headlines */}
-              <div className="pt-6 border-t border-[#E2E0D8]">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-mono text-xs uppercase tracking-widest text-[#111111]">
-                    Applied AI Matrix Headlines (PlayerZero Theme)
-                  </h3>
-                  <span className="font-mono text-[9.5px] px-1.5 py-0.5 bg-[#E2E0D8] text-[#6E6D68]">
-                    HERO DOT-MATRIX
-                  </span>
-                </div>
-                <p className="font-mono text-[11px] text-[#6E6D68] mb-4">
-                  Customize the dot-matrix titles displayed above and below the pipeline diagram in the PlayerZero theme hero section.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 font-mono text-xs">
-                  <div className="space-y-1.5">
-                    <label className="text-[#6E6D68] uppercase">Upper Headline</label>
-                    <input
-                      type="text"
-                      value={data.profile.matrixTopHeadline || ""}
-                      placeholder="BUILD. TRAIN."
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            matrixTopHeadline: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
-                    />
-                    <span className="font-mono text-[10px] text-[#6E6D68] block">
-                      Default: BUILD. TRAIN.
-                    </span>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[#6E6D68] uppercase">Lower Headline</label>
-                    <input
-                      type="text"
-                      value={data.profile.matrixBottomHeadline || ""}
-                      placeholder="DEPLOY. SCALE."
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            matrixBottomHeadline: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
-                    />
-                    <span className="font-mono text-[10px] text-[#6E6D68] block">
-                      Default: DEPLOY. SCALE.
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Telemetry Stats Bar Section */}
-              <div className="pt-6 border-t border-[#E2E0D8]">
-                <h3 className="font-mono text-xs uppercase tracking-widest text-[#111111] mb-4">
-                  Telemetry Stats Bar
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 font-mono text-xs">
-                  <div className="space-y-1.5">
-                    <label className="text-[#6E6D68]">Throughput Label</label>
-                    <input
-                      type="text"
-                      value={data.profile.stats.throughput.label}
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            stats: {
-                              ...data.profile.stats,
-                              throughput: {
-                                ...data.profile.stats.throughput,
-                                label: e.target.value,
-                              },
-                            },
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
-                    />
-                    <label className="text-[#6E6D68] pt-1 block">Value &amp; Unit</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={data.profile.stats.throughput.value}
-                        onChange={(e) =>
-                          setData({
-                            ...data,
-                            profile: {
-                              ...data.profile,
-                              stats: {
-                                ...data.profile.stats,
-                                throughput: {
-                                  ...data.profile.stats.throughput,
-                                  value: e.target.value,
-                                },
-                              },
-                            },
-                          })
-                        }
-                        className="w-2/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
-                      />
-                      <input
-                        type="text"
-                        value={data.profile.stats.throughput.unit}
-                        onChange={(e) =>
-                          setData({
-                            ...data,
-                            profile: {
-                              ...data.profile,
-                              stats: {
-                                ...data.profile.stats,
-                                throughput: {
-                                  ...data.profile.stats.throughput,
-                                  unit: e.target.value,
-                                },
-                              },
-                            },
-                          })
-                        }
-                        className="w-1/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[#6E6D68]">Core Engines Label</label>
-                    <input
-                      type="text"
-                      value={data.profile.stats.coreEngines.label}
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            stats: {
-                              ...data.profile.stats,
-                              coreEngines: {
-                                ...data.profile.stats.coreEngines,
-                                label: e.target.value,
-                              },
-                            },
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
-                    />
-                    <label className="text-[#6E6D68] pt-1 block">Core Engines Value</label>
-                    <input
-                      type="text"
-                      value={data.profile.stats.coreEngines.value}
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            stats: {
-                              ...data.profile.stats,
-                              coreEngines: {
-                                ...data.profile.stats.coreEngines,
-                                value: e.target.value,
-                              },
-                            },
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[#6E6D68]">Status Label</label>
-                    <input
-                      type="text"
-                      value={data.profile.stats.status.label}
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            stats: {
-                              ...data.profile.stats,
-                              status: {
-                                ...data.profile.stats.status,
-                                label: e.target.value,
-                              },
-                            },
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
-                    />
-                    <label className="text-[#6E6D68] pt-1 block">Status Value</label>
-                    <input
-                      type="text"
-                      value={data.profile.stats.status.value}
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            stats: {
-                              ...data.profile.stats,
-                              status: {
-                                ...data.profile.stats.status,
-                                value: e.target.value,
-                              },
-                            },
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs focus:outline-none rounded-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Public JSON Schema ($ curl badge) Toggle */}
-                <div className="pt-6 border-t border-[#E2E0D8]/60">
-                  <div className="flex items-center justify-between p-4 bg-[#EBEAE4]/60 border border-[#E2E0D8]">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs uppercase font-medium text-[#111111]">
-                          Public JSON Schema ($ curl badge)
-                        </span>
-                        <span
-                          className={`font-mono text-[9.5px] px-1.5 py-0.2 ${
-                            data.profile.showCurlBadge
-                              ? "bg-[#2563EB]/10 text-[#2563EB] font-medium"
-                              : "bg-[#E2E0D8] text-[#6E6D68]"
-                          }`}
-                        >
-                          {data.profile.showCurlBadge ? "VISIBLE" : "HIDDEN (DEFAULT)"}
-                        </span>
-                      </div>
-                      <p className="font-mono text-[11px] text-[#6E6D68]">
-                        Display the copyable <code className="text-[#111111]">$ curl -s https://abhishekkkk.in/api/profile</code> telemetry chip in the Hero section.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            showCurlBadge: !data.profile.showCurlBadge,
-                          },
-                        })
-                      }
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        data.profile.showCurlBadge ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
-                      }`}
-                      role="switch"
-                      aria-checked={Boolean(data.profile.showCurlBadge)}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                          data.profile.showCurlBadge ? "translate-x-5" : "translate-x-0"
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  {/* Sticky Spotify Live Music Player Toggle */}
-                  <div className="p-4 border border-[#E2E0D8] bg-[#EBEAE4]/40 flex items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs uppercase font-medium text-[#111111]">
-                          Sticky Spotify Vinyl Player
-                        </span>
-                        <span
-                          className={`font-mono text-[9.5px] px-1.5 py-0.5 ${
-                            data.profile.showSpotifyPlayer !== false
-                              ? "bg-[#2563EB]/10 text-[#2563EB] font-medium"
-                              : "bg-[#E2E0D8] text-[#6E6D68]"
-                          }`}
-                        >
-                          {data.profile.showSpotifyPlayer !== false
-                            ? "VISIBLE (DEFAULT)"
-                            : "HIDDEN"}
-                        </span>
-                      </div>
-                      <p className="font-mono text-[11px] text-[#6E6D68]">
-                        Show or hide the floating interactive vinyl record player with live audio telemetry across your site.
-                      </p>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            showSpotifyPlayer:
-                              data.profile.showSpotifyPlayer === false ? true : false,
-                          },
-                        })
-                      }
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        data.profile.showSpotifyPlayer !== false
-                          ? "bg-[#2563EB]"
-                          : "bg-[#D8D6CE]"
-                      }`}
-                      role="switch"
-                      aria-checked={data.profile.showSpotifyPlayer !== false}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                          data.profile.showSpotifyPlayer !== false
-                            ? "translate-x-5"
-                            : "translate-x-0"
-                        }`}
-                      />
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
           )}
 
-          {/* TAB 2: ARCHITECTURAL FOCUS */}
-          {activeTab === "focus" && (
-            <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-display font-medium text-[#111111]">
-                  Architectural Focus (02 //)
-                </h2>
-                <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Configure the 3 core competency pillars.
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                {data.architecturalFocus.map((focus, index) => (
-                  <div
-                    key={index}
-                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 rounded-none"
-                  >
-                    <div className="flex items-center justify-between font-mono text-xs">
-                      <span className="font-medium text-[#111111]">
-                        Pillar 0{index + 1}
-                      </span>
-                      <input
-                        type="text"
-                        value={focus.index}
-                        onChange={(e) => {
-                          const updated = [...data.architecturalFocus];
-                          updated[index].index = e.target.value;
-                          setData({ ...data, architecturalFocus: updated });
-                        }}
-                        className="w-16 bg-[#EBEAE4] border border-[#E2E0D8] px-2 py-1 text-xs text-center rounded-none"
-                      />
-                    </div>
-                    <div className="space-y-1 font-mono text-xs">
-                      <label className="text-[#6E6D68]">Pillar Title</label>
-                      <input
-                        type="text"
-                        value={focus.title}
-                        onChange={(e) => {
-                          const updated = [...data.architecturalFocus];
-                          updated[index].title = e.target.value;
-                          setData({ ...data, architecturalFocus: updated });
-                        }}
-                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none rounded-none"
-                      />
-                    </div>
-                    <div className="space-y-1 font-mono text-xs">
-                      <label className="text-[#6E6D68]">Description</label>
-                      <textarea
-                        rows={3}
-                        value={focus.description}
-                        onChange={(e) => {
-                          const updated = [...data.architecturalFocus];
-                          updated[index].description = e.target.value;
-                          setData({ ...data, architecturalFocus: updated });
-                        }}
-                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none rounded-none"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: WORK EXPERIENCE */}
+          {/* TAB 2: EXPERIENCE / TRAJECTORY */}
           {activeTab === "experience" && (
             <div className="space-y-6 max-w-3xl">
               <div className="border-b border-[#E2E0D8] pb-4 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-display font-medium text-[#111111]">
-                    Experience Timeline (03 //)
+                  <h2 className="text-2xl font-serif font-medium text-[#111111]">
+                    Trajectory Timeline
                   </h2>
                   <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                    Manage roles, engineering accomplishments, and technical tags.
+                    Manage continuous vertical timeline milestones, roles, and descriptions.
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setData({
                       ...data,
@@ -1236,13 +516,13 @@ export default function EditorPage() {
                           description: "Role overview and impact...",
                           metric: "Key Metric",
                           metricSub: "Sub-metric detail",
-                          tags: ["TypeScript", "Go"],
+                          tags: ["TypeScript", "Next.js"],
                         },
                         ...data.experience,
                       ],
                     });
                   }}
-                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors"
+                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors cursor-pointer"
                 >
                   <Plus size={13} /> Add Role
                 </button>
@@ -1255,12 +535,13 @@ export default function EditorPage() {
                     className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 relative rounded-none"
                   >
                     <button
+                      type="button"
                       onClick={() => {
                         const updated = data.experience.filter((_, i) => i !== index);
                         setData({ ...data, experience: updated });
                       }}
                       title="Remove Role"
-                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors"
+                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors cursor-pointer"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -1315,7 +596,7 @@ export default function EditorPage() {
                             updated[index].company = e.target.value;
                             setData({ ...data, experience: updated });
                           }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-semibold rounded-none"
                         />
                       </div>
                       <div className="sm:col-span-2">
@@ -1331,50 +612,6 @@ export default function EditorPage() {
                           className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-sans rounded-none"
                         />
                       </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Right Metric Title</label>
-                        <input
-                          type="text"
-                          value={item.metric}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].metric = e.target.value;
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Right Metric Sub</label>
-                        <input
-                          type="text"
-                          value={item.metricSub}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].metricSub = e.target.value;
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="text-[#6E6D68]">
-                          Tags (comma-separated)
-                        </label>
-                        <input
-                          type="text"
-                          value={item.tags.join(", ")}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].tags = e.target.value
-                              .split(",")
-                              .map((t) => t.trim())
-                              .filter(Boolean);
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
                     </div>
                   </div>
                 ))}
@@ -1382,42 +619,43 @@ export default function EditorPage() {
             </div>
           )}
 
-          {/* TAB 4: SELECTED PROJECTS */}
+          {/* TAB 3: PROJECTS / RUNTIMES */}
           {activeTab === "projects" && (
             <div className="space-y-6 max-w-3xl">
               <div className="border-b border-[#E2E0D8] pb-4 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-display font-medium text-[#111111]">
-                    Selected Projects (04 //)
+                  <h2 className="text-2xl font-serif font-medium text-[#111111]">
+                    Projects &amp; Runtimes
                   </h2>
                   <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                    Manage featured engineering repositories, demos, and live metrics.
+                    Manage core systems, repositories, demo links, and latency benchmarks.
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setData({
                       ...data,
                       projects: [
                         {
-                          codeIndex: `0${data.projects.length + 1} // SYSTEM`,
-                          category: "AI SYSTEM",
-                          title: "NEW-PROJECT",
+                          codeIndex: "runtime engine",
+                          category: "runtime engine",
+                          title: "new-system",
                           version: "v1.0",
                           status: "Active",
-                          description: "Project architecture and capabilities...",
-                          techStack: "TypeScript · Node.js",
-                          tech: ["TypeScript", "Node.js"],
-                          github: "https://github.com/Abhishekkkk-15",
+                          description: "Architecture overview and operational details...",
+                          techStack: "TypeScript · Next.js · Node.js",
+                          tech: ["TypeScript", "Next.js"],
+                          github: data.profile.socials?.github || "https://github.com/Abhishekkkk-15",
                           live: "",
-                          metric: "Performance Metric",
-                          metricSub: "Sub-metric detail",
+                          metric: "< 20ms",
+                          metricSub: "latency",
                         },
                         ...data.projects,
                       ],
                     });
                   }}
-                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors"
+                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors cursor-pointer"
                 >
                   <Plus size={13} /> Add Project
                 </button>
@@ -1430,30 +668,18 @@ export default function EditorPage() {
                     className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 relative rounded-none"
                   >
                     <button
+                      type="button"
                       onClick={() => {
                         const updated = data.projects.filter((_, i) => i !== index);
                         setData({ ...data, projects: updated });
                       }}
                       title="Remove Project"
-                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors"
+                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors cursor-pointer"
                     >
                       <Trash2 size={15} />
                     </button>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
-                      <div>
-                        <label className="text-[#6E6D68]">Code Index</label>
-                        <input
-                          type="text"
-                          value={project.codeIndex}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].codeIndex = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
                       <div>
                         <label className="text-[#6E6D68]">Title</label>
                         <input
@@ -1468,48 +694,22 @@ export default function EditorPage() {
                         />
                       </div>
                       <div>
-                        <label className="text-[#6E6D68]">Version &amp; Status</label>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={project.version}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].version = e.target.value;
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-2 py-1.5 text-xs rounded-none"
-                          />
-                          <input
-                            type="text"
-                            value={project.status || ""}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].status = e.target.value;
-                              setData({ ...data, projects: updated });
-                            }}
-                            placeholder="Active"
-                            className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-2 py-1.5 text-xs rounded-none"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <label className="text-[#6E6D68]">Tech Stack Summary</label>
+                        <label className="text-[#6E6D68]">Category / Code Tag</label>
                         <input
                           type="text"
-                          value={project.techStack}
+                          value={project.codeIndex || project.category || ""}
                           onChange={(e) => {
                             const updated = [...data.projects];
-                            updated[index].techStack = e.target.value;
+                            updated[index].codeIndex = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
+                          placeholder="e.g. multimodal agent or ai runtime"
                           className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
 
-                      <div className="sm:col-span-3">
-                        <label className="text-[#6E6D68]">Project Description</label>
+                      <div className="sm:col-span-2">
+                        <label className="text-[#6E6D68]">Description</label>
                         <textarea
                           rows={2}
                           value={project.description}
@@ -1522,37 +722,23 @@ export default function EditorPage() {
                         />
                       </div>
 
-                      <div className="sm:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-[#6E6D68]">GitHub URL</label>
-                          <input
-                            type="text"
-                            value={project.github}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].github = e.target.value;
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[#6E6D68]">Live Demo URL</label>
-                          <input
-                            type="text"
-                            value={project.live || ""}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].live = e.target.value;
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                          />
-                        </div>
+                      <div className="sm:col-span-2">
+                        <label className="text-[#6E6D68]">Tech Stack</label>
+                        <input
+                          type="text"
+                          value={project.techStack}
+                          onChange={(e) => {
+                            const updated = [...data.projects];
+                            updated[index].techStack = e.target.value;
+                            setData({ ...data, projects: updated });
+                          }}
+                          placeholder="e.g. TypeScript, LangGraph, Electron"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
+                        />
                       </div>
 
                       <div>
-                        <label className="text-[#6E6D68]">Metric Highlight</label>
+                        <label className="text-[#6E6D68]">Benchmark Metric</label>
                         <input
                           type="text"
                           value={project.metric}
@@ -1561,12 +747,12 @@ export default function EditorPage() {
                             updated[index].metric = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
+                          placeholder="sub-50ms"
                           className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
-
-                      <div className="sm:col-span-2">
-                        <label className="text-[#6E6D68]">Metric Subtext</label>
+                      <div>
+                        <label className="text-[#6E6D68]">Metric Sub / Context</label>
                         <input
                           type="text"
                           value={project.metricSub}
@@ -1575,6 +761,35 @@ export default function EditorPage() {
                             updated[index].metricSub = e.target.value;
                             setData({ ...data, projects: updated });
                           }}
+                          placeholder="latency"
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[#6E6D68]">GitHub Repository URL</label>
+                        <input
+                          type="text"
+                          value={project.github}
+                          onChange={(e) => {
+                            const updated = [...data.projects];
+                            updated[index].github = e.target.value;
+                            setData({ ...data, projects: updated });
+                          }}
+                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[#6E6D68]">Live Demo URL (Optional)</label>
+                        <input
+                          type="text"
+                          value={project.live || ""}
+                          onChange={(e) => {
+                            const updated = [...data.projects];
+                            updated[index].live = e.target.value;
+                            setData({ ...data, projects: updated });
+                          }}
+                          placeholder="https://..."
                           className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
                         />
                       </div>
@@ -1585,222 +800,23 @@ export default function EditorPage() {
             </div>
           )}
 
-          {/* TAB 5: FLAGSHIP DOSSIER DEEP DIVE */}
-          {activeTab === "dossier" && (
-            <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-display font-medium text-[#111111]">
-                  Flagship Architectural Dossier (04.1 //)
-                </h2>
-                <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Configure the deep-dive technical showcase for your flagship system.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
-                <div>
-                  <label className="text-[#6E6D68]">Dossier Title</label>
-                  <input
-                    type="text"
-                    value={data.flagshipDossier.title}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        flagshipDossier: {
-                          ...data.flagshipDossier,
-                          title: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans rounded-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[#6E6D68]">Subtitle Tag</label>
-                  <input
-                    type="text"
-                    value={data.flagshipDossier.subtitle}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        flagshipDossier: {
-                          ...data.flagshipDossier,
-                          subtitle: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans rounded-none"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="text-[#6E6D68]">Deep Dive Architecture Summary</label>
-                  <textarea
-                    rows={3}
-                    value={data.flagshipDossier.description}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        flagshipDossier: {
-                          ...data.flagshipDossier,
-                          description: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans rounded-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[#6E6D68]">GitHub Code Target</label>
-                  <input
-                    type="text"
-                    value={data.flagshipDossier.github}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        flagshipDossier: {
-                          ...data.flagshipDossier,
-                          github: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[#6E6D68]">Live Target</label>
-                  <input
-                    type="text"
-                    value={data.flagshipDossier.live || ""}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        flagshipDossier: {
-                          ...data.flagshipDossier,
-                          live: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[#E2E0D8] space-y-3 font-mono text-xs">
-                <label className="text-[#6E6D68] block uppercase tracking-wider">
-                  Specification Telemetry (Key/Value)
-                </label>
-                {data.flagshipDossier.metrics.map((m, idx) => (
-                  <div key={idx} className="flex gap-3">
-                    <input
-                      type="text"
-                      value={m.label}
-                      onChange={(e) => {
-                        const updated = [...data.flagshipDossier.metrics];
-                        updated[idx].label = e.target.value;
-                        setData({
-                          ...data,
-                          flagshipDossier: {
-                            ...data.flagshipDossier,
-                            metrics: updated,
-                          },
-                        });
-                      }}
-                      className="w-1/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                    />
-                    <input
-                      type="text"
-                      value={m.value}
-                      onChange={(e) => {
-                        const updated = [...data.flagshipDossier.metrics];
-                        updated[idx].value = e.target.value;
-                        setData({
-                          ...data,
-                          flagshipDossier: {
-                            ...data.flagshipDossier,
-                            metrics: updated,
-                          },
-                        });
-                      }}
-                      className="w-2/3 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* System Architecture Pipeline Toggle */}
-              <div className="pt-4 border-t border-[#E2E0D8]">
-                <div className="flex items-center justify-between p-4 bg-[#EBEAE4]/60 border border-[#E2E0D8]">
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs uppercase font-medium text-[#111111]">
-                        System Architecture Pipeline
-                      </span>
-                      <span
-                        className={`font-mono text-[9.5px] px-1.5 py-0.2 ${
-                          data.flagshipDossier.showArchitecturePipeline
-                            ? "bg-[#2563EB]/10 text-[#2563EB] font-medium"
-                            : "bg-[#E2E0D8] text-[#6E6D68]"
-                        }`}
-                      >
-                        {data.flagshipDossier.showArchitecturePipeline
-                          ? "VISIBLE"
-                          : "HIDDEN (DEFAULT)"}
-                      </span>
-                    </div>
-                    <p className="font-mono text-[11px] text-[#6E6D68]">
-                      Display the interactive 4-stage systems architecture pipeline in the Flagship Architectural Dossier.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setData({
-                        ...data,
-                        flagshipDossier: {
-                          ...data.flagshipDossier,
-                          showArchitecturePipeline: !data.flagshipDossier.showArchitecturePipeline,
-                        },
-                      })
-                    }
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      data.flagshipDossier.showArchitecturePipeline ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
-                    }`}
-                    role="switch"
-                    aria-checked={Boolean(data.flagshipDossier.showArchitecturePipeline)}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                        data.flagshipDossier.showArchitecturePipeline ? "translate-x-5" : "translate-x-0"
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5.5: GITHUB ACTIVITY (04.2) */}
+          {/* TAB 4: GITHUB ACTIVITY */}
           {activeTab === "activity" && (
             <div className="space-y-6 max-w-3xl">
               <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-display font-medium text-[#111111]">
-                  Open Source Activity // GitHub (04.2)
+                <h2 className="text-2xl font-serif font-medium text-[#111111]">
+                  GitHub &amp; Upstream Activity
                 </h2>
                 <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Connected to your GitHub profile URL stored in 01 // Profile (
+                  Connected to your GitHub account (
                   <span className="text-[#111111] font-semibold">
                     {data.profile.socials?.github || "Not configured"}
                   </span>
-                  ). The 52-week commit density heatmap and live metrics are fetched dynamically via Next.js SSR.
+                  ). Real upstream commits and merged PRs are fetched dynamically via Next.js SSR.
                 </p>
               </div>
 
               <div className="p-4 bg-[#EBEAE4]/40 border border-[#E2E0D8] space-y-4 font-mono text-xs">
-                <div className="text-[11px] uppercase tracking-wider text-[#111111] font-semibold border-b border-[#E2E0D8] pb-2">
-                  TELEMETRY STATUS &amp; OVERRIDES
-                </div>
-
                 <div>
                   <label className="text-[#6E6D68] block mb-1">
                     Activity Status Badge (default: Active Development)
@@ -1830,7 +846,7 @@ export default function EditorPage() {
                     <input
                       type="text"
                       value={data.githubActivity?.customCommits || ""}
-                      placeholder="e.g. 1,740+ (auto from API if blank)"
+                      placeholder="e.g. 500+"
                       onChange={(e) =>
                         setData({
                           ...data,
@@ -1846,12 +862,12 @@ export default function EditorPage() {
 
                   <div>
                     <label className="text-[#6E6D68] block mb-1">
-                      PRs Merged Metric
+                      Custom PRs Merged (leave blank for live count)
                     </label>
                     <input
                       type="text"
                       value={data.githubActivity?.customPrs || ""}
-                      placeholder="e.g. 140+"
+                      placeholder="e.g. 42"
                       onChange={(e) =>
                         setData({
                           ...data,
@@ -1864,305 +880,20 @@ export default function EditorPage() {
                       className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
                     />
                   </div>
-
-                  <div>
-                    <label className="text-[#6E6D68] block mb-1">
-                      Code Reviews Completed
-                    </label>
-                    <input
-                      type="text"
-                      value={data.githubActivity?.customReviews || ""}
-                      placeholder="e.g. 45"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          githubActivity: {
-                            ...(data.githubActivity || {}),
-                            customReviews: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[#6E6D68] block mb-1">
-                      Stars Accumulated (leave blank for live repo star sum)
-                    </label>
-                    <input
-                      type="text"
-                      value={data.githubActivity?.customStars || ""}
-                      placeholder="e.g. 820+ (auto from public repos if blank)"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          githubActivity: {
-                            ...(data.githubActivity || {}),
-                            customStars: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="text-[#6E6D68] block mb-1">
-                      Top Languages (leave blank to auto-detect from repos)
-                    </label>
-                    <input
-                      type="text"
-                      value={data.githubActivity?.customLanguages || ""}
-                      placeholder="e.g. TypeScript, Python, C++"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          githubActivity: {
-                            ...(data.githubActivity || {}),
-                            customLanguages: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="p-3 bg-[#EBEAE4] border border-[#E2E0D8] text-[11px] text-[#6E6D68]">
-                  Tip: To switch the GitHub account, update the GitHub URL in the &quot;01 // Profile &amp; Hero&quot; tab. The system will automatically fetch that profile&apos;s live contributions, public repos, and primary languages.
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB 6: SKILLS & INFRASTRUCTURE */}
-          {activeTab === "skills" && (
-            <div className="space-y-6 max-w-3xl">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E2E0D8] pb-4 gap-4">
-                <div>
-                  <h2 className="text-2xl font-display font-medium text-[#111111]">
-                    Technical Capabilities (05 //)
-                  </h2>
-                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                    Manage core technology categories and skill tags. Add as many categories as needed.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setData({
-                      ...data,
-                      skillMatrix: [
-                        ...data.skillMatrix,
-                        {
-                          category: `DOMAIN ${String(data.skillMatrix.length + 1).padStart(2, "0")}`,
-                          items: ["Tool A", "Tool B", "Framework"],
-                        },
-                      ],
-                    });
-                  }}
-                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3.5 py-2 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
-                >
-                  <Plus size={13} /> Add Category
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                {data.skillMatrix.length === 0 ? (
-                  <div className="p-8 border border-dashed border-[#E2E0D8] text-center space-y-3 font-mono text-xs text-[#6E6D68]">
-                    <p>No technical capability categories configured.</p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setData({
-                          ...data,
-                          skillMatrix: [
-                            {
-                              category: "CORE STACK",
-                              items: ["TypeScript", "Next.js", "Python"],
-                            },
-                          ],
-                        });
-                      }}
-                      className="inline-flex items-center gap-1.5 bg-[#111111] text-[#F4F3EF] px-3 py-1.5 rounded-none hover:bg-[#2563EB] transition-colors"
-                    >
-                      <Plus size={13} /> Add Initial Category
-                    </button>
-                  </div>
-                ) : (
-                  data.skillMatrix.map((matrix, index) => (
-                    <div
-                      key={index}
-                      className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-3.5 relative rounded-none"
-                    >
-                      <div className="flex items-center justify-between border-b border-[#E2E0D8]/60 pb-2">
-                        <span className="font-mono text-xs uppercase font-medium text-[#111111]">
-                          Category {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const updated = data.skillMatrix.filter((_, i) => i !== index);
-                            setData({ ...data, skillMatrix: updated });
-                          }}
-                          title="Remove Category"
-                          className="text-[#6E6D68] hover:text-red-600 transition-colors p-1 flex items-center gap-1 text-[11px] font-mono cursor-pointer"
-                        >
-                          <Trash2 size={13} />
-                          <span>Delete</span>
-                        </button>
-                      </div>
-
-                      <div className="font-mono text-xs">
-                        <label className="text-[#6E6D68] uppercase">
-                          Category Name
-                        </label>
-                        <input
-                          type="text"
-                          value={matrix.category}
-                          onChange={(e) => {
-                            const updated = [...data.skillMatrix];
-                            updated[index].category = e.target.value;
-                            setData({ ...data, skillMatrix: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-sm font-sans focus:outline-none mt-1 rounded-none"
-                        />
-                      </div>
-                      <div className="font-mono text-xs">
-                        <label className="text-[#6E6D68] uppercase">
-                          Skills (comma-separated)
-                        </label>
-                        <input
-                          type="text"
-                          value={matrix.items.join(", ")}
-                          onChange={(e) => {
-                            const updated = [...data.skillMatrix];
-                            updated[index].items = e.target.value
-                              .split(",")
-                              .map((s) => s.trim())
-                              .filter(Boolean);
-                            setData({ ...data, skillMatrix: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
-                        />
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 7: CONTACT & AVAILABILITY */}
-          {activeTab === "contact" && (
-            <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-display font-medium text-[#111111]">
-                  Contact &amp; Availability (06 //)
-                </h2>
-                <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Configure location details, direct links, and open-to-work status.
-                </p>
-              </div>
-
-              <div className="space-y-4 font-mono text-xs">
-                <div>
-                  <label className="text-[#6E6D68] uppercase">
-                    Location Lines (one per line)
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={data.contactInfo.locationLines.join("\n")}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        contactInfo: {
-                          ...data.contactInfo,
-                          locationLines: e.target.value
-                            .split("\n")
-                            .filter(Boolean),
-                        },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[#6E6D68] uppercase">
-                    Availability Statement
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={data.contactInfo.availability}
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        contactInfo: {
-                          ...data.contactInfo,
-                          availability: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-sm font-sans focus:outline-none mt-1 rounded-none"
-                  />
-                </div>
-
-                <div className="pt-4 border-t border-[#E2E0D8]">
-                  <label className="text-[#6E6D68] uppercase block mb-3">
-                    Connect Links
-                  </label>
-                  {data.contactInfo.connectLinks.map((link, idx) => (
-                    <div key={idx} className="flex gap-3 mb-2">
-                      <input
-                        type="text"
-                        value={link.label}
-                        onChange={(e) => {
-                          const updated = [...data.contactInfo.connectLinks];
-                          updated[idx].label = e.target.value;
-                          setData({
-                            ...data,
-                            contactInfo: {
-                              ...data.contactInfo,
-                              connectLinks: updated,
-                            },
-                          });
-                        }}
-                        className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                      />
-                      <input
-                        type="text"
-                        value={link.href}
-                        onChange={(e) => {
-                          const updated = [...data.contactInfo.connectLinks];
-                          updated[idx].href = e.target.value;
-                          setData({
-                            ...data,
-                            contactInfo: {
-                              ...data.contactInfo,
-                              connectLinks: updated,
-                            },
-                          });
-                        }}
-                        className="w-1/2 bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 7: SECURITY & ACCESS CONTROL */}
+          {/* TAB 5: SECURITY & ACCESS */}
           {activeTab === "security" && (
             <div className="space-y-6 max-w-2xl">
               <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-display font-medium text-[#111111]">
-                  Security &amp; Access Control (07 //)
+                <h2 className="text-2xl font-serif font-medium text-[#111111]">
+                  Security &amp; Access Control
                 </h2>
                 <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Rotate your admin credentials and manage defense-in-depth settings.
+                  Manage administrative credentials and security settings.
                 </p>
               </div>
 
@@ -2191,62 +922,6 @@ export default function EditorPage() {
                     <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] inline-block animate-pulse"></span>
                     <span className="text-[#6E6D68]">Rate Limiter:</span>
                     <span className="font-medium text-[#2563EB]">5-Attempt / 15m Lockout</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Spotify Live Audio Telemetry Integration Card */}
-              <div className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-3 font-mono text-xs">
-                <div className="text-xs uppercase tracking-wider font-semibold text-[#111111] flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Radio size={14} className="text-[#2563EB]" />
-                    <span>Spotify Live Audio Telemetry</span>
-                  </div>
-                  <span className="text-[10px] text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/25 px-1.5 py-0.5">
-                    ADMIN AUTH REQUIRED
-                  </span>
-                </div>
-                <p className="text-[11px] text-[#6E6D68] leading-relaxed">
-                  Authenticate your personal Spotify account to stream currently playing music directly into your portfolio's sticky audio widget.
-                </p>
-                <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-[#E2E0D8]/60">
-                  <a
-                    href="/api/spotify/login"
-                    className="inline-flex items-center gap-2 bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-4 py-2 font-mono text-xs uppercase tracking-wider transition-colors"
-                  >
-                    <span>Authenticate Spotify Account ↗</span>
-                  </a>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-[#6E6D68]">Widget Status:</span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setData({
-                          ...data,
-                          profile: {
-                            ...data.profile,
-                            showSpotifyPlayer:
-                              data.profile.showSpotifyPlayer === false ? true : false,
-                          },
-                        })
-                      }
-                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        data.profile.showSpotifyPlayer !== false ? "bg-[#2563EB]" : "bg-[#D8D6CE]"
-                      }`}
-                      role="switch"
-                      aria-checked={data.profile.showSpotifyPlayer !== false}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                          data.profile.showSpotifyPlayer !== false ? "translate-x-4" : "translate-x-0"
-                        }`}
-                      />
-                    </button>
-                    <span className="text-[10px] font-bold text-[#111111]">
-                      {data.profile.showSpotifyPlayer !== false ? "ON" : "OFF"}
-                    </span>
                   </div>
                 </div>
               </div>
@@ -2324,7 +999,7 @@ export default function EditorPage() {
                     <button
                       type="submit"
                       disabled={passwordSaving}
-                      className="bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-5 py-2 font-mono text-xs uppercase tracking-wider transition-colors disabled:opacity-50 rounded-none flex items-center gap-2"
+                      className="bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-5 py-2 font-mono text-xs uppercase tracking-wider transition-colors disabled:opacity-50 rounded-none flex items-center gap-2 cursor-pointer"
                     >
                       <ShieldCheck size={14} />
                       {passwordSaving ? "Updating Password..." : "Update Password"}
