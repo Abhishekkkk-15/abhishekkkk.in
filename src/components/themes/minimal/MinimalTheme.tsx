@@ -336,26 +336,6 @@ export default function MinimalTheme({
                       </div>
                     </div>
                   ))}
-
-                  {/* Accolades Node at bottom */}
-                  <div className="relative flex items-start gap-3.5 group">
-                    <div className="relative z-10 w-3.5 h-3.5 rounded-full border border-[#E5E5E5] dark:border-[#26262a] bg-[#f9f9f9] dark:bg-[#0d0d0e] shrink-0 mt-1 flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#c4c7c7] dark:bg-[#38383e]" />
-                    </div>
-                    <div className="flex flex-col w-full min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-x-3 gap-y-1">
-                        <span className="font-sans text-sm font-semibold text-[#1a1c1c] dark:text-[#f0f0f2]">
-                          accolades &amp; honors
-                        </span>
-                        <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] shrink-0">
-                          milestones
-                        </span>
-                      </div>
-                      <p className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] leading-relaxed lowercase mt-1">
-                        amazon ml summer school · top 1% typescript engineer, algora · autonomous agent architecture consultant
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </section>
