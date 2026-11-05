@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getPortfolioData } from "@/lib/portfolioService";
 
 export const dynamic = "force-dynamic";
@@ -31,5 +31,26 @@ export async function GET() {
       matrixTopHeadline: "BUILD. TRAIN.",
       matrixBottomHeadline: "DEPLOY. SCALE.",
     });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const theme = body?.theme;
+
+    if (["terminal", "playerzero", "industrial", "minimal"].includes(theme)) {
+      const res = NextResponse.json({ success: true, theme });
+      res.cookies.set("active_theme", theme, {
+        path: "/",
+        maxAge: 31536000,
+        sameSite: "lax",
+      });
+      return res;
+    }
+
+    return NextResponse.json({ error: "Invalid theme requested" }, { status: 400 });
+  } catch {
+    return NextResponse.json({ error: "Failed to update theme preference" }, { status: 500 });
   }
 }

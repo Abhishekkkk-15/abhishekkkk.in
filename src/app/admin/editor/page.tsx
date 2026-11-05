@@ -322,6 +322,8 @@ export default function EditorPage() {
                       ? "PlayerZero Matrix"
                       : data.activeTheme === "industrial"
                       ? "Teenage Hardware"
+                      : data.activeTheme === "minimal"
+                      ? "Minimal Editorial"
                       : "Terminal Swiss"}
                   </span>
                 </div>
@@ -339,7 +341,7 @@ export default function EditorPage() {
               </div>
 
               {/* Themes Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 {/* THEME 1: Terminal Swiss Technical */}
                 <div
                   className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#F4F3EF] relative ${
@@ -526,6 +528,69 @@ export default function EditorPage() {
                     {data.activeTheme === "industrial"
                       ? "Currently Active"
                       : "Activate Hardware Theme"}
+                  </button>
+                </div>
+
+                {/* THEME 4: Minimal / Editorial Research */}
+                <div
+                  className={`border-2 p-6 flex flex-col justify-between transition-all bg-[#f9f9f9] relative ${
+                    data.activeTheme === "minimal"
+                      ? "border-[#111111] shadow-md ring-1 ring-[#111111]"
+                      : "border-[#E2E0D8] opacity-85 hover:opacity-100 hover:border-stone-400"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#111111]">
+                        04 // Minimal Editorial
+                      </span>
+                      {data.activeTheme === "minimal" ? (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-black text-white font-bold">
+                          ● Live on Site
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#EBEAE4] text-[#6E6D68] border border-[#E2E0D8]">
+                          Available
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-lg font-serif font-medium text-[#111111] mb-2 lowercase">
+                      editorial research &amp; runtimes
+                    </h3>
+                    <p className="font-sans text-xs text-[#6E6D68] leading-relaxed mb-6">
+                      Ultra-minimalist typographic editorial portfolio calibrated for a narrow 680px mono readout. Source Serif 4 headlines, Geist body text, continuous timeline nodes, and clean dark mode.
+                    </p>
+
+                    {/* Feature Highlights */}
+                    <div className="space-y-2 font-mono text-[11px] text-[#6E6D68] mb-6 border-y border-[#E2E0D8] py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Calibrated 680px mono column
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Source Serif 4 + Geist typography
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Continuous vertical trajectory timeline
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#111111]">✓</span> Integrated Human / Agent persona mode
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setData({ ...data, activeTheme: "minimal" })}
+                    disabled={data.activeTheme === "minimal"}
+                    className={`w-full font-mono text-xs uppercase tracking-wider py-2.5 px-4 text-center transition-all ${
+                      data.activeTheme === "minimal"
+                        ? "bg-[#111111] text-[#F4F3EF] cursor-default font-bold"
+                        : "bg-[#EBEAE4] text-[#111111] hover:bg-[#111111] hover:text-[#F4F3EF] border border-[#E2E0D8] cursor-pointer"
+                    }`}
+                  >
+                    {data.activeTheme === "minimal"
+                      ? "Currently Active"
+                      : "Activate Minimal Theme"}
                   </button>
                 </div>
               </div>

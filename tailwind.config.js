@@ -29,6 +29,8 @@ export default {
         dimText: '#686870',
       },
       fontFamily: {
+        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+        geist: ['Geist', 'Inter', 'sans-serif'],
         sans: ['Inter', '"Hanken Grotesk"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         display: ['"Space Grotesk"', 'sans-serif'],
         mono: ['"Space Mono"', '"JetBrains Mono"', 'ui-monospace', 'monospace'],

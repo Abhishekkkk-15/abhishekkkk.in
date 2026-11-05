@@ -112,7 +112,7 @@ export interface IContactInfo {
 }
 
 export interface IPortfolioData {
-  activeTheme?: "terminal" | "playerzero" | "industrial";
+  activeTheme?: "terminal" | "playerzero" | "industrial" | "minimal";
   profile: IProfile;
   architecturalFocus: IArchitecturalFocus[];
   experience: IExperienceItem[];
@@ -132,7 +132,7 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
   {
     activeTheme: {
       type: String,
-      enum: ["terminal", "playerzero", "industrial"],
+      enum: ["terminal", "playerzero", "industrial", "minimal"],
       default: "terminal",
     },
     profile: {
