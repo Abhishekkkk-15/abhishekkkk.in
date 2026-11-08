@@ -8,8 +8,10 @@ import {
   ExternalLink,
   Plus,
   Trash2,
-  CheckCircle,
+  CheckCircle2,
   AlertCircle,
+  Sun,
+  Moon,
   User,
   Briefcase,
   FolderGit2,
@@ -32,6 +34,10 @@ export default function EditorPage() {
   } | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
 
+  // Dark/Light Mode State
+  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
   // Security & Password Change State
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -41,6 +47,30 @@ export default function EditorPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const initialDark = saved === "dark" || (!saved && prefersDark);
+    setIsDark(initialDark);
+    if (initialDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+    if (next) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   useEffect(() => {
     async function loadPortfolio() {
@@ -55,7 +85,7 @@ export default function EditorPage() {
       } catch {
         setStatusMessage({
           type: "error",
-          text: "Failed to load portfolio data.",
+          text: "failed to load portfolio data.",
         });
       } finally {
         setLoading(false);
@@ -83,13 +113,13 @@ export default function EditorPage() {
 
       setStatusMessage({
         type: "success",
-        text: "Portfolio data successfully saved and published.",
+        text: "portfolio changes published successfully.",
       });
       setTimeout(() => setStatusMessage(null), 4000);
     } catch (err: any) {
       setStatusMessage({
         type: "error",
-        text: err.message || "An unexpected error occurred while saving.",
+        text: err.message || "an unexpected error occurred while saving.",
       });
     } finally {
       setSaving(false);
@@ -100,8 +130,9 @@ export default function EditorPage() {
     try {
       await fetch("/api/admin/auth/logout", { method: "POST" });
       router.push("/admin/login");
-    } catch {
-      router.push("/admin/login");
+      router.refresh();
+    } catch (err) {
+      console.error("Logout error:", err);
     }
   };
 
@@ -112,7 +143,7 @@ export default function EditorPage() {
     if (newPassword !== confirmPassword) {
       setPasswordStatus({
         type: "error",
-        text: "New passwords do not match.",
+        text: "new passwords do not match.",
       });
       return;
     }
@@ -120,7 +151,7 @@ export default function EditorPage() {
     if (newPassword.length < 8) {
       setPasswordStatus({
         type: "error",
-        text: "New password must be at least 8 characters long.",
+        text: "new password must be at least 8 characters long.",
       });
       return;
     }
@@ -140,7 +171,7 @@ export default function EditorPage() {
 
       setPasswordStatus({
         type: "success",
-        text: "Admin password successfully updated.",
+        text: "admin password successfully updated.",
       });
       setCurrentPassword("");
       setNewPassword("");
@@ -149,7 +180,7 @@ export default function EditorPage() {
     } catch (err: any) {
       setPasswordStatus({
         type: "error",
-        text: err.message || "Failed to update password.",
+        text: err.message || "failed to update password.",
       });
     } finally {
       setPasswordSaving(false);
@@ -158,10 +189,10 @@ export default function EditorPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F4F3EF] flex flex-col items-center justify-center font-mono text-xs text-[#6E6D68]">
-        <div className="flex items-center gap-2 mb-2">
+      <div className="min-h-screen bg-[#f9f9f9] dark:bg-[#0d0d0e] flex flex-col items-center justify-center font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6]">
+        <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-          <span>AUTHENTICATING CMS SESSION...</span>
+          <span>authenticating cms session...</span>
         </div>
       </div>
     );
@@ -169,115 +200,153 @@ export default function EditorPage() {
 
   if (!data) return null;
 
+  const tabs: Array<{ id: TabKey; label: string; icon: any }> = [
+    { id: "profile", label: "profile & bio", icon: User },
+    { id: "experience", label: "trajectory", icon: Briefcase },
+    { id: "projects", label: "projects & engines", icon: FolderGit2 },
+    { id: "activity", label: "github activity", icon: GitCommit },
+    { id: "security", label: "security", icon: ShieldCheck },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F4F3EF] text-[#111111] antialiased">
-      {/* Top Fixed Admin Header */}
-      <header className="sticky top-0 z-40 bg-[#F4F3EF]/95 backdrop-blur border-b border-[#E2E0D8] px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-xs uppercase tracking-widest font-bold text-[#111111]">
-            CMS // MINIMAL PORTFOLIO
-          </span>
-          <span className="hidden sm:inline-block font-mono text-[10px] bg-black text-white px-2 py-0.5 uppercase tracking-wider">
-            680px Mono
-          </span>
+    <div className="min-h-screen bg-[#f9f9f9] dark:bg-[#0d0d0e] text-[#1a1c1c] dark:text-[#f0f0f2] antialiased transition-colors duration-200">
+      
+      {/* Sticky Editorial Header */}
+      <header className="sticky top-0 z-40 bg-[#f9f9f9]/90 dark:bg-[#0d0d0e]/90 backdrop-blur-xl border-b border-[#E5E5E5] dark:border-[#26262a] transition-colors">
+        <div className="max-w-5xl mx-auto px-6 h-14 sm:h-16 flex items-center justify-between">
+          {/* Brand & Status */}
+          <div className="flex items-center gap-3">
+            <a
+              href="/"
+              className="font-mono text-xs font-semibold text-[#1a1c1c] dark:text-[#f0f0f2] lowercase tracking-tight hover:underline"
+            >
+              {data.profile.shortName || "abhishek"}
+            </a>
+            <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6]">/</span>
+            <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] lowercase">
+              cms editor
+            </span>
+            <div className="hidden sm:flex items-center gap-1.5 ml-2 px-2 py-0.5 rounded-full bg-[#10B981]/10 text-[#10B981] font-mono text-[10px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+              <span>live</span>
+            </div>
+          </div>
+
+          {/* Action Controls */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Dark Mode Toggle */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[#1a1c1c] dark:text-[#f0f0f2] hover:bg-[#E5E5E5]/60 dark:hover:bg-[#26262a] transition-colors cursor-pointer"
+            >
+              {mounted && isDark ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+
+            {/* View Site External Link */}
+            <a
+              href="/"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex items-center gap-1 font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] px-2.5 py-1.5 rounded-md hover:bg-[#E5E5E5]/50 dark:hover:bg-[#26262a]/50 transition-colors"
+            >
+              <span>view site</span>
+              <ExternalLink size={12} />
+            </a>
+
+            {/* Save Changes Button */}
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="bg-[#1a1c1c] dark:bg-[#f0f0f2] hover:bg-black dark:hover:bg-white text-[#f9f9f9] dark:text-[#0d0d0e] font-mono text-xs px-3.5 py-1.5 rounded-full font-medium transition-all duration-150 flex items-center gap-1.5 disabled:opacity-50 cursor-pointer shadow-2xs"
+            >
+              <Save size={13} />
+              <span>{saving ? "saving..." : "save changes"}</span>
+            </button>
+
+            {/* Logout */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              title="Sign out of CMS"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+            >
+              <LogOut size={15} />
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <a
-            href="/"
-            target="_blank"
-            rel="noreferrer"
-            className="font-mono text-xs text-[#6E6D68] hover:text-[#111111] flex items-center gap-1.5 transition-colors"
-          >
-            <ExternalLink size={13} />
-            <span className="hidden sm:inline">View Site</span>
-          </a>
-
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="font-mono text-xs uppercase tracking-wider bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] disabled:opacity-50 px-4 py-2 flex items-center gap-2 transition-colors cursor-pointer"
-          >
-            <Save size={13} />
-            <span>{saving ? "Saving..." : "Save Changes"}</span>
-          </button>
-
-          <button
-            onClick={handleLogout}
-            title="Log out of CMS"
-            className="font-mono text-xs text-[#6E6D68] hover:text-red-600 p-2 transition-colors cursor-pointer"
-          >
-            <LogOut size={15} />
-          </button>
+        {/* Horizontal Navigation Sub-bar */}
+        <div className="max-w-5xl mx-auto px-6 overflow-x-auto scrollbar-none border-t border-[#E5E5E5]/60 dark:border-[#26262a]/60">
+          <nav className="flex items-center gap-1 py-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-3 py-1.5 rounded-full font-mono text-xs lowercase flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                    isActive
+                      ? "bg-[#1a1c1c] dark:bg-[#f0f0f2] text-[#f9f9f9] dark:text-[#0d0d0e] font-medium shadow-2xs"
+                      : "text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] hover:bg-[#E5E5E5]/50 dark:hover:bg-[#26262a]/50"
+                  }`}
+                >
+                  <Icon size={12} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
         </div>
       </header>
 
-      {/* Status Alert Banner */}
+      {/* Floating Status Notification */}
       {statusMessage && (
-        <div
-          className={`px-6 py-3 border-b text-xs font-mono flex items-center gap-2 ${
-            statusMessage.type === "success"
-              ? "bg-green-50 text-green-800 border-green-200"
-              : "bg-red-50 text-red-800 border-red-200"
-          }`}
-        >
-          {statusMessage.type === "success" ? (
-            <CheckCircle size={16} />
-          ) : (
-            <AlertCircle size={16} />
-          )}
-          <span>{statusMessage.text}</span>
+        <div className="max-w-5xl mx-auto px-6 pt-4">
+          <div
+            className={`p-3 rounded-lg text-xs font-mono flex items-center gap-2 border transition-all ${
+              statusMessage.type === "success"
+                ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-300"
+                : "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50 text-red-800 dark:text-red-300"
+            }`}
+          >
+            {statusMessage.type === "success" ? (
+              <CheckCircle2 size={15} className="shrink-0" />
+            ) : (
+              <AlertCircle size={15} className="shrink-0" />
+            )}
+            <span>{statusMessage.text}</span>
+          </div>
         </div>
       )}
 
-      {/* Editor Body Grid */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row border-x border-[#E2E0D8] min-h-[calc(100vh-60px)]">
-        {/* Left Side Tab Navigation */}
-        <nav className="w-full md:w-64 border-b md:border-b-0 md:border-r border-[#E2E0D8] bg-[#EBEAE4]/40 p-3 sm:p-4 flex md:flex-col overflow-x-auto md:overflow-x-visible gap-1.5 md:gap-1 font-mono text-xs uppercase tracking-wider shrink-0 scrollbar-none">
-          <div className="hidden md:block text-[10px] text-[#6E6D68] px-3 py-2">SECTIONS</div>
+      {/* Main Content Area */}
+      <main className="max-w-5xl mx-auto px-6 py-8">
+        
+        {/* ========================================================= */}
+        {/* TAB 1: PROFILE & BIO                                     */}
+        {/* ========================================================= */}
+        {activeTab === "profile" && (
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h2 className="font-serif text-2xl sm:text-3xl font-normal lowercase tracking-tight text-[#1a1c1c] dark:text-[#f0f0f2]">
+                profile &amp; bio
+              </h2>
+              <p className="text-sm font-sans text-[#5e5e5e] dark:text-[#9e9ea6]">
+                manage your core identity, editorial headline, ethos paragraphs, and public handles.
+              </p>
+            </div>
 
-          {[
-            { id: "profile", label: "01 // Profile & Bio", icon: User },
-            { id: "experience", label: "02 // Trajectory", icon: Briefcase },
-            { id: "projects", label: "03 // Projects & Engines", icon: FolderGit2 },
-            { id: "activity", label: "04 // Upstream Commits", icon: GitCommit },
-            { id: "security", label: "05 // Security & Access", icon: ShieldCheck },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as TabKey)}
-                className={`shrink-0 md:w-full text-left px-3.5 py-2.5 rounded-none flex items-center gap-2.5 transition-colors whitespace-nowrap cursor-pointer ${
-                  activeTab === tab.id
-                    ? "bg-[#111111] text-[#F4F3EF]"
-                    : "text-[#444442] hover:text-[#111111] hover:bg-[#EBEAE4]"
-                }`}
-              >
-                <Icon size={14} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Right Side Tab Form Content */}
-        <main className="flex-1 p-6 sm:p-10 bg-[#F4F3EF]">
-          {/* TAB 1: PROFILE & BIO */}
-          {activeTab === "profile" && (
-            <div className="space-y-8 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-serif font-medium text-[#111111]">
-                  Profile &amp; Editorial Bio
-                </h2>
-                <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Manage primary identity, bio statements, contact details, and social links.
-                </p>
-              </div>
-
+            <div className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 sm:p-8 space-y-6 shadow-2xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 font-mono text-xs">
+                {/* Full Name */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Full Name</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    full name
+                  </label>
                   <input
                     type="text"
                     value={data.profile.name}
@@ -287,12 +356,15 @@ export default function EditorPage() {
                         profile: { ...data.profile, name: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Short Name */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Short Name / Brandmark</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    short name / brandmark
+                  </label>
                   <input
                     type="text"
                     value={data.profile.shortName || "abhishek"}
@@ -302,16 +374,17 @@ export default function EditorPage() {
                         profile: { ...data.profile, shortName: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Lead Headline Statement */}
                 <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">
-                    Headline Bio Statement
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    editorial headline statement
                   </label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={data.profile.headline}
                     onChange={(e) =>
                       setData({
@@ -319,27 +392,35 @@ export default function EditorPage() {
                         profile: { ...data.profile, headline: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-serif focus:outline-none focus:border-[#111111] rounded-none"
+                    placeholder="i do applied ai & systems engineering, & build the autonomous agents & inference runtimes that serve them."
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-serif focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Tagline / Subtitle */}
                 <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Tagline / Ethos</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    tagline / focus domains
+                  </label>
                   <input
                     type="text"
                     value={data.profile.tagline || ""}
+                    placeholder="Autonomous AI Agents · Distributed Systems · Developer Tooling"
                     onChange={(e) =>
                       setData({
                         ...data,
                         profile: { ...data.profile, tagline: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Email */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Contact Email</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    contact email
+                  </label>
                   <input
                     type="email"
                     value={data.profile.email}
@@ -349,30 +430,38 @@ export default function EditorPage() {
                         profile: { ...data.profile, email: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Location */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Location</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    location / timezone
+                  </label>
                   <input
                     type="text"
                     value={data.profile.location}
+                    placeholder="Jaipur, India · Remote"
                     onChange={(e) =>
                       setData({
                         ...data,
                         profile: { ...data.profile, location: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* GitHub URL */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">GitHub Profile URL</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    github profile url
+                  </label>
                   <input
                     type="text"
                     value={data.profile.socials?.github || ""}
+                    placeholder="https://github.com/..."
                     onChange={(e) =>
                       setData({
                         ...data,
@@ -386,15 +475,19 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* LinkedIn URL */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">LinkedIn URL</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    linkedin url
+                  </label>
                   <input
                     type="text"
                     value={data.profile.socials?.linkedin || ""}
+                    placeholder="https://linkedin.com/in/..."
                     onChange={(e) =>
                       setData({
                         ...data,
@@ -408,15 +501,19 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Twitter / X URL */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Twitter / X URL</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    x (twitter) url
+                  </label>
                   <input
                     type="text"
                     value={data.profile.socials?.twitter || ""}
+                    placeholder="https://x.com/..."
                     onChange={(e) =>
                       setData({
                         ...data,
@@ -431,29 +528,33 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Resume URL */}
                 <div className="space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">Resume Document URL</label>
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    resume document url
+                  </label>
                   <input
                     type="text"
                     value={data.profile.resumeUrl || "/resume.pdf"}
+                    placeholder="/resume.pdf"
                     onChange={(e) =>
                       setData({
                         ...data,
                         profile: { ...data.profile, resumeUrl: e.target.value },
                       })
                     }
-                    placeholder="/resume.pdf"
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
-                <div className="sm:col-span-2 space-y-1.5 pt-3 border-t border-[#E2E0D8]">
-                  <label className="text-[#6E6D68] uppercase">
-                    Ethos Bio Paragraph 1 (Work Cycle / Dossiers)
+                {/* Bio Paragraph 1 */}
+                <div className="sm:col-span-2 space-y-1.5 pt-2 border-t border-[#E5E5E5] dark:border-[#26262a]">
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    ethos bio paragraph 1 (work cycle &amp; thoughts)
                   </label>
                   <textarea
                     rows={2}
@@ -465,361 +566,409 @@ export default function EditorPage() {
                         profile: { ...data.profile, bioParagraph1: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
 
+                {/* Bio Paragraph 2 */}
                 <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-[#6E6D68] uppercase">
-                    Ethos Bio Paragraph 2 (Launch / Thrills)
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    ethos bio paragraph 2 (post-launch thrills)
                   </label>
                   <textarea
                     rows={2}
                     value={data.profile.bioParagraph2 || ""}
-                    placeholder="i live the part after the launch day. when the reasoning breaks..."
+                    placeholder="i live the part after the launch day. when the reasoning breaks, when the cost skyrockets..."
                     onChange={(e) =>
                       setData({
                         ...data,
                         profile: { ...data.profile, bioParagraph2: e.target.value },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] text-[#111111] px-3.5 py-2 text-sm font-sans focus:outline-none focus:border-[#111111] rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
                   />
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* TAB 2: EXPERIENCE / TRAJECTORY */}
-          {activeTab === "experience" && (
-            <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-serif font-medium text-[#111111]">
-                    Trajectory Timeline
-                  </h2>
-                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                    Manage continuous vertical timeline milestones, roles, and descriptions.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setData({
-                      ...data,
-                      experience: [
-                        {
-                          period: "2026 — PRESENT",
-                          location: "Remote",
-                          role: "Systems Engineer",
-                          company: "Company Name",
-                          description: "Role overview and impact...",
-                          metric: "Key Metric",
-                          metricSub: "Sub-metric detail",
-                          tags: ["TypeScript", "Next.js"],
-                        },
-                        ...data.experience,
-                      ],
-                    });
-                  }}
-                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors cursor-pointer"
-                >
-                  <Plus size={13} /> Add Role
-                </button>
+        {/* ========================================================= */}
+        {/* TAB 2: TRAJECTORY / EXPERIENCE                            */}
+        {/* ========================================================= */}
+        {activeTab === "experience" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+              <div className="space-y-1">
+                <h2 className="font-serif text-2xl sm:text-3xl font-normal lowercase tracking-tight text-[#1a1c1c] dark:text-[#f0f0f2]">
+                  trajectory timeline
+                </h2>
+                <p className="text-sm font-sans text-[#5e5e5e] dark:text-[#9e9ea6]">
+                  chronological milestones connecting previous and current systems engineering roles.
+                </p>
               </div>
 
-              <div className="space-y-6">
-                {data.experience.map((item, index) => (
-                  <div
-                    key={index}
-                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 relative rounded-none"
-                  >
+              <button
+                type="button"
+                onClick={() => {
+                  setData({
+                    ...data,
+                    experience: [
+                      {
+                        period: "2026 — PRESENT",
+                        location: "Remote",
+                        role: "Systems Engineer",
+                        company: "Company Name",
+                        description: "Architected high-throughput agent systems and real-time inference runtimes...",
+                        metric: "Key Metric",
+                        metricSub: "Latency",
+                        tags: ["TypeScript", "Go"],
+                      },
+                      ...data.experience,
+                    ],
+                  });
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1a1c1c] dark:bg-[#f0f0f2] hover:bg-black dark:hover:bg-white text-[#f9f9f9] dark:text-[#0d0d0e] font-mono text-xs font-medium cursor-pointer transition-colors shadow-2xs shrink-0"
+              >
+                <Plus size={13} />
+                <span>add milestone</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {data.experience.map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 relative space-y-4 transition-colors shadow-2xs"
+                >
+                  <div className="flex items-center justify-between border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
+                    <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] lowercase">
+                      milestone #{index + 1}
+                    </span>
                     <button
                       type="button"
                       onClick={() => {
                         const updated = data.experience.filter((_, i) => i !== index);
                         setData({ ...data, experience: updated });
                       }}
-                      title="Remove Role"
-                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors cursor-pointer"
+                      title="Remove milestone"
+                      className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-red-600 dark:hover:text-red-400 p-1 transition-colors cursor-pointer"
                     >
                       <Trash2 size={15} />
                     </button>
+                  </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
-                      <div>
-                        <label className="text-[#6E6D68]">Period</label>
-                        <input
-                          type="text"
-                          value={item.period}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].period = e.target.value;
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Location / Office</label>
-                        <input
-                          type="text"
-                          value={item.location}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].location = e.target.value;
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Role Title</label>
-                        <input
-                          type="text"
-                          value={item.role}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].role = e.target.value;
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Company Name</label>
-                        <input
-                          type="text"
-                          value={item.company}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].company = e.target.value;
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-semibold rounded-none"
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="text-[#6E6D68]">Description</label>
-                        <textarea
-                          rows={2}
-                          value={item.description}
-                          onChange={(e) => {
-                            const updated = [...data.experience];
-                            updated[index].description = e.target.value;
-                            setData({ ...data, experience: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-sans rounded-none"
-                        />
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">period</label>
+                      <input
+                        type="text"
+                        value={item.period}
+                        placeholder="2026 — PRESENT"
+                        onChange={(e) => {
+                          const updated = [...data.experience];
+                          updated[index].period = e.target.value;
+                          setData({ ...data, experience: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">location / office</label>
+                      <input
+                        type="text"
+                        value={item.location}
+                        placeholder="Jaipur, India or Remote"
+                        onChange={(e) => {
+                          const updated = [...data.experience];
+                          updated[index].location = e.target.value;
+                          setData({ ...data, experience: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">company name</label>
+                      <input
+                        type="text"
+                        value={item.company}
+                        placeholder="Adiyogi Technosoft"
+                        onChange={(e) => {
+                          const updated = [...data.experience];
+                          updated[index].company = e.target.value;
+                          setData({ ...data, experience: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-sans font-semibold text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">role title</label>
+                      <input
+                        type="text"
+                        value={item.role}
+                        placeholder="Full Stack Developer"
+                        onChange={(e) => {
+                          const updated = [...data.experience];
+                          updated[index].role = e.target.value;
+                          setData({ ...data, experience: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2 space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">milestone overview</label>
+                      <textarea
+                        rows={2}
+                        value={item.description}
+                        placeholder="Architecting and shipping production full-stack web applications..."
+                        onChange={(e) => {
+                          const updated = [...data.experience];
+                          updated[index].description = e.target.value;
+                          setData({ ...data, experience: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-sans text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: PROJECTS / RUNTIMES */}
-          {activeTab === "projects" && (
-            <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-serif font-medium text-[#111111]">
-                    Projects &amp; Runtimes
-                  </h2>
-                  <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                    Manage core systems, repositories, demo links, and latency benchmarks.
-                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setData({
-                      ...data,
-                      projects: [
-                        {
-                          codeIndex: "runtime engine",
-                          category: "runtime engine",
-                          title: "new-system",
-                          version: "v1.0",
-                          status: "Active",
-                          description: "Architecture overview and operational details...",
-                          techStack: "TypeScript · Next.js · Node.js",
-                          tech: ["TypeScript", "Next.js"],
-                          github: data.profile.socials?.github || "https://github.com/Abhishekkkk-15",
-                          live: "",
-                          metric: "< 20ms",
-                          metricSub: "latency",
-                        },
-                        ...data.projects,
-                      ],
-                    });
-                  }}
-                  className="font-mono text-xs bg-[#111111] text-[#F4F3EF] px-3 py-1.5 flex items-center gap-1.5 rounded-none hover:bg-[#2563EB] transition-colors cursor-pointer"
-                >
-                  <Plus size={13} /> Add Project
-                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 3: PROJECTS / RUNTIMES & ENGINES                      */}
+        {/* ========================================================= */}
+        {activeTab === "projects" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+              <div className="space-y-1">
+                <h2 className="font-serif text-2xl sm:text-3xl font-normal lowercase tracking-tight text-[#1a1c1c] dark:text-[#f0f0f2]">
+                  projects &amp; engines
+                </h2>
+                <p className="text-sm font-sans text-[#5e5e5e] dark:text-[#9e9ea6]">
+                  curate open-source engines, agentic tooling, repository links, and latency benchmarks.
+                </p>
               </div>
 
-              <div className="space-y-6">
-                {data.projects.map((project, index) => (
-                  <div
-                    key={index}
-                    className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4 relative rounded-none"
-                  >
+              <button
+                type="button"
+                onClick={() => {
+                  setData({
+                    ...data,
+                    projects: [
+                      {
+                        codeIndex: "runtime engine",
+                        category: "runtime engine",
+                        title: "new-system",
+                        version: "v1.0",
+                        status: "Active",
+                        description: "architecture overview and operational details...",
+                        techStack: "TypeScript, Next.js, Node.js",
+                        tech: ["TypeScript", "Next.js"],
+                        github: data.profile.socials?.github || "https://github.com/Abhishekkkk-15",
+                        live: "",
+                        metric: "sub-20ms",
+                        metricSub: "latency",
+                      },
+                      ...data.projects,
+                    ],
+                  });
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1a1c1c] dark:bg-[#f0f0f2] hover:bg-black dark:hover:bg-white text-[#f9f9f9] dark:text-[#0d0d0e] font-mono text-xs font-medium cursor-pointer transition-colors shadow-2xs shrink-0"
+              >
+                <Plus size={13} />
+                <span>add project</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {data.projects.map((project, index) => (
+                <div
+                  key={index}
+                  className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 relative space-y-4 transition-colors shadow-2xs"
+                >
+                  <div className="flex items-center justify-between border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif text-base font-semibold lowercase text-[#1a1c1c] dark:text-[#f0f0f2]">
+                        {project.title || "untitled-project"}
+                      </span>
+                      <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6]">
+                        // {project.codeIndex || "runtime engine"}
+                      </span>
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => {
                         const updated = data.projects.filter((_, i) => i !== index);
                         setData({ ...data, projects: updated });
                       }}
-                      title="Remove Project"
-                      className="absolute right-4 top-4 text-[#6E6D68] hover:text-red-600 transition-colors cursor-pointer"
+                      title="Remove project"
+                      className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-red-600 dark:hover:text-red-400 p-1 transition-colors cursor-pointer"
                     >
                       <Trash2 size={15} />
                     </button>
+                  </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
-                      <div>
-                        <label className="text-[#6E6D68]">Title</label>
-                        <input
-                          type="text"
-                          value={project.title}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].title = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-semibold rounded-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Category / Code Tag</label>
-                        <input
-                          type="text"
-                          value={project.codeIndex || project.category || ""}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].codeIndex = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          placeholder="e.g. multimodal agent or ai runtime"
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">title (lowercase slug)</label>
+                      <input
+                        type="text"
+                        value={project.title}
+                        placeholder="jarvis-assistant"
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].title = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono font-medium text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
 
-                      <div className="sm:col-span-2">
-                        <label className="text-[#6E6D68]">Description</label>
-                        <textarea
-                          rows={2}
-                          value={project.description}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].description = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs font-sans rounded-none"
-                        />
-                      </div>
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">category / classification tag</label>
+                      <input
+                        type="text"
+                        value={project.codeIndex || project.category || ""}
+                        placeholder="multimodal agent"
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].codeIndex = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
 
-                      <div className="sm:col-span-2">
-                        <label className="text-[#6E6D68]">Tech Stack</label>
-                        <input
-                          type="text"
-                          value={project.techStack}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].techStack = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          placeholder="e.g. TypeScript, LangGraph, Electron"
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
+                    <div className="sm:col-span-2 space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">description</label>
+                      <textarea
+                        rows={2}
+                        value={project.description}
+                        placeholder="multimodal ai desktop companion that lives on screen..."
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].description = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-sans text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
 
-                      <div>
-                        <label className="text-[#6E6D68]">Benchmark Metric</label>
-                        <input
-                          type="text"
-                          value={project.metric}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].metric = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          placeholder="sub-50ms"
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Metric Sub / Context</label>
-                        <input
-                          type="text"
-                          value={project.metricSub}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].metricSub = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          placeholder="latency"
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
+                    <div className="sm:col-span-2 space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">tech stack</label>
+                      <input
+                        type="text"
+                        value={project.techStack}
+                        placeholder="TypeScript, LangGraph, Electron, Next.js"
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].techStack = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
 
-                      <div>
-                        <label className="text-[#6E6D68]">GitHub Repository URL</label>
-                        <input
-                          type="text"
-                          value={project.github}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].github = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[#6E6D68]">Live Demo URL (Optional)</label>
-                        <input
-                          type="text"
-                          value={project.live || ""}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].live = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          placeholder="https://..."
-                          className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-1.5 text-xs rounded-none"
-                        />
-                      </div>
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">benchmark metric</label>
+                      <input
+                        type="text"
+                        value={project.metric}
+                        placeholder="sub-50ms"
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].metric = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">metric sub / context</label>
+                      <input
+                        type="text"
+                        value={project.metricSub}
+                        placeholder="agent loop"
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].metricSub = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">github repository url</label>
+                      <input
+                        type="text"
+                        value={project.github}
+                        placeholder="https://github.com/..."
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].github = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">live demo url (optional)</label>
+                      <input
+                        type="text"
+                        value={project.live || ""}
+                        placeholder="https://..."
+                        onChange={(e) => {
+                          const updated = [...data.projects];
+                          updated[index].live = e.target.value;
+                          setData({ ...data, projects: updated });
+                        }}
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* TAB 4: GITHUB ACTIVITY */}
-          {activeTab === "activity" && (
-            <div className="space-y-6 max-w-3xl">
-              <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-serif font-medium text-[#111111]">
-                  GitHub &amp; Upstream Activity
-                </h2>
-                <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Connected to your GitHub account (
-                  <span className="text-[#111111] font-semibold">
-                    {data.profile.socials?.github || "Not configured"}
-                  </span>
-                  ). Real upstream commits and merged PRs are fetched dynamically via Next.js SSR.
-                </p>
+        {/* ========================================================= */}
+        {/* TAB 4: GITHUB ACTIVITY                                    */}
+        {/* ========================================================= */}
+        {activeTab === "activity" && (
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h2 className="font-serif text-2xl sm:text-3xl font-normal lowercase tracking-tight text-[#1a1c1c] dark:text-[#f0f0f2]">
+                github &amp; upstream commits
+              </h2>
+              <p className="text-sm font-sans text-[#5e5e5e] dark:text-[#9e9ea6]">
+                live upstream commits are automatically queried across public repositories.
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 sm:p-8 space-y-6 shadow-2xs">
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] font-mono text-xs">
+                <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+                <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">connected account:</span>
+                <span className="font-semibold text-[#1a1c1c] dark:text-[#f0f0f2]">
+                  {data.profile.socials?.github || "not configured"}
+                </span>
               </div>
 
-              <div className="p-4 bg-[#EBEAE4]/40 border border-[#E2E0D8] space-y-4 font-mono text-xs">
-                <div>
-                  <label className="text-[#6E6D68] block mb-1">
-                    Activity Status Badge (default: Active Development)
+              <div className="space-y-4 font-mono text-xs">
+                <div className="space-y-1.5">
+                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                    activity status badge (e.g. active development)
                   </label>
                   <input
                     type="text"
@@ -834,14 +983,14 @@ export default function EditorPage() {
                         },
                       })
                     }
-                    className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3.5 py-2.5 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[#6E6D68] block mb-1">
-                      Custom Commits Display (leave blank for live count)
+                  <div className="space-y-1.5">
+                    <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                      custom commits display (leave blank for live count)
                     </label>
                     <input
                       type="text"
@@ -856,13 +1005,13 @@ export default function EditorPage() {
                           },
                         })
                       }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                      className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3.5 py-2.5 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                     />
                   </div>
 
-                  <div>
-                    <label className="text-[#6E6D68] block mb-1">
-                      Custom PRs Merged (leave blank for live count)
+                  <div className="space-y-1.5">
+                    <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                      custom prs merged (leave blank for live count)
                     </label>
                     <input
                       type="text"
@@ -877,120 +1026,117 @@ export default function EditorPage() {
                           },
                         })
                       }
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none"
+                      className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3.5 py-2.5 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                     />
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* TAB 5: SECURITY & ACCESS */}
-          {activeTab === "security" && (
-            <div className="space-y-6 max-w-2xl">
-              <div className="border-b border-[#E2E0D8] pb-4">
-                <h2 className="text-2xl font-serif font-medium text-[#111111]">
-                  Security &amp; Access Control
-                </h2>
-                <p className="font-mono text-xs text-[#6E6D68] mt-1">
-                  Manage administrative credentials and security settings.
-                </p>
+        {/* ========================================================= */}
+        {/* TAB 5: SECURITY & ACCESS                                 */}
+        {/* ========================================================= */}
+        {activeTab === "security" && (
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h2 className="font-serif text-2xl sm:text-3xl font-normal lowercase tracking-tight text-[#1a1c1c] dark:text-[#f0f0f2]">
+                security &amp; access
+              </h2>
+              <p className="text-sm font-sans text-[#5e5e5e] dark:text-[#9e9ea6]">
+                manage cms administrator credentials, authentication tokens, and access policies.
+              </p>
+            </div>
+
+            {/* Security Posture Overview */}
+            <div className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 sm:p-8 space-y-6 shadow-2xs">
+              <div className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] lowercase border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
+                active defense &amp; token policy
               </div>
 
-              {/* Security Telemetry Status Card */}
-              <div className="p-4 bg-[#EBEAE4]/40 border border-[#E2E0D8] space-y-3 font-mono text-xs">
-                <div className="text-[11px] uppercase tracking-wider text-[#111111] font-semibold border-b border-[#E2E0D8] pb-2">
-                  SECURITY POLICY &amp; DEFENSE POSTURE
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">encryption:</span>
+                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">bcrypt (cost 10)</span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11.5px]">
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block"></span>
-                    <span className="text-[#6E6D68]">Encryption:</span>
-                    <span className="font-medium text-[#111111]">Bcrypt (Cost 10)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block"></span>
-                    <span className="text-[#6E6D68]">Token:</span>
-                    <span className="font-medium text-[#111111]">HMAC-SHA256 JWT</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block"></span>
-                    <span className="text-[#6E6D68]">Cookies:</span>
-                    <span className="font-medium text-[#111111]">HttpOnly + SameSite=Lax</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] inline-block animate-pulse"></span>
-                    <span className="text-[#6E6D68]">Rate Limiter:</span>
-                    <span className="font-medium text-[#2563EB]">5-Attempt / 15m Lockout</span>
-                  </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">token:</span>
+                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">hmac-sha256 jwt</span>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">cookies:</span>
+                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">httponly + samesite</span>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">rate limit:</span>
+                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">5 attempts / 15m</span>
                 </div>
               </div>
 
-              {/* Change Password Form */}
-              <form onSubmit={handleChangePassword} className="space-y-4 font-mono text-xs">
-                <div className="p-5 border border-[#E2E0D8] bg-[#EBEAE4]/40 space-y-4">
-                  <div className="text-xs uppercase tracking-wider font-semibold text-[#111111] flex items-center gap-2">
-                    <Key size={14} />
-                    <span>Change Admin Password</span>
+              {/* Password Change Form */}
+              <form onSubmit={handleChangePassword} className="space-y-4 pt-4 border-t border-[#E5E5E5]/60 dark:border-[#26262a]/60">
+                <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#1a1c1c] dark:text-[#f0f0f2] lowercase">
+                  <Key size={14} />
+                  <span>update administrator password</span>
+                </div>
+
+                {passwordStatus && (
+                  <div
+                    className={`p-3 rounded-lg text-xs font-mono flex items-center gap-2 border ${
+                      passwordStatus.type === "success"
+                        ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-300"
+                        : "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50 text-red-800 dark:text-red-300"
+                    }`}
+                  >
+                    {passwordStatus.type === "success" ? (
+                      <CheckCircle2 size={15} />
+                    ) : (
+                      <AlertCircle size={15} />
+                    )}
+                    <span>{passwordStatus.text}</span>
                   </div>
+                )}
 
-                  {passwordStatus && (
-                    <div
-                      className={`p-3 border text-xs flex items-center gap-2 ${
-                        passwordStatus.type === "success"
-                          ? "bg-green-50 text-green-800 border-green-200"
-                          : "bg-red-50 text-red-800 border-red-200"
-                      }`}
-                    >
-                      {passwordStatus.type === "success" ? (
-                        <CheckCircle size={15} />
-                      ) : (
-                        <AlertCircle size={15} />
-                      )}
-                      <span>{passwordStatus.text}</span>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="text-[#6E6D68] block mb-1">
-                      CURRENT PASSWORD
-                    </label>
+                <div className="space-y-3 font-mono text-xs">
+                  <div className="space-y-1">
+                    <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">current password</label>
                     <input
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="••••••••••••"
                       required
-                      className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none focus:outline-none focus:border-[#111111]"
+                      className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3.5 py-2.5 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-[#6E6D68] block mb-1">
-                        NEW PASSWORD (MIN 8 CHARS)
-                      </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">new password (min 8 chars)</label>
                       <input
                         type="password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••••••"
                         required
-                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3.5 py-2.5 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                       />
                     </div>
 
-                    <div>
-                      <label className="text-[#6E6D68] block mb-1">
-                        CONFIRM NEW PASSWORD
-                      </label>
+                    <div className="space-y-1">
+                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">confirm new password</label>
                       <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="••••••••••••"
                         required
-                        className="w-full bg-[#EBEAE4] border border-[#E2E0D8] px-3 py-2 text-xs rounded-none focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3.5 py-2.5 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                       />
                     </div>
                   </div>
@@ -999,18 +1145,25 @@ export default function EditorPage() {
                     <button
                       type="submit"
                       disabled={passwordSaving}
-                      className="bg-[#111111] text-[#F4F3EF] hover:bg-[#2563EB] px-5 py-2 font-mono text-xs uppercase tracking-wider transition-colors disabled:opacity-50 rounded-none flex items-center gap-2 cursor-pointer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a1c1c] dark:bg-[#f0f0f2] hover:bg-black dark:hover:bg-white text-[#f9f9f9] dark:text-[#0d0d0e] font-mono text-xs font-medium cursor-pointer transition-colors shadow-2xs disabled:opacity-50"
                     >
                       <ShieldCheck size={14} />
-                      {passwordSaving ? "Updating Password..." : "Update Password"}
+                      <span>{passwordSaving ? "updating password..." : "update password"}</span>
                     </button>
                   </div>
                 </div>
               </form>
             </div>
-          )}
-        </main>
-      </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* Footer */}
+      <footer className="max-w-5xl mx-auto px-6 py-10 border-t border-[#E5E5E5]/60 dark:border-[#26262a]/60 text-center font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] lowercase">
+        <span>portfolio cms // minimal editorial editor // © {new Date().getFullYear()}</span>
+      </footer>
+
     </div>
   );
 }
