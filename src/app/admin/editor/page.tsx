@@ -61,14 +61,59 @@ export default function EditorPage() {
     }
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e?: React.MouseEvent) => {
     const next = !isDark;
-    setIsDark(next);
-    localStorage.setItem("theme", next ? "dark" : "light");
-    if (next) {
-      document.documentElement.classList.add("dark");
+
+    const applyTheme = () => {
+      setIsDark(next);
+      localStorage.setItem("theme", next ? "dark" : "light");
+      if (next) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    };
+
+    if (
+      typeof document !== "undefined" &&
+      "startViewTransition" in document &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      const x = e ? e.clientX : window.innerWidth / 2;
+      const y = e ? e.clientY : 0;
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      const transition = (document as any).startViewTransition(() => {
+        applyTheme();
+      });
+
+      transition.ready.then(() => {
+        const clipPath = [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${endRadius}px at ${x}px ${y}px)`,
+        ];
+        document.documentElement.animate(
+          {
+            clipPath: next ? clipPath : [...clipPath].reverse(),
+          },
+          {
+            duration: 420,
+            easing: "ease-in-out",
+            pseudoElement: next
+              ? "::view-transition-new(root)"
+              : "::view-transition-old(root)",
+          }
+        );
+      });
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("theme-transition");
+      applyTheme();
+      window.setTimeout(() => {
+        document.documentElement.classList.remove("theme-transition");
+      }, 450);
     }
   };
 
@@ -237,7 +282,7 @@ export default function EditorPage() {
             {/* Dark Mode Toggle */}
             <button
               type="button"
-              onClick={toggleTheme}
+              onClick={(e) => toggleTheme(e)}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               className="w-8 h-8 rounded-full flex items-center justify-center text-[#1a1c1c] dark:text-[#f0f0f2] hover:bg-[#E5E5E5]/60 dark:hover:bg-[#26262a] transition-colors cursor-pointer"
             >

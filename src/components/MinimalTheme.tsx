@@ -42,14 +42,61 @@ export default function MinimalTheme({
     }
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e?: React.MouseEvent) => {
     const next = !isDark;
-    setIsDark(next);
-    localStorage.setItem("theme", next ? "dark" : "light");
-    if (next) {
-      document.documentElement.classList.add("dark");
+
+    const applyTheme = () => {
+      setIsDark(next);
+      localStorage.setItem("theme", next ? "dark" : "light");
+      if (next) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    };
+
+    // If browser supports View Transitions API and user hasn't requested reduced motion:
+    if (
+      typeof document !== "undefined" &&
+      "startViewTransition" in document &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      const x = e ? e.clientX : window.innerWidth / 2;
+      const y = e ? e.clientY : 0;
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      const transition = (document as any).startViewTransition(() => {
+        applyTheme();
+      });
+
+      transition.ready.then(() => {
+        const clipPath = [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${endRadius}px at ${x}px ${y}px)`,
+        ];
+        document.documentElement.animate(
+          {
+            clipPath: next ? clipPath : [...clipPath].reverse(),
+          },
+          {
+            duration: 420,
+            easing: "ease-in-out",
+            pseudoElement: next
+              ? "::view-transition-new(root)"
+              : "::view-transition-old(root)",
+          }
+        );
+      });
     } else {
-      document.documentElement.classList.remove("dark");
+      // Fallback smooth transition
+      document.documentElement.classList.add("theme-transition");
+      applyTheme();
+      window.setTimeout(() => {
+        document.documentElement.classList.remove("theme-transition");
+      }, 450);
     }
   };
 
@@ -212,18 +259,29 @@ export default function MinimalTheme({
             <button
               id="theme-toggle"
               type="button"
-              onClick={toggleTheme}
+              onClick={(e) => toggleTheme(e)}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              className={`rounded-full flex items-center justify-center text-[#1a1c1c] dark:text-[#f0f0f2] hover:bg-[#f3f3f4] dark:hover:bg-[#1e1e22] transition-all duration-300 cursor-pointer ${
+              className={`rounded-full flex items-center justify-center text-[#1a1c1c] dark:text-[#f0f0f2] hover:bg-[#f3f3f4] dark:hover:bg-[#1e1e22] transition-all duration-300 cursor-pointer overflow-hidden ${
                 isScrolled ? "w-7 h-7" : "w-8 h-8"
               }`}
             >
-              {mounted && isDark ? (
-                <Sun size={isScrolled ? 13.5 : 15} className="text-[#f0f0f2] transition-all duration-300" />
-              ) : (
-                <Moon size={isScrolled ? 13.5 : 15} className="text-[#1a1c1c] transition-all duration-300" />
-              )}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={isDark ? "dark" : "light"}
+                  initial={{ opacity: 0, rotate: -40, scale: 0.75 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 40, scale: 0.75 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  className="flex items-center justify-center"
+                >
+                  {mounted && isDark ? (
+                    <Sun size={isScrolled ? 13.5 : 15} className="text-[#f0f0f2]" />
+                  ) : (
+                    <Moon size={isScrolled ? 13.5 : 15} className="text-[#1a1c1c]" />
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </button>
           </div>
         </div>
@@ -326,13 +384,12 @@ export default function MinimalTheme({
                 )}
                 <span className="text-[#dadada] dark:text-[#26262a] select-none">/</span>
                 <a
-                  className="inline-flex items-center gap-1.5 hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] transition-colors"
+                  className="hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] transition-colors"
                   href={profile?.resumeUrl || "/resume.pdf"}
                   rel="noreferrer"
                   target="_blank"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                  <span>resume</span>
+                  resume ↗
                 </a>
               </div>
             </section>
@@ -409,9 +466,9 @@ export default function MinimalTheme({
 
               {/* 52-Week GitHub Contribution Graph */}
               {weeks.length > 0 && (
-                <div className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-4 sm:p-5 shadow-2xs space-y-3.5 transition-colors">
+                <div className="flex flex-col gap-3 py-1">
                   {/* Summary Bar */}
-                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                     <div className="flex items-baseline gap-2">
                       <span className="font-sans text-sm font-semibold text-[#1a1c1c] dark:text-[#f0f0f2]">
                         {totalContributions} contributions
@@ -497,7 +554,7 @@ export default function MinimalTheme({
                       </div>
 
                       {/* Scale Legend */}
-                      <div className="flex items-center justify-between text-[10px] font-mono text-[#5e5e5e] dark:text-[#9e9ea6] pt-1.5 border-t border-[#E5E5E5]/60 dark:border-[#26262a]/60">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-[#5e5e5e] dark:text-[#9e9ea6] pt-1">
                         <span>github stream</span>
                         <div className="flex items-center gap-1.5">
                           <span>less</span>
