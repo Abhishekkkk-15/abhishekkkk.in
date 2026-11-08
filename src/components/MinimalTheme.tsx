@@ -172,6 +172,13 @@ export default function MinimalTheme({
   const visibleProjects = expandedProjects ? allProjects : allProjects.slice(0, initialProjectsCount);
   const remainingCount = Math.max(0, allProjects.length - initialProjectsCount);
 
+  // GitHub contribution matrix data
+  const weeks = githubData?.weeks && githubData.weeks.length > 0 ? githubData.weeks : [];
+  const totalContributions =
+    githubData?.totalContributions || githubData?.commitsCount || "1,776";
+  const prsMerged = githubData?.prsMerged || "48";
+  const starsAccumulated = githubData?.starsAccumulated || "180 ★";
+
   return (
     <div className="w-full min-h-screen bg-[#f9f9f9] dark:bg-[#0d0d0e] text-[#1a1c1c] dark:text-[#f0f0f2] font-sans antialiased selection:bg-[#1a1c1c] selection:text-[#f9f9f9] dark:selection:bg-[#f0f0f2] dark:selection:text-[#0d0d0e] transition-colors duration-200">
       
@@ -390,12 +397,122 @@ export default function MinimalTheme({
             </section>
 
             {/* OPEN SOURCE SECTION */}
-            <section className="flex flex-col pt-8 pb-6 gap-3.5">
+            <section className="flex flex-col pt-8 pb-6 gap-4" id="open-source">
               <div className="flex items-center justify-between border-b border-[#E5E5E5] dark:border-[#26262a] pb-2">
                 <span className="font-mono text-[11px] uppercase tracking-widest text-[#5e5e5e] dark:text-[#9e9ea6]">
                   open source
                 </span>
+                <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] lowercase">
+                  52-week activity
+                </span>
               </div>
+
+              {/* 52-Week GitHub Contribution Graph */}
+              {weeks.length > 0 && (
+                <div className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-4 sm:p-5 shadow-2xs space-y-3.5 transition-colors">
+                  {/* Summary Bar */}
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-sans text-sm font-semibold text-[#1a1c1c] dark:text-[#f0f0f2]">
+                        {totalContributions} contributions
+                      </span>
+                      <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6]">
+                        in the last year
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-3 font-mono text-[11px] text-[#5e5e5e] dark:text-[#9e9ea6]">
+                      {prsMerged && (
+                        <span>
+                          <strong className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">
+                            {prsMerged}
+                          </strong>{" "}
+                          prs
+                        </span>
+                      )}
+                      {starsAccumulated && (
+                        <>
+                          <span className="text-[#dadada] dark:text-[#26262a]">·</span>
+                          <span>
+                            <strong className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">
+                              {starsAccumulated}
+                            </strong>
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 52-Week Grid */}
+                  <div className="overflow-x-auto scrollbar-none pb-1">
+                    <div className="min-w-[560px] flex flex-col gap-1.5">
+                      {/* Months */}
+                      <div className="flex justify-between text-[10px] font-mono text-[#5e5e5e]/80 dark:text-[#9e9ea6]/70 pl-5 pr-1 select-none lowercase">
+                        <span>jan</span>
+                        <span>feb</span>
+                        <span>mar</span>
+                        <span>apr</span>
+                        <span>may</span>
+                        <span>jun</span>
+                        <span>jul</span>
+                        <span>aug</span>
+                        <span>sep</span>
+                        <span>oct</span>
+                        <span>nov</span>
+                        <span>dec</span>
+                      </div>
+
+                      {/* Day Markers + Squares Matrix */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex flex-col justify-between h-[72px] text-[9px] font-mono text-[#5e5e5e]/70 dark:text-[#9e9ea6]/60 select-none py-0.5 lowercase shrink-0 w-3">
+                          <span>m</span>
+                          <span>w</span>
+                          <span>f</span>
+                        </div>
+
+                        <div
+                          className="flex-1 grid grid-flow-col grid-rows-7 gap-[2.5px]"
+                          style={{ gridTemplateColumns: "repeat(52, minmax(0, 1fr))" }}
+                        >
+                          {weeks.map((week, wIdx) =>
+                            week.map((day, dIdx) => (
+                              <div
+                                key={`${wIdx}-${dIdx}`}
+                                title={`${day.count} contributions on ${day.date}`}
+                                className={`w-full aspect-square rounded-[2px] transition-transform duration-100 hover:scale-125 cursor-pointer ${
+                                  day.level === 0
+                                    ? "bg-[#ebedf0] dark:bg-[#1f1f23]"
+                                    : day.level === 1
+                                    ? "bg-[#bbf7d0] dark:bg-[#064e3b]"
+                                    : day.level === 2
+                                    ? "bg-[#4ade80] dark:bg-[#059669]"
+                                    : day.level === 3
+                                    ? "bg-[#16a34a] dark:bg-[#10b981]"
+                                    : "bg-[#14532d] dark:bg-[#34d399]"
+                                }`}
+                              />
+                            ))
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Scale Legend */}
+                      <div className="flex items-center justify-between text-[10px] font-mono text-[#5e5e5e] dark:text-[#9e9ea6] pt-1.5 border-t border-[#E5E5E5]/60 dark:border-[#26262a]/60">
+                        <span>github stream</span>
+                        <div className="flex items-center gap-1.5">
+                          <span>less</span>
+                          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#ebedf0] dark:bg-[#1f1f23]" />
+                          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#bbf7d0] dark:bg-[#064e3b]" />
+                          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#4ade80] dark:bg-[#059669]" />
+                          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#16a34a] dark:bg-[#10b981]" />
+                          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#14532d] dark:bg-[#34d399]" />
+                          <span>more</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Commit Stream List */}
               <div className="flex flex-col divide-y divide-[#EEEEEE] dark:divide-[#26262a]">
