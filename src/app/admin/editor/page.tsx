@@ -18,6 +18,8 @@ import {
   GitCommit,
   ShieldCheck,
   Key,
+  Upload,
+  Loader2,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
 
@@ -44,6 +46,13 @@ export default function EditorPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordSaving, setPasswordSaving] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  // Resume PDF Direct Upload State
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const [resumeUploadStatus, setResumeUploadStatus] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
@@ -229,6 +238,75 @@ export default function EditorPage() {
       });
     } finally {
       setPasswordSaving(false);
+    }
+  };
+
+  const handleResumeFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (
+      !file.name.toLowerCase().endsWith(".pdf") &&
+      file.type !== "application/pdf"
+    ) {
+      setResumeUploadStatus({
+        type: "error",
+        text: "only pdf documents (.pdf) can be uploaded.",
+      });
+      return;
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+      setResumeUploadStatus({
+        type: "error",
+        text: "file exceeds 15mb maximum limit.",
+      });
+      return;
+    }
+
+    setUploadingResume(true);
+    setResumeUploadStatus(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/admin/resume/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error || "failed to upload resume.");
+      }
+
+      if (data) {
+        setData({
+          ...data,
+          profile: {
+            ...data.profile,
+            resumeUrl: json.url,
+          },
+        });
+      }
+
+      const kb = Math.round(json.size / 1024);
+      setResumeUploadStatus({
+        type: "success",
+        text: `uploaded "${json.filename}" (${kb} KB) successfully.`,
+      });
+      setTimeout(() => setResumeUploadStatus(null), 5000);
+    } catch (err: any) {
+      setResumeUploadStatus({
+        type: "error",
+        text: err.message || "failed to upload resume.",
+      });
+    } finally {
+      setUploadingResume(false);
+      e.target.value = "";
     }
   };
 
@@ -577,23 +655,75 @@ export default function EditorPage() {
                   />
                 </div>
 
-                {/* Resume URL */}
-                <div className="space-y-1.5">
-                  <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
-                    resume document url
-                  </label>
-                  <input
-                    type="text"
-                    value={data.profile.resumeUrl || "/resume.pdf"}
-                    placeholder="/resume.pdf"
-                    onChange={(e) =>
-                      setData({
-                        ...data,
-                        profile: { ...data.profile, resumeUrl: e.target.value },
-                      })
-                    }
-                    className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
-                  />
+                {/* Resume URL & Direct PDF Upload */}
+                <div className="sm:col-span-2 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">
+                      resume document (url or upload new pdf)
+                    </label>
+                    {data.profile.resumeUrl && (
+                      <a
+                        href={data.profile.resumeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-mono text-[#737373] dark:text-[#8e8e93] hover:text-black dark:hover:text-white underline underline-offset-2 transition-colors flex items-center gap-1"
+                      >
+                        view current document ↗
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <input
+                      type="text"
+                      value={data.profile.resumeUrl || "/resume.pdf"}
+                      placeholder="/resume.pdf or https://..."
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          profile: { ...data.profile, resumeUrl: e.target.value },
+                        })
+                      }
+                      className="flex-1 bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] px-3.5 py-2.5 rounded-lg text-sm font-sans focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+                    />
+
+                    <label
+                      className={`relative inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[#E5E5E5] dark:border-[#26262a] bg-white dark:bg-[#1e1e22] hover:bg-[#f3f3f4] dark:hover:bg-[#26262a] text-[#1a1c1c] dark:text-[#f0f0f2] text-xs font-mono font-medium transition-colors shrink-0 ${
+                        uploadingResume ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
+                      }`}
+                    >
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        className="sr-only"
+                        disabled={uploadingResume}
+                        onChange={handleResumeFileUpload}
+                      />
+                      {uploadingResume ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>upload .pdf</span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+
+                  {resumeUploadStatus && (
+                    <p
+                      className={`text-xs font-mono ${
+                        resumeUploadStatus.type === "error"
+                          ? "text-red-500"
+                          : "text-emerald-600 dark:text-emerald-400"
+                      }`}
+                    >
+                      {resumeUploadStatus.text}
+                    </p>
+                  )}
                 </div>
 
                 {/* Bio Paragraph 1 */}

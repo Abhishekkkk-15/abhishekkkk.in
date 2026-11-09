@@ -48,7 +48,8 @@ export async function middleware(req: NextRequest) {
   // Protecting admin API mutation/data routes at the Edge
   if (
     pathname.startsWith("/api/admin/portfolio") ||
-    pathname.startsWith("/api/admin/auth/change-password")
+    pathname.startsWith("/api/admin/auth/change-password") ||
+    pathname.startsWith("/api/admin/resume")
   ) {
     if (!isAuthenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -69,6 +70,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/api/admin/portfolio/:path*",
+    "/api/admin/resume/:path*",
     "/api/admin/auth/change-password",
     "/resume",
     "/cv",
