@@ -20,6 +20,22 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Redirect /resume and /cv to /resume.pdf
+  if (pathname === "/resume" || pathname === "/cv") {
+    return NextResponse.redirect(new URL("/resume.pdf", req.url));
+  }
+
+  // Redirect root /admin to /admin/editor or /admin/login
+  if (pathname === "/admin" || pathname === "/admin/") {
+    if (isAuthenticated) {
+      return NextResponse.redirect(new URL("/admin/editor", req.url));
+    } else {
+      const loginUrl = new URL("/admin/login", req.url);
+      loginUrl.searchParams.set("redirect", "/admin/editor");
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   // Protecting /admin/editor UI route
   if (pathname.startsWith("/admin/editor")) {
     if (!isAuthenticated) {
@@ -54,5 +70,7 @@ export const config = {
     "/admin/:path*",
     "/api/admin/portfolio/:path*",
     "/api/admin/auth/change-password",
+    "/resume",
+    "/cv",
   ],
 };
