@@ -20,6 +20,9 @@ import {
   Key,
   Upload,
   Loader2,
+  GripVertical,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
 
@@ -35,6 +38,7 @@ export default function EditorPage() {
     text: string;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
+  const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
 
   // Dark/Light Mode State
   const [isDark, setIsDark] = useState(false);
@@ -322,6 +326,14 @@ export default function EditorPage() {
   }
 
   if (!data) return null;
+
+  const moveProject = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex || toIndex < 0 || toIndex >= data.projects.length) return;
+    const projects = [...data.projects];
+    const [movedProject] = projects.splice(fromIndex, 1);
+    projects.splice(toIndex, 0, movedProject);
+    setData({ ...data, projects });
+  };
 
   const tabs: Array<{ id: TabKey; label: string; icon: any }> = [
     { id: "profile", label: "profile & bio", icon: User },
@@ -926,7 +938,7 @@ export default function EditorPage() {
                   projects &amp; engines
                 </h2>
                 <p className="text-sm font-sans text-[#5e5e5e] dark:text-[#9e9ea6]">
-                  curate open-source engines, agentic tooling, repository links, and latency benchmarks.
+                  drag projects into the order you want on your portfolio, then save changes to publish.
                 </p>
               </div>
 
@@ -965,10 +977,36 @@ export default function EditorPage() {
               {data.projects.map((project, index) => (
                 <div
                   key={index}
-                  className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 relative space-y-4 transition-colors shadow-2xs"
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    if (draggedProjectIndex !== null) moveProject(draggedProjectIndex, index);
+                    setDraggedProjectIndex(null);
+                  }}
+                  className={`bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 relative space-y-4 transition-all shadow-2xs ${
+                    draggedProjectIndex === index ? "opacity-50" : ""
+                  }`}
                 >
                   <div className="flex items-center justify-between border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <button
+                        type="button"
+                        draggable
+                        onDragStart={(event) => {
+                          event.dataTransfer.effectAllowed = "move";
+                          event.dataTransfer.setData("text/plain", String(index));
+                          setDraggedProjectIndex(index);
+                        }}
+                        onDragEnd={() => setDraggedProjectIndex(null)}
+                        title="Drag to reorder project"
+                        aria-label={`Drag ${project.title || "project"} to reorder`}
+                        className="touch-none cursor-grab active:cursor-grabbing text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] p-1"
+                      >
+                        <GripVertical size={16} />
+                      </button>
+                      <span className="font-mono text-[10px] text-[#5e5e5e] dark:text-[#9e9ea6] w-5">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                       <span className="font-serif text-base font-semibold lowercase text-[#1a1c1c] dark:text-[#f0f0f2]">
                         {project.title || "untitled-project"}
                       </span>
@@ -977,17 +1015,40 @@ export default function EditorPage() {
                       </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = data.projects.filter((_, i) => i !== index);
-                        setData({ ...data, projects: updated });
-                      }}
-                      title="Remove project"
-                      className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-red-600 dark:hover:text-red-400 p-1 transition-colors cursor-pointer"
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => moveProject(index, index - 1)}
+                        disabled={index === 0}
+                        aria-label={`Move ${project.title || "project"} up`}
+                        title="Move up"
+                        className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] disabled:opacity-30 p-1 transition-colors"
+                      >
+                        <ArrowUp size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveProject(index, index + 1)}
+                        disabled={index === data.projects.length - 1}
+                        aria-label={`Move ${project.title || "project"} down`}
+                        title="Move down"
+                        className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] disabled:opacity-30 p-1 transition-colors"
+                      >
+                        <ArrowDown size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = data.projects.filter((_, i) => i !== index);
+                          setData({ ...data, projects: updated });
+                        }}
+                        title="Remove project"
+                        aria-label={`Remove ${project.title || "project"}`}
+                        className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-red-600 dark:hover:text-red-400 p-1 transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
