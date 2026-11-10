@@ -1281,41 +1281,13 @@ export default function EditorPage() {
                 security &amp; access
               </h2>
               <p className="text-sm font-sans text-[#5e5e5e] dark:text-[#9e9ea6]">
-                manage cms administrator credentials, authentication tokens, and access policies.
+                manage cms administrator credentials.
               </p>
             </div>
 
-            {/* Security Posture Overview */}
-            <div className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 sm:p-8 space-y-6 shadow-2xs">
-              <div className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6] lowercase border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
-                active defense &amp; token policy
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">encryption:</span>
-                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">bcrypt (cost 10)</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">token:</span>
-                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">hmac-sha256 jwt</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">cookies:</span>
-                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">httponly + samesite</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
-                  <span className="text-[#5e5e5e] dark:text-[#9e9ea6]">rate limit:</span>
-                  <span className="font-medium text-[#1a1c1c] dark:text-[#f0f0f2]">5 attempts / 15m</span>
-                </div>
-              </div>
-
+            <div className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 sm:p-8 shadow-2xs">
               {/* Password Change Form */}
-              <form onSubmit={handleChangePassword} className="space-y-4 pt-4 border-t border-[#E5E5E5]/60 dark:border-[#26262a]/60">
+              <form onSubmit={handleChangePassword} className="space-y-4">
                 <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#1a1c1c] dark:text-[#f0f0f2] lowercase">
                   <Key size={14} />
                   <span>update administrator password</span>
