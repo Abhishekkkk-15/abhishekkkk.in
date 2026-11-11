@@ -23,6 +23,8 @@ import {
   GripVertical,
   ArrowUp,
   ArrowDown,
+  X,
+  Edit3,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
 
@@ -39,6 +41,7 @@ export default function EditorPage() {
   } | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
   const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
+  const [editingProjectIndex, setEditingProjectIndex] = useState<number | null>(null);
 
   // Dark/Light Mode State
   const [isDark, setIsDark] = useState(false);
@@ -60,6 +63,14 @@ export default function EditorPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setEditingProjectIndex(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -945,26 +956,23 @@ export default function EditorPage() {
               <button
                 type="button"
                 onClick={() => {
+                  const newProj = {
+                    title: "new-system",
+                    version: "v1.0",
+                    status: "Active",
+                    description: "architecture overview and operational details...",
+                    techStack: "TypeScript, Next.js, Node.js",
+                    tech: ["TypeScript", "Next.js"],
+                    github: data.profile.socials?.github || "https://github.com/Abhishekkkk-15",
+                    live: "",
+                    metric: "sub-20ms",
+                    metricSub: "latency",
+                  };
                   setData({
                     ...data,
-                    projects: [
-                      {
-                        codeIndex: "runtime engine",
-                        category: "runtime engine",
-                        title: "new-system",
-                        version: "v1.0",
-                        status: "Active",
-                        description: "architecture overview and operational details...",
-                        techStack: "TypeScript, Next.js, Node.js",
-                        tech: ["TypeScript", "Next.js"],
-                        github: data.profile.socials?.github || "https://github.com/Abhishekkkk-15",
-                        live: "",
-                        metric: "sub-20ms",
-                        metricSub: "latency",
-                      },
-                      ...data.projects,
-                    ],
+                    projects: [newProj, ...data.projects],
                   });
+                  setEditingProjectIndex(0);
                 }}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1a1c1c] dark:bg-[#f0f0f2] hover:bg-black dark:hover:bg-white text-[#f9f9f9] dark:text-[#0d0d0e] font-mono text-xs font-medium cursor-pointer transition-colors shadow-2xs shrink-0"
               >
@@ -973,7 +981,7 @@ export default function EditorPage() {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2.5">
               {data.projects.map((project, index) => (
                 <div
                   key={index}
@@ -983,114 +991,165 @@ export default function EditorPage() {
                     if (draggedProjectIndex !== null) moveProject(draggedProjectIndex, index);
                     setDraggedProjectIndex(null);
                   }}
-                  className={`bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-xl p-6 relative space-y-4 transition-all shadow-2xs ${
-                    draggedProjectIndex === index ? "opacity-50" : ""
+                  onClick={() => setEditingProjectIndex(index)}
+                  className={`group bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] hover:border-black/40 dark:hover:border-white/40 rounded-xl px-4 py-3 sm:py-3.5 flex items-center justify-between gap-3 cursor-pointer transition-all shadow-2xs ${
+                    draggedProjectIndex === index ? "opacity-40 border-dashed" : ""
                   }`}
                 >
-                  <div className="flex items-center justify-between border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <button
-                        type="button"
-                        draggable
-                        onDragStart={(event) => {
-                          event.dataTransfer.effectAllowed = "move";
-                          event.dataTransfer.setData("text/plain", String(index));
-                          setDraggedProjectIndex(index);
-                        }}
-                        onDragEnd={() => setDraggedProjectIndex(null)}
-                        title="Drag to reorder project"
-                        aria-label={`Drag ${project.title || "project"} to reorder`}
-                        className="touch-none cursor-grab active:cursor-grabbing text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] p-1"
-                      >
-                        <GripVertical size={16} />
-                      </button>
-                      <span className="font-mono text-[10px] text-[#5e5e5e] dark:text-[#9e9ea6] w-5">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <span className="font-serif text-base font-semibold lowercase text-[#1a1c1c] dark:text-[#f0f0f2]">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <button
+                      type="button"
+                      draggable
+                      onDragStart={(event) => {
+                        event.stopPropagation();
+                        event.dataTransfer.effectAllowed = "move";
+                        event.dataTransfer.setData("text/plain", String(index));
+                        setDraggedProjectIndex(index);
+                      }}
+                      onDragEnd={() => setDraggedProjectIndex(null)}
+                      onClick={(e) => e.stopPropagation()}
+                      title="Drag to reorder project"
+                      aria-label={`Drag ${project.title || "project"} to reorder`}
+                      className="touch-none cursor-grab active:cursor-grabbing text-[#8e8e93] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] p-1 -ml-1 transition-colors"
+                    >
+                      <GripVertical size={16} />
+                    </button>
+                    <span className="font-mono text-xs text-[#8e8e93] shrink-0">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div className="min-w-0 flex items-baseline gap-2">
+                      <span className="font-mono text-sm font-semibold lowercase text-[#1a1c1c] dark:text-[#f0f0f2] truncate">
                         {project.title || "untitled-project"}
                       </span>
-                      <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6]">
-                        // {project.codeIndex || "runtime engine"}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => moveProject(index, index - 1)}
-                        disabled={index === 0}
-                        aria-label={`Move ${project.title || "project"} up`}
-                        title="Move up"
-                        className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] disabled:opacity-30 p-1 transition-colors"
-                      >
-                        <ArrowUp size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveProject(index, index + 1)}
-                        disabled={index === data.projects.length - 1}
-                        aria-label={`Move ${project.title || "project"} down`}
-                        title="Move down"
-                        className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] disabled:opacity-30 p-1 transition-colors"
-                      >
-                        <ArrowDown size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const updated = data.projects.filter((_, i) => i !== index);
-                          setData({ ...data, projects: updated });
-                        }}
-                        title="Remove project"
-                        aria-label={`Remove ${project.title || "project"}`}
-                        className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-red-600 dark:hover:text-red-400 p-1 transition-colors cursor-pointer"
-                      >
-                        <Trash2 size={15} />
-                      </button>
+                      {project.techStack && (
+                        <span className="hidden sm:inline-block font-mono text-xs text-[#8e8e93] truncate max-w-[220px]">
+                          // {project.techStack}
+                        </span>
+                      )}
                     </div>
                   </div>
 
+                  <div className="flex items-center gap-1 shrink-0">
+                    {project.metric && (
+                      <span className="hidden md:inline-flex items-center text-[10px] font-mono px-2 py-0.5 rounded bg-[#f0f0f2] dark:bg-[#1f1f23] text-[#5e5e5e] dark:text-[#9e9ea6] mr-2">
+                        {project.metric} {project.metricSub}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        moveProject(index, index - 1);
+                      }}
+                      disabled={index === 0}
+                      aria-label={`Move ${project.title || "project"} up`}
+                      title="Move up"
+                      className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] disabled:opacity-20 p-1.5 rounded transition-colors"
+                    >
+                      <ArrowUp size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        moveProject(index, index + 1);
+                      }}
+                      disabled={index === data.projects.length - 1}
+                      aria-label={`Move ${project.title || "project"} down`}
+                      title="Move down"
+                      className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] disabled:opacity-20 p-1.5 rounded transition-colors"
+                    >
+                      <ArrowDown size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProjectIndex(index);
+                      }}
+                      title="Edit project details"
+                      aria-label={`Edit ${project.title || "project"}`}
+                      className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] p-1.5 rounded transition-colors cursor-pointer"
+                    >
+                      <Edit3 size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const updated = data.projects.filter((_, i) => i !== index);
+                        setData({ ...data, projects: updated });
+                        if (editingProjectIndex === index) {
+                          setEditingProjectIndex(null);
+                        } else if (editingProjectIndex !== null && editingProjectIndex > index) {
+                          setEditingProjectIndex(editingProjectIndex - 1);
+                        }
+                      }}
+                      title="Remove project"
+                      aria-label={`Remove ${project.title || "project"}`}
+                      className="text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-red-600 dark:hover:text-red-400 p-1.5 rounded transition-colors cursor-pointer"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Project Edit Pop-up Modal */}
+            {editingProjectIndex !== null && data.projects[editingProjectIndex] && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
+                onClick={() => setEditingProjectIndex(null)}
+              >
+                <div
+                  className="bg-white dark:bg-[#141416] border border-[#E5E5E5] dark:border-[#26262a] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-7 shadow-2xl relative my-auto space-y-5"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between border-b border-[#E5E5E5]/60 dark:border-[#26262a]/60 pb-3">
+                    <div className="space-y-0.5 min-w-0 pr-2">
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#5e5e5e] dark:text-[#9e9ea6]">
+                        project {String(editingProjectIndex + 1).padStart(2, "0")} of {data.projects.length}
+                      </span>
+                      <h3 className="font-serif text-xl font-normal lowercase tracking-tight text-[#1a1c1c] dark:text-[#f0f0f2] truncate">
+                        edit: {data.projects[editingProjectIndex].title || "untitled-project"}
+                      </h3>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setEditingProjectIndex(null)}
+                      className="p-1.5 rounded-lg text-[#5e5e5e] dark:text-[#9e9ea6] hover:text-[#1a1c1c] dark:hover:text-[#f0f0f2] hover:bg-[#f5f5f5] dark:hover:bg-[#1f1f23] transition-colors cursor-pointer shrink-0"
+                      aria-label="Close dialog"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
-                    <div className="space-y-1">
+                    <div className="sm:col-span-2 space-y-1">
                       <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">title (lowercase slug)</label>
                       <input
                         type="text"
-                        value={project.title}
+                        value={data.projects[editingProjectIndex].title}
                         placeholder="jarvis-assistant"
                         onChange={(e) => {
                           const updated = [...data.projects];
-                          updated[index].title = e.target.value;
+                          updated[editingProjectIndex].title = e.target.value;
                           setData({ ...data, projects: updated });
                         }}
                         className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono font-medium text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">category / classification tag</label>
-                      <input
-                        type="text"
-                        value={project.codeIndex || project.category || ""}
-                        placeholder="multimodal agent"
-                        onChange={(e) => {
-                          const updated = [...data.projects];
-                          updated[index].codeIndex = e.target.value;
-                          setData({ ...data, projects: updated });
-                        }}
-                        className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
-                      />
-                    </div>
-
                     <div className="sm:col-span-2 space-y-1">
                       <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">description</label>
                       <textarea
-                        rows={2}
-                        value={project.description}
+                        rows={3}
+                        value={data.projects[editingProjectIndex].description}
                         placeholder="multimodal ai desktop companion that lives on screen..."
                         onChange={(e) => {
                           const updated = [...data.projects];
-                          updated[index].description = e.target.value;
+                          updated[editingProjectIndex].description = e.target.value;
                           setData({ ...data, projects: updated });
                         }}
                         className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-sans text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
@@ -1101,11 +1160,11 @@ export default function EditorPage() {
                       <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">tech stack</label>
                       <input
                         type="text"
-                        value={project.techStack}
+                        value={data.projects[editingProjectIndex].techStack}
                         placeholder="TypeScript, LangGraph, Electron, Next.js"
                         onChange={(e) => {
                           const updated = [...data.projects];
-                          updated[index].techStack = e.target.value;
+                          updated[editingProjectIndex].techStack = e.target.value;
                           setData({ ...data, projects: updated });
                         }}
                         className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
@@ -1116,11 +1175,11 @@ export default function EditorPage() {
                       <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">benchmark metric</label>
                       <input
                         type="text"
-                        value={project.metric}
+                        value={data.projects[editingProjectIndex].metric}
                         placeholder="sub-50ms"
                         onChange={(e) => {
                           const updated = [...data.projects];
-                          updated[index].metric = e.target.value;
+                          updated[editingProjectIndex].metric = e.target.value;
                           setData({ ...data, projects: updated });
                         }}
                         className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
@@ -1131,11 +1190,11 @@ export default function EditorPage() {
                       <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">metric sub / context</label>
                       <input
                         type="text"
-                        value={project.metricSub}
+                        value={data.projects[editingProjectIndex].metricSub}
                         placeholder="agent loop"
                         onChange={(e) => {
                           const updated = [...data.projects];
-                          updated[index].metricSub = e.target.value;
+                          updated[editingProjectIndex].metricSub = e.target.value;
                           setData({ ...data, projects: updated });
                         }}
                         className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
@@ -1146,11 +1205,11 @@ export default function EditorPage() {
                       <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">github repository url</label>
                       <input
                         type="text"
-                        value={project.github}
+                        value={data.projects[editingProjectIndex].github}
                         placeholder="https://github.com/..."
                         onChange={(e) => {
                           const updated = [...data.projects];
-                          updated[index].github = e.target.value;
+                          updated[editingProjectIndex].github = e.target.value;
                           setData({ ...data, projects: updated });
                         }}
                         className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
@@ -1161,20 +1220,30 @@ export default function EditorPage() {
                       <label className="text-[#5e5e5e] dark:text-[#9e9ea6] lowercase block">live demo url (optional)</label>
                       <input
                         type="text"
-                        value={project.live || ""}
+                        value={data.projects[editingProjectIndex].live || ""}
                         placeholder="https://..."
                         onChange={(e) => {
                           const updated = [...data.projects];
-                          updated[index].live = e.target.value;
+                          updated[editingProjectIndex].live = e.target.value;
                           setData({ ...data, projects: updated });
                         }}
                         className="w-full bg-[#f9f9f9] dark:bg-[#19191c] border border-[#E5E5E5] dark:border-[#26262a] px-3 py-2 rounded-lg text-xs font-mono text-[#1a1c1c] dark:text-[#f0f0f2] focus:outline-none focus:border-black dark:focus:border-white"
                       />
                     </div>
                   </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E5E5]/60 dark:border-[#26262a]/60">
+                    <button
+                      type="button"
+                      onClick={() => setEditingProjectIndex(null)}
+                      className="px-4 py-2 rounded-lg bg-[#1a1c1c] dark:bg-[#f0f0f2] hover:bg-black dark:hover:bg-white text-[#f9f9f9] dark:text-[#0d0d0e] font-mono text-xs font-medium cursor-pointer transition-colors"
+                    >
+                      done
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         )}
 

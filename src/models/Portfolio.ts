@@ -71,8 +71,8 @@ export interface IExperienceItem {
 }
 
 export interface IProjectItem {
-  codeIndex: string;
-  category: string;
+  codeIndex?: string;
+  category?: string;
   title: string;
   version: string;
   status?: string;
@@ -205,8 +205,8 @@ const PortfolioSchema = new Schema<IPortfolioDocument>(
     ],
     projects: [
       {
-        codeIndex: { type: String, required: true },
-        category: { type: String, required: true },
+        codeIndex: { type: String, default: '' },
+        category: { type: String, default: '' },
         title: { type: String, required: true },
         version: { type: String, required: true },
         status: { type: String },

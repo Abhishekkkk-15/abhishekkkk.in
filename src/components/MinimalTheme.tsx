@@ -121,18 +121,10 @@ export default function MinimalTheme({
     },
   ];
 
-  // Helper to strip numbering (e.g. "01 // ", "01. ", "1 - ") from project tags
-  const formatProjectTag = (rawTag?: string) => {
-    if (!rawTag) return "runtime engine";
-    const cleaned = rawTag.replace(/^0?\d+\s*(\/\/|-|\.|\/)?\s*/i, "").trim();
-    return cleaned.toLowerCase() || "runtime engine";
-  };
-
   // Combine projects for a rich project list (falling back to core systems if empty)
   const allProjects: Array<any> = projects.length > 0 ? projects : [
     {
       title: "jarvis-assistant",
-      codeIndex: "multimodal agent",
       description: "multimodal ai desktop companion that lives on screen. captures viewports, streams microphone audio, and triggers system actions via langgraph state machines.",
       techStack: "TypeScript, LangGraph, Electron, Next.js",
       metric: "sub-50ms",
@@ -142,7 +134,6 @@ export default function MinimalTheme({
     },
     {
       title: "infra-cd",
-      codeIndex: "ci/cd engine",
       description: "self-hosted continuous deployment platform with isolated build environments and lightweight go worker daemons streaming live build logs over sse.",
       techStack: "Go, TypeScript, React, Docker, SSE",
       metric: "real-time sse",
@@ -152,7 +143,6 @@ export default function MinimalTheme({
     },
     {
       title: "eden",
-      codeIndex: "vector workspace",
       description: "ai-driven workspace for indexing and searching internal knowledge via pgvector semantic embeddings and redis background queues.",
       techStack: "TypeScript, React, Node.js, pgvector, Redis",
       metric: "pgvector",
@@ -161,7 +151,6 @@ export default function MinimalTheme({
     },
     {
       title: "collabflow",
-      codeIndex: "realtime platform",
       description: "real-time team workspace platform with live document sync, role-based access controls, and a resilient nestjs microservice architecture.",
       techStack: "TypeScript, NestJS, Next.js, PostgreSQL",
       metric: "sub-20ms",
@@ -171,7 +160,6 @@ export default function MinimalTheme({
     },
     {
       title: "internal-search",
-      codeIndex: "enterprise rag",
       description: "cross-platform knowledge retrieval aggregating data across slack, notion, github, and jira with langchain rag pipelines and hybrid vector ranking.",
       techStack: "TypeScript, Next.js, LangChain, pgvector",
       metric: "cross-app rag",
@@ -180,7 +168,6 @@ export default function MinimalTheme({
     },
     {
       title: "email-scheduler",
-      codeIndex: "workflow queue",
       description: "full-stack automated email campaign system featuring a visual workflow builder and cron-scheduled job dispatching powered by agenda.js.",
       techStack: "Next.js, TypeScript, Redis, Agenda.js",
       metric: "visual pipeline",
@@ -635,9 +622,6 @@ export default function MinimalTheme({
                       <h3 className="font-serif text-[1.125rem] font-semibold text-[#1a1c1c] dark:text-[#f0f0f2] lowercase">
                         {proj.title}
                       </h3>
-                      <span className="font-mono text-xs text-[#5e5e5e] dark:text-[#9e9ea6]">
-                        {formatProjectTag(proj.codeIndex || proj.category)}
-                      </span>
                     </div>
 
                     <p className="font-sans text-sm text-[#5e5e5e] dark:text-[#9e9ea6] leading-relaxed">
