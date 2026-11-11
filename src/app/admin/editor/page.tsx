@@ -27,6 +27,7 @@ import {
   Edit3,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
+import { VenomTransitionOverlay, triggerVenomTransition } from "@/components/VenomTransition";
 
 type TabKey = "profile" | "experience" | "projects" | "activity" | "security";
 
@@ -99,46 +100,22 @@ export default function EditorPage() {
     };
 
     if (
-      typeof document !== "undefined" &&
-      "startViewTransition" in document &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
-      const x = e ? e.clientX : window.innerWidth / 2;
-      const y = e ? e.clientY : 0;
-      const endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y)
-      );
-
-      const transition = (document as any).startViewTransition(() => {
-        applyTheme();
-      });
-
-      transition.ready.then(() => {
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
-        document.documentElement.animate(
-          {
-            clipPath: next ? clipPath : [...clipPath].reverse(),
-          },
-          {
-            duration: 420,
-            easing: "ease-in-out",
-            pseudoElement: next
-              ? "::view-transition-new(root)"
-              : "::view-transition-old(root)",
-          }
-        );
-      });
-    } else {
-      document.documentElement.classList.add("theme-transition");
       applyTheme();
-      window.setTimeout(() => {
-        document.documentElement.classList.remove("theme-transition");
-      }, 450);
+      return;
     }
+
+    const x = e ? e.clientX : window.innerWidth / 2;
+    const y = e ? e.clientY : 0;
+
+    triggerVenomTransition({
+      x,
+      y,
+      nextDark: next,
+      onSwap: applyTheme,
+    });
   };
 
   useEffect(() => {
@@ -356,6 +333,7 @@ export default function EditorPage() {
 
   return (
     <div className="min-h-screen bg-[#f9f9f9] dark:bg-[#0d0d0e] text-[#1a1c1c] dark:text-[#f0f0f2] antialiased transition-colors duration-200">
+      <VenomTransitionOverlay />
       
       {/* Sticky Editorial Header */}
       <header className="sticky top-0 z-40 bg-[#f9f9f9]/90 dark:bg-[#0d0d0e]/90 backdrop-blur-xl border-b border-[#E5E5E5] dark:border-[#26262a] transition-colors">

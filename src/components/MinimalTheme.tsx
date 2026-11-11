@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { IPortfolioData } from "@/models/Portfolio";
 import type { FormattedGithubData } from "@/lib/github";
 import { Sun, Moon, ArrowUpRight, GitCommit, CheckCircle2 } from "lucide-react";
+import { VenomTransitionOverlay, triggerVenomTransition } from "@/components/VenomTransition";
 
 export default function MinimalTheme({
   portfolio,
@@ -55,49 +56,24 @@ export default function MinimalTheme({
       }
     };
 
-    // If browser supports View Transitions API and user hasn't requested reduced motion:
+    // Venom theme transition
     if (
-      typeof document !== "undefined" &&
-      "startViewTransition" in document &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
-      const x = e ? e.clientX : window.innerWidth / 2;
-      const y = e ? e.clientY : 0;
-      const endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y)
-      );
-
-      const transition = (document as any).startViewTransition(() => {
-        applyTheme();
-      });
-
-      transition.ready.then(() => {
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
-        document.documentElement.animate(
-          {
-            clipPath: next ? clipPath : [...clipPath].reverse(),
-          },
-          {
-            duration: 420,
-            easing: "ease-in-out",
-            pseudoElement: next
-              ? "::view-transition-new(root)"
-              : "::view-transition-old(root)",
-          }
-        );
-      });
-    } else {
-      // Fallback smooth transition
-      document.documentElement.classList.add("theme-transition");
       applyTheme();
-      window.setTimeout(() => {
-        document.documentElement.classList.remove("theme-transition");
-      }, 450);
+      return;
     }
+
+    const x = e ? e.clientX : window.innerWidth / 2;
+    const y = e ? e.clientY : 0;
+
+    triggerVenomTransition({
+      x,
+      y,
+      nextDark: next,
+      onSwap: applyTheme,
+    });
   };
 
   const { profile, experience = [], projects = [] } = portfolio;
@@ -215,6 +191,7 @@ export default function MinimalTheme({
 
   return (
     <div className="w-full min-h-screen bg-[#f9f9f9] dark:bg-[#0d0d0e] text-[#1a1c1c] dark:text-[#f0f0f2] font-sans antialiased selection:bg-[#1a1c1c] selection:text-[#f9f9f9] dark:selection:bg-[#f0f0f2] dark:selection:text-[#0d0d0e] transition-colors duration-200">
+      <VenomTransitionOverlay />
       
       {/* FIXED MINIMAL HEADER (Transitions to a more compact bar on scroll) */}
       <header
