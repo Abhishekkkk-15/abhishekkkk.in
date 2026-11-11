@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { IPortfolioData } from "@/models/Portfolio";
 import type { FormattedGithubData } from "@/lib/github";
 import { Sun, Moon, ArrowUpRight, GitCommit, CheckCircle2 } from "lucide-react";
-import { VenomTransitionOverlay, triggerVenomTransition } from "@/components/VenomTransition";
+import { useModeAnimation, ThemeAnimationType } from "react-theme-switch-animation";
 
 export default function MinimalTheme({
   portfolio,
@@ -14,10 +14,19 @@ export default function MinimalTheme({
   portfolio: IPortfolioData;
   githubData: FormattedGithubData;
 }) {
-  const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [expandedProjects, setExpandedProjects] = useState(false);
+
+  const { ref: themeToggleRef, toggleSwitchTheme, isDarkMode } = useModeAnimation({
+    animationType: ThemeAnimationType.BLUR_CIRCLE,
+    blurAmount: 2.5,
+    duration: 650,
+  });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Track scroll position to transition navbar size
   useEffect(() => {
@@ -28,53 +37,6 @@ export default function MinimalTheme({
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Sync theme with document class and localStorage
-  useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialDark = saved === "dark" || (!saved && prefersDark);
-    setIsDark(initialDark);
-    if (initialDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleTheme = (e?: React.MouseEvent) => {
-    const next = !isDark;
-
-    const applyTheme = () => {
-      setIsDark(next);
-      localStorage.setItem("theme", next ? "dark" : "light");
-      if (next) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    };
-
-    // Venom theme transition
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      applyTheme();
-      return;
-    }
-
-    const x = e ? e.clientX : window.innerWidth / 2;
-    const y = e ? e.clientY : 0;
-
-    triggerVenomTransition({
-      x,
-      y,
-      nextDark: next,
-      onSwap: applyTheme,
-    });
-  };
 
   const { profile, experience = [], projects = [] } = portfolio;
   const name = (profile?.name || "Abhishek Jangid").toLowerCase();
@@ -191,7 +153,6 @@ export default function MinimalTheme({
 
   return (
     <div className="w-full min-h-screen bg-[#f9f9f9] dark:bg-[#0d0d0e] text-[#1a1c1c] dark:text-[#f0f0f2] font-sans antialiased selection:bg-[#1a1c1c] selection:text-[#f9f9f9] dark:selection:bg-[#f0f0f2] dark:selection:text-[#0d0d0e] transition-colors duration-200">
-      <VenomTransitionOverlay />
       
       {/* FIXED MINIMAL HEADER (Transitions to a more compact bar on scroll) */}
       <header
@@ -221,25 +182,26 @@ export default function MinimalTheme({
           {/* Right Controls: Dark/Light Mode Toggle */}
           <div className="flex items-center gap-3">
             <button
+              ref={themeToggleRef as any}
               id="theme-toggle"
               type="button"
-              onClick={(e) => toggleTheme(e)}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              onClick={toggleSwitchTheme}
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               className={`rounded-full flex items-center justify-center text-[#1a1c1c] dark:text-[#f0f0f2] hover:bg-[#f3f3f4] dark:hover:bg-[#1e1e22] transition-all duration-300 cursor-pointer overflow-hidden ${
                 isScrolled ? "w-7 h-7" : "w-8 h-8"
               }`}
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
-                  key={isDark ? "dark" : "light"}
+                  key={isDarkMode ? "dark" : "light"}
                   initial={{ opacity: 0, rotate: -40, scale: 0.75 }}
                   animate={{ opacity: 1, rotate: 0, scale: 1 }}
                   exit={{ opacity: 0, rotate: 40, scale: 0.75 }}
                   transition={{ duration: 0.22, ease: "easeOut" }}
                   className="flex items-center justify-center"
                 >
-                  {mounted && isDark ? (
+                  {mounted && isDarkMode ? (
                     <Sun size={isScrolled ? 13.5 : 15} className="text-[#f0f0f2]" />
                   ) : (
                     <Moon size={isScrolled ? 13.5 : 15} className="text-[#1a1c1c]" />

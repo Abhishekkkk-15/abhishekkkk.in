@@ -27,7 +27,7 @@ import {
   Edit3,
 } from "lucide-react";
 import type { IPortfolioData } from "@/models/Portfolio";
-import { VenomTransitionOverlay, triggerVenomTransition } from "@/components/VenomTransition";
+import { useModeAnimation, ThemeAnimationType } from "react-theme-switch-animation";
 
 type TabKey = "profile" | "experience" | "projects" | "activity" | "security";
 
@@ -44,9 +44,17 @@ export default function EditorPage() {
   const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
   const [editingProjectIndex, setEditingProjectIndex] = useState<number | null>(null);
 
-  // Dark/Light Mode State
-  const [isDark, setIsDark] = useState(false);
+  // Dark/Light Mode State with react-theme-switch-animation
+  const { ref: themeToggleRef, toggleSwitchTheme, isDarkMode } = useModeAnimation({
+    animationType: ThemeAnimationType.BLUR_CIRCLE,
+    blurAmount: 2.5,
+    duration: 650,
+  });
   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Security & Password Change State
   const [currentPassword, setCurrentPassword] = useState("");
@@ -73,50 +81,6 @@ export default function EditorPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialDark = saved === "dark" || (!saved && prefersDark);
-    setIsDark(initialDark);
-    if (initialDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleTheme = (e?: React.MouseEvent) => {
-    const next = !isDark;
-
-    const applyTheme = () => {
-      setIsDark(next);
-      localStorage.setItem("theme", next ? "dark" : "light");
-      if (next) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    };
-
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      applyTheme();
-      return;
-    }
-
-    const x = e ? e.clientX : window.innerWidth / 2;
-    const y = e ? e.clientY : 0;
-
-    triggerVenomTransition({
-      x,
-      y,
-      nextDark: next,
-      onSwap: applyTheme,
-    });
-  };
 
   useEffect(() => {
     async function loadPortfolio() {
@@ -333,7 +297,6 @@ export default function EditorPage() {
 
   return (
     <div className="min-h-screen bg-[#f9f9f9] dark:bg-[#0d0d0e] text-[#1a1c1c] dark:text-[#f0f0f2] antialiased transition-colors duration-200">
-      <VenomTransitionOverlay />
       
       {/* Sticky Editorial Header */}
       <header className="sticky top-0 z-40 bg-[#f9f9f9]/90 dark:bg-[#0d0d0e]/90 backdrop-blur-xl border-b border-[#E5E5E5] dark:border-[#26262a] transition-colors">
@@ -360,12 +323,13 @@ export default function EditorPage() {
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Dark Mode Toggle */}
             <button
+              ref={themeToggleRef as any}
               type="button"
-              onClick={(e) => toggleTheme(e)}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              onClick={toggleSwitchTheme}
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               className="w-8 h-8 rounded-full flex items-center justify-center text-[#1a1c1c] dark:text-[#f0f0f2] hover:bg-[#E5E5E5]/60 dark:hover:bg-[#26262a] transition-colors cursor-pointer"
             >
-              {mounted && isDark ? <Sun size={15} /> : <Moon size={15} />}
+              {mounted && isDarkMode ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
             {/* View Site External Link */}
